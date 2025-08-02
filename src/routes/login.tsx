@@ -104,14 +104,14 @@ function RouteComponent() {
             <Stack gap="md">
               <TextInput
                 label="Email"
-                placeholder="your@email.com"
+                placeholder="ciro@mindmeet.com.br"
                 required
                 {...form.getInputProps('email')}
               />
 
               <PasswordInput
                 label="Senha"
-                placeholder="Enter your password"
+                placeholder="********"
                 required
                 {...form.getInputProps('password')}
               />

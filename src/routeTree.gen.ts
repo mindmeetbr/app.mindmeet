@@ -10,12 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as PsicologoIdRouteImport } from './routes/psicologo/$id'
+import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
+import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
+import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
+import { Route as AppPacientesNovoRouteImport } from './routes/app/pacientes/novo'
+import { Route as AppPacientesIdRouteImport } from './routes/app/pacientes/$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -28,35 +41,128 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const PsicologoIdRoute = PsicologoIdRouteImport.update({
+  id: '/psicologo/$id',
+  path: '/psicologo/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppDisponibilidadeRoute = AppDisponibilidadeRouteImport.update({
+  id: '/disponibilidade',
+  path: '/disponibilidade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
+  id: '/pacientes/',
+  path: '/pacientes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPacientesNovoRoute = AppPacientesNovoRouteImport.update({
+  id: '/pacientes/novo',
+  path: '/pacientes/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPacientesIdRoute = AppPacientesIdRouteImport.update({
+  id: '/pacientes/$id',
+  path: '/pacientes/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/psicologo/$id': typeof PsicologoIdRoute
+  '/app/': typeof AppIndexRoute
+  '/app/pacientes/$id': typeof AppPacientesIdRoute
+  '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/pacientes': typeof AppPacientesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/psicologo/$id': typeof PsicologoIdRoute
+  '/app': typeof AppIndexRoute
+  '/app/pacientes/$id': typeof AppPacientesIdRoute
+  '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/pacientes': typeof AppPacientesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/psicologo/$id': typeof PsicologoIdRoute
+  '/app/': typeof AppIndexRoute
+  '/app/pacientes/$id': typeof AppPacientesIdRoute
+  '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/pacientes/': typeof AppPacientesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/login'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/app'
+    | '/login'
+    | '/app/configuracoes'
+    | '/app/disponibilidade'
+    | '/psicologo/$id'
+    | '/app/'
+    | '/app/pacientes/$id'
+    | '/app/pacientes/novo'
+    | '/app/pacientes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/login'
-  id: '__root__' | '/' | '/about' | '/login'
+  to:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/app/configuracoes'
+    | '/app/disponibilidade'
+    | '/psicologo/$id'
+    | '/app'
+    | '/app/pacientes/$id'
+    | '/app/pacientes/novo'
+    | '/app/pacientes'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/app'
+    | '/login'
+    | '/app/configuracoes'
+    | '/app/disponibilidade'
+    | '/psicologo/$id'
+    | '/app/'
+    | '/app/pacientes/$id'
+    | '/app/pacientes/novo'
+    | '/app/pacientes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  PsicologoIdRoute: typeof PsicologoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +172,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -82,13 +195,84 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/psicologo/$id': {
+      id: '/psicologo/$id'
+      path: '/psicologo/$id'
+      fullPath: '/psicologo/$id'
+      preLoaderRoute: typeof PsicologoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/disponibilidade': {
+      id: '/app/disponibilidade'
+      path: '/disponibilidade'
+      fullPath: '/app/disponibilidade'
+      preLoaderRoute: typeof AppDisponibilidadeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/configuracoes': {
+      id: '/app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pacientes/': {
+      id: '/app/pacientes/'
+      path: '/pacientes'
+      fullPath: '/app/pacientes'
+      preLoaderRoute: typeof AppPacientesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pacientes/novo': {
+      id: '/app/pacientes/novo'
+      path: '/pacientes/novo'
+      fullPath: '/app/pacientes/novo'
+      preLoaderRoute: typeof AppPacientesNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pacientes/$id': {
+      id: '/app/pacientes/$id'
+      path: '/pacientes/$id'
+      fullPath: '/app/pacientes/$id'
+      preLoaderRoute: typeof AppPacientesIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
+
+interface AppRouteChildren {
+  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
+  AppDisponibilidadeRoute: typeof AppDisponibilidadeRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppPacientesIdRoute: typeof AppPacientesIdRoute
+  AppPacientesNovoRoute: typeof AppPacientesNovoRoute
+  AppPacientesIndexRoute: typeof AppPacientesIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppConfiguracoesRoute: AppConfiguracoesRoute,
+  AppDisponibilidadeRoute: AppDisponibilidadeRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppPacientesIdRoute: AppPacientesIdRoute,
+  AppPacientesNovoRoute: AppPacientesNovoRoute,
+  AppPacientesIndexRoute: AppPacientesIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  PsicologoIdRoute: PsicologoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
