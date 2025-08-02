@@ -5,11 +5,8 @@ import {
   Group,
   Switch,
   Text,
-  Button,
   TextInput,
   ActionIcon,
-  Box,
-  Divider,
   LoadingOverlay,
   Accordion,
 } from '@mantine/core'
@@ -51,7 +48,7 @@ function RouteComponent() {
     const initial: AvailabilityData = {}
     DAYS_OF_WEEK.forEach(day => {
       initial[day.key] = {
-        enabled: ['monday', 'tuesday', 'wednesday'].includes(day.key),
+        enabled: false,
         timeSlots: [
           {
             id: `${day.key}-1`,

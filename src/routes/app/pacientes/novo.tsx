@@ -161,7 +161,6 @@ function NovoPacientePage() {
 
   const getBreadcrumbs = () => {
     const breadcrumbs = [
-      { label: 'Dashboard', href: '/app' },
       { label: 'Pacientes', href: '/app/pacientes' }
     ]
 

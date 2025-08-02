@@ -144,7 +144,6 @@ function PacienteDetalhePage() {
   return (
     <PageLayout
       breadcrumbs={[
-        { label: 'Dashboard', href: '/app' },
         { label: 'Pacientes', href: '/app/pacientes' },
         { label: mockPaciente.nome, isCurrentPage: true }
       ]}
