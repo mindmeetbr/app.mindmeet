@@ -42,6 +42,7 @@ function RouteComponent() {
 
   const schema = z.object({
     email: z.email('Invalid email address'),
+    username: z.string('Invalid username'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
   })
 
@@ -49,6 +50,7 @@ function RouteComponent() {
     initialValues: {
       email: '',
       password: '',
+      username: ''
     },
     validate: values => {
       const result = schema.safeParse(values)
@@ -59,11 +61,12 @@ function RouteComponent() {
     },
   })
 
-  const handleSubmit = (values: { email: string; password: string }) => {
+  const handleSubmit = (values: { email: string; username: string; password: string }) => {
     login({
       data: {
         email: values.email,
-        password: values.password,
+        username: values.username,
+        password: values.password
       },
     })
   }
@@ -107,6 +110,13 @@ function RouteComponent() {
                 placeholder="ciro@mindmeet.com.br"
                 required
                 {...form.getInputProps('email')}
+              />
+
+              <TextInput
+                label="Nome de usuário"
+                placeholder="ciro.moura"
+                required
+                {...form.getInputProps('username')}
               />
 
               <PasswordInput
