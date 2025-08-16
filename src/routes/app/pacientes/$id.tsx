@@ -79,18 +79,14 @@ const mockPaciente = {
     parentesco: "Cônjuge",
   },
   anamnese: {
-    motivoConsulta:
-      "Episódios de ansiedade e pânico no trabalho, dificuldade para dormir",
-    expectativas:
-      "Aprender a controlar a ansiedade e melhorar qualidade do sono",
-    historiaDoencaAtual:
-      "Sintomas iniciaram há 6 meses após mudança de setor no trabalho",
+    motivoConsulta: "Episódios de ansiedade e pânico no trabalho, dificuldade para dormir",
+    expectativas: "Aprender a controlar a ansiedade e melhorar qualidade do sono",
+    historiaDoencaAtual: "Sintomas iniciaram há 6 meses após mudança de setor no trabalho",
     historicoFamiliar: "Mãe com histórico de depressão",
     antecedentePsiquiatrico: "Nenhum",
     usoSubstancias: "Eventual consumo de álcool socialmente",
   },
-  observacoes:
-    "Paciente muito colaborativa, demonstra insight sobre sua condição",
+  observacoes: "Paciente muito colaborativa, demonstra insight sobre sua condição",
 };
 
 function BotaoNovaConsulta() {
@@ -108,7 +104,6 @@ function BotaoNovaConsulta() {
       identificada: "",
     },
   });
-
 
   function handleSubmit(values) {
     const dataStr = values.data?.trim() || null;
@@ -251,9 +246,7 @@ function BotaoNovaConsulta() {
       </Modal>
 
       <Button
-        leftSection={
-          <IconCalendar style={{ width: rem(16), height: rem(16) }} />
-        }
+        leftSection={<IconCalendar style={{ width: rem(16), height: rem(16) }} />}
         onClick={open}
       >
         Nova Anotação
@@ -262,34 +255,21 @@ function BotaoNovaConsulta() {
   );
 }
 
-function PacienteDetalhePage() {
+function LinhaDoTempo() {
   const { id } = Route.useParams();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("perfil");
-  const [editingConsultaId, setEditingConsultaId] = useState<number | null>(
-    null,
-  );
+  const { data, isLoading, isError } = useAnotacaoList(id);
+  const { mutate } = useAnotacaoUpdate();
+
+  const [editingConsultaId, setEditingConsultaId] = useState<number | null>(null);
   const [descTemp, setDescTemp] = useState("");
   const [apresentadaTemp, setApresentadaTemp] = useState("");
   const [identificadaTemp, setIdentificadaTemp] = useState("");
 
-  const { data, isLoading } = useAnotacaoList(id);
-
-  const { mutate } = useAnotacaoUpdate();
-
-  const calcularIdade = (dataNascimento: string) => {
-    return dayjs().diff(dayjs(dataNascimento), "year");
-  };
-
   const handleEditConsulta = (consulta: Anotacao) => {
     setEditingConsultaId(consulta.id);
     setDescTemp(consulta.descricao ? consulta.descricao : "");
-    setApresentadaTemp(
-      consulta.queixa_apresentada ? consulta.queixa_apresentada? : "",
-    );
-    setIdentificadaTemp(
-      consulta.queixa_identificada ? consulta.queixa_identificada : "",
-    );
+    setApresentadaTemp(consulta.queixa_apresentada ? consulta.queixa_apresentada : "");
+    setIdentificadaTemp(consulta.queixa_identificada ? consulta.queixa_identificada : "");
   };
 
   const handleSaveConsulta = (consultaId: number) => {
@@ -321,6 +301,126 @@ function PacienteDetalhePage() {
     setIdentificadaTemp("");
   };
 
+  if (isLoading) {
+    return <p>Carregando anotações...</p>;
+  }
+
+  if (isError) {
+    return <p>Não foi possível recuperar as anotações sobre o paciente, tente novamente.</p>;
+  }
+
+  if (!data) {
+    return <p>Nenhuma anotação sobre o paciente!</p>;
+  }
+
+  return (
+    <Timeline active={data.length} bulletSize={24} lineWidth={2}>
+      {data.map((consulta: Anotacao, index) => (
+        <Timeline.Item
+          key={consulta.id}
+          bullet={<IconClockHour3 style={{ width: rem(12), height: rem(12) }} />}
+          title={
+            <Group justify="space-between">
+              <div>
+                <Text fw={500}>{consulta.tipo}</Text>
+                <Text size="sm" c="dimmed">
+                  {dayjs(consulta.data).format("DD/MM/YYYY[ - ]HH:mm")}
+                </Text>
+              </div>
+              <ActionIcon variant="light" size="sm" onClick={() => handleEditConsulta(consulta)}>
+                <IconPencil style={{ width: rem(14), height: rem(14) }} />
+              </ActionIcon>
+            </Group>
+          }
+        >
+          <Stack gap="md" mt="sm">
+            <div>
+              <Text size="md" fw="bold" mb="xs">
+                {consulta.titulo}
+              </Text>
+              {editingConsultaId === consulta.id ? (
+                <Textarea
+                  value={descTemp}
+                  onChange={(e) => setDescTemp(e.target.value)}
+                  rows={3}
+                  placeholder="Descrição da sessão..."
+                />
+              ) : (
+                <Text size="sm" c="dimmed">
+                  {consulta.descricao ? consulta.descricao : "Sem descrição"}
+                </Text>
+              )}
+            </div>
+
+            <div>
+              <Text size="sm" fw={500} mb="xs">
+                Queixa Apresentada:
+              </Text>
+              {editingConsultaId === consulta.id ? (
+                <Textarea
+                  value={apresentadaTemp}
+                  onChange={(e) => setApresentadaTemp(e.target.value)}
+                  rows={3}
+                  placeholder="Queixa apresentada..."
+                />
+              ) : (
+                <Text size="sm" c="dimmed">
+                  {consulta.queixa_apresentada
+                    ? consulta.queixa_apresentada
+                    : "Nenhuma queixa apresentada."}
+                </Text>
+              )}
+            </div>
+
+            <div>
+              <Text size="sm" fw={500} mb="xs">
+                Queixa Identificada:
+              </Text>
+              {editingConsultaId === consulta.id ? (
+                <Stack>
+                  <Textarea
+                    value={identificadaTemp}
+                    onChange={(e) => setIdentificadaTemp(e.target.value)}
+                    rows={3}
+                    placeholder="Queixa identificada..."
+                  />
+                  <Group>
+                    <Button
+                      size="xs"
+                      leftSection={<IconDeviceFloppy style={{ width: rem(12), height: rem(12) }} />}
+                      onClick={() => handleSaveConsulta(consulta.id)}
+                    >
+                      Salvar
+                    </Button>
+                    <Button size="xs" variant="outline" onClick={handleCancelEdit}>
+                      Cancelar
+                    </Button>
+                  </Group>
+                </Stack>
+              ) : (
+                <Text size="sm" c="dimmed">
+                  {consulta.queixa_identificada
+                    ? consulta.queixa_identificada
+                    : "Nenhuma queixa identificada."}
+                </Text>
+              )}
+            </div>
+          </Stack>
+        </Timeline.Item>
+      ))}
+    </Timeline>
+  );
+}
+
+function PacienteDetalhePage() {
+  const { id } = Route.useParams();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("perfil");
+
+  const calcularIdade = (dataNascimento: string) => {
+    return dayjs().diff(dayjs(dataNascimento), "year");
+  };
+
   return (
     <PageLayout
       breadcrumbs={[
@@ -332,8 +432,7 @@ function PacienteDetalhePage() {
         label: "Editar",
         icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
         variant: "light",
-        onClick: () =>
-          router.navigate({ to: "/app/pacientes/novo", search: { id } }),
+        onClick: () => router.navigate({ to: "/app/pacientes/novo", search: { id } }),
       }}
       headerChildren={
         <Group gap="md" mt="xs">
@@ -345,10 +444,7 @@ function PacienteDetalhePage() {
               .slice(0, 2)}
           </Avatar>
           <Group gap="md">
-            <Badge
-              color={mockPaciente.status === "ativo" ? "green" : "gray"}
-              variant="light"
-            >
+            <Badge color={mockPaciente.status === "ativo" ? "green" : "gray"} variant="light">
               {mockPaciente.status}
             </Badge>
             <Text size="sm" c="dimmed">
@@ -365,17 +461,13 @@ function PacienteDetalhePage() {
         <Tabs.List>
           <Tabs.Tab
             value="perfil"
-            leftSection={
-              <IconUser style={{ width: rem(16), height: rem(16) }} />
-            }
+            leftSection={<IconUser style={{ width: rem(16), height: rem(16) }} />}
           >
             Perfil
           </Tabs.Tab>
           <Tabs.Tab
             value="consultas"
-            leftSection={
-              <IconCalendar style={{ width: rem(16), height: rem(16) }} />
-            }
+            leftSection={<IconCalendar style={{ width: rem(16), height: rem(16) }} />}
           >
             Consultas
           </Tabs.Tab>
@@ -396,13 +488,8 @@ function PacienteDetalhePage() {
 
                   <div style={{ textAlign: "center" }}>
                     <Title order={3}>{mockPaciente.nome}</Title>
-                    <Text c="dimmed">
-                      {calcularIdade(mockPaciente.dataNascimento)} anos
-                    </Text>
-                    <Badge
-                      color={mockPaciente.status === "ativo" ? "green" : "gray"}
-                      mt="xs"
-                    >
+                    <Text c="dimmed">{calcularIdade(mockPaciente.dataNascimento)} anos</Text>
+                    <Badge color={mockPaciente.status === "ativo" ? "green" : "gray"} mt="xs">
                       {mockPaciente.status}
                     </Badge>
                   </div>
@@ -414,9 +501,7 @@ function PacienteDetalhePage() {
                     </Group>
                     {mockPaciente.celular && (
                       <Group gap="xs">
-                        <IconPhone
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
+                        <IconPhone style={{ width: rem(16), height: rem(16) }} />
                         <Text size="sm">{mockPaciente.celular}</Text>
                       </Group>
                     )}
@@ -427,8 +512,7 @@ function PacienteDetalhePage() {
                     <Group gap="xs">
                       <IconMapPin style={{ width: rem(16), height: rem(16) }} />
                       <Text size="sm">
-                        {mockPaciente.endereco.rua},{" "}
-                        {mockPaciente.endereco.bairro}
+                        {mockPaciente.endereco.rua}, {mockPaciente.endereco.bairro}
                       </Text>
                     </Group>
                   </Stack>
@@ -536,127 +620,7 @@ function PacienteDetalhePage() {
               <BotaoNovaConsulta />
             </Group>
 
-            {!isLoading && (
-              <Timeline active={data.length} bulletSize={24} lineWidth={2}>
-                {data.map((consulta: Anotacao, index) => (
-                  <Timeline.Item
-                    key={consulta.id}
-                    bullet={
-                      <IconClockHour3
-                        style={{ width: rem(12), height: rem(12) }}
-                      />
-                    }
-                    title={
-                      <Group justify="space-between">
-                        <div>
-                          <Text fw={500}>{consulta.tipo}</Text>
-                          <Text size="sm" c="dimmed">
-                            {dayjs(consulta.data).format(
-                              "DD/MM/YYYY[ - ]HH:mm",
-                            )}
-                          </Text>
-                        </div>
-                        <ActionIcon
-                          variant="light"
-                          size="sm"
-                          onClick={() => handleEditConsulta(consulta)}
-                        >
-                          <IconPencil
-                            style={{ width: rem(14), height: rem(14) }}
-                          />
-                        </ActionIcon>
-                      </Group>
-                    }
-                  >
-                    <Stack gap="md" mt="sm">
-                      <div>
-                        <Text size="md" fw="bold" mb="xs">
-                          {consulta.titulo}
-                        </Text>
-                        {editingConsultaId === consulta.id ? (
-                          <Textarea
-                            value={descTemp}
-                            onChange={(e) => setDescTemp(e.target.value)}
-                            rows={3}
-                            placeholder="Descrição da sessão..."
-                          />
-                        ) : (
-                          <Text size="sm" c="dimmed">
-                            {consulta.descricao
-                              ? consulta.descricao
-                              : "Sem descrição"}
-                          </Text>
-                        )}
-                      </div>
-
-                      <div>
-                        <Text size="sm" fw={500} mb="xs">
-                          Queixa Apresentada:
-                        </Text>
-                        {editingConsultaId === consulta.id ? (
-                          <Textarea
-                            value={apresentadaTemp}
-                            onChange={(e) => setApresentadaTemp(e.target.value)}
-                            rows={3}
-                            placeholder="Queixa apresentada..."
-                          />
-                        ) : (
-                          <Text size="sm" c="dimmed">
-                            {consulta.queixa_apresentada
-                              ? consulta.queixa_apresentada
-                              : "Nenhuma queixa apresentada."}
-                          </Text>
-                        )}
-                      </div>
-
-                      <div>
-                        <Text size="sm" fw={500} mb="xs">
-                          Queixa Identificada:
-                        </Text>
-                        {editingConsultaId === consulta.id ? (
-                          <Stack>
-                            <Textarea
-                              value={identificadaTemp}
-                              onChange={(e) =>
-                                setIdentificadaTemp(e.target.value)
-                              }
-                              rows={3}
-                              placeholder="Queixa identificada..."
-                            />
-                            <Group>
-                              <Button
-                                size="xs"
-                                leftSection={
-                                  <IconDeviceFloppy
-                                    style={{ width: rem(12), height: rem(12) }}
-                                  />
-                                }
-                                onClick={() => handleSaveConsulta(consulta.id)}
-                              >
-                                Salvar
-                              </Button>
-                              <Button
-                                size="xs"
-                                variant="outline"
-                                onClick={handleCancelEdit}
-                              >
-                                Cancelar
-                              </Button>
-                            </Group>
-                          </Stack>
-                        ) : (
-                          <Text size="sm" c="dimmed">
-                            {consulta.queixa_identificada
-                              ? consulta.queixa_identificada
-                              : "Nenhuma queixa identificada."}
-                          </Text>
-                        )}
-                      </div>
-                    </Stack>
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            )}
+            <LinhaDoTempo />
           </Card>
         </Tabs.Panel>
       </Tabs>
