@@ -5,12 +5,19 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from './anotacao';
+export * from './anotacaoDelete404';
+export * from './anotacaoDetail404';
+export * from './anotacaoUpdate400';
+export * from './anotacaoUpdate404';
+export * from './criarAnotacao';
 export * from './customLogin';
 export * from './customRegister';
 export * from './jwt';
 export * from './passwordChange';
 export * from './passwordReset';
 export * from './passwordResetConfirm';
+export * from './patchedAnotacao';
 export * from './patchedUserDetails';
 export * from './resendEmailVerification';
 export * from './restAuthDetail';
