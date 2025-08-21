@@ -4,13 +4,13 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { ParentescoEnum } from './parentescoEnum';
 
 export interface ContatoDeEmergencia {
   readonly id: string;
   /** @maxLength 50 */
   nome?: string;
   /** @maxLength 15 */
-  numero_telefone: string;
-  parentesco: ParentescoEnum;
+  numero_telefone?: string;
+  /** @maxLength 20 */
+  parentesco?: string;
 }

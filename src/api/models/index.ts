@@ -13,6 +13,7 @@ export * from './anotacaoUpdate400';
 export * from './anotacaoUpdate404';
 export * from './blankEnum';
 export * from './contatoDeEmergencia';
+export * from './contatoDeEmergenciaParentesco';
 export * from './criarAnotacao';
 export * from './customLogin';
 export * from './customRegister';

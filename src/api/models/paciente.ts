@@ -8,7 +8,6 @@ import type { PacienteAnamnese } from './pacienteAnamnese';
 import type { PacienteContatoEmergencia } from './pacienteContatoEmergencia';
 import type { PacienteEndereco } from './pacienteEndereco';
 import type { PacienteInformacoesClinicas } from './pacienteInformacoesClinicas';
-import type { PacienteEstadoCivil } from './pacienteEstadoCivil';
 
 export interface Paciente {
   readonly id: string;
@@ -34,7 +33,8 @@ export interface Paciente {
   cpf: string;
   /** @maxLength 12 */
   rg?: string;
-  estado_civil?: typeof PacienteEstadoCivil[keyof typeof PacienteEstadoCivil] ;
+  /** @maxLength 20 */
+  estado_civil?: string;
   /** @maxLength 255 */
   profissao?: string;
 }

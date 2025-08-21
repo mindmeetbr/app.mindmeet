@@ -8,7 +8,6 @@ import type { PatchedPacienteAnamnese } from './patchedPacienteAnamnese';
 import type { PatchedPacienteContatoEmergencia } from './patchedPacienteContatoEmergencia';
 import type { PatchedPacienteEndereco } from './patchedPacienteEndereco';
 import type { PatchedPacienteInformacoesClinicas } from './patchedPacienteInformacoesClinicas';
-import type { PatchedPacienteEstadoCivil } from './patchedPacienteEstadoCivil';
 
 export interface PatchedPaciente {
   readonly id?: string;
@@ -34,7 +33,8 @@ export interface PatchedPaciente {
   cpf?: string;
   /** @maxLength 12 */
   rg?: string;
-  estado_civil?: typeof PatchedPacienteEstadoCivil[keyof typeof PatchedPacienteEstadoCivil] ;
+  /** @maxLength 20 */
+  estado_civil?: string;
   /** @maxLength 255 */
   profissao?: string;
 }
