@@ -1,5 +1,15 @@
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { Table, Avatar, Text, Group, ActionIcon, TextInput, Card, rem, Flex } from "@mantine/core";
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import {
+  Table,
+  Avatar,
+  Text,
+  Group,
+  ActionIcon,
+  TextInput,
+  Card,
+  rem,
+  Flex,
+} from '@mantine/core'
 import {
   IconPlus,
   IconSearch,
@@ -8,51 +18,84 @@ import {
   IconTrash,
   IconPhone,
   IconMail,
-} from "@tabler/icons-react";
-import { useState } from "react";
-import dayjs from "dayjs";
-import { PageLayout } from "../../../components/layout";
-import { usePacienteList } from "../../../api/endpoints/api/api";
+} from '@tabler/icons-react'
+import { useState } from 'react'
+import dayjs from 'dayjs'
+import { PageLayout } from '../../../components/layout'
+import {
+  usePacienteList,
+  usePacienteDelete,
+} from '../../../api/endpoints/api/api'
+import { notifications } from '@mantine/notifications'
 
-export const Route = createFileRoute("/app/pacientes/")({
+export const Route = createFileRoute('/app/pacientes/')({
   component: PacientesPage,
-});
+})
 
 function TabelaPacientes() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { data, isLoading, isError } = usePacienteList();
+  const [searchTerm, setSearchTerm] = useState('')
+  const { data, isLoading, isError } = usePacienteList()
+  const { mutate: apagarPaciente } = usePacienteDelete()
 
   const calcularIdade = (dataNascimento: string) => {
-    return dayjs().diff(dayjs(dataNascimento), "year");
-  };
+    return dayjs().diff(dayjs(dataNascimento), 'year')
+  }
+
+  const handleClick = (idPaciente: string) => {
+    const apagar = window.confirm(
+      'Tem certeza que deseja apagar este paciente?'
+    )
+
+    if (apagar) {
+      apagarPaciente(
+        { idPaciente },
+        {
+          onSuccess: () => {
+            notifications.show({
+              title: 'Sucesso',
+              message: 'Paciente apagado com sucesso.',
+              color: 'green',
+            })
+          },
+          onError: () => {
+            notifications.show({
+              title: 'Erro',
+              message: 'Não foi possível apagar o paciente, tente novamente.',
+              color: 'red',
+            })
+          },
+        }
+      )
+    }
+  }
 
   if (isLoading) {
-    return <p>Carregando pacientes...</p>;
+    return <p>Carregando pacientes...</p>
   }
 
   if (isError) {
-    return <p>Não foi possível carregar seus pacientes, tente novamente.</p>;
+    return <p>Não foi possível carregar seus pacientes, tente novamente.</p>
   }
 
   if (data?.length === 0) {
-    return <p>Nenhum paciente cadastrado.</p>;
+    return <p>Nenhum paciente cadastrado.</p>
   }
 
   const pacientesFiltrados = data!.filter(
-    (paciente) =>
+    paciente =>
       paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
-  const linhasTabela = pacientesFiltrados.map((paciente) => (
+  const linhasTabela = pacientesFiltrados.map(paciente => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
         <Group gap="sm">
           <Avatar>
             {paciente.nome_completo
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
+              .split(' ')
+              .map(n => n[0])
+              .join('')
               .slice(0, 2)}
           </Avatar>
           <div>
@@ -84,7 +127,7 @@ function TabelaPacientes() {
         <Text lineClamp={2}>
           {paciente.informacoes_clinicas?.queixa_principal
             ? paciente.informacoes_clinicas.queixa_principal
-            : "Nenhuma"}
+            : 'Nenhuma'}
         </Text>
       </Table.Td>
       <Table.Td>
@@ -103,23 +146,25 @@ function TabelaPacientes() {
             variant="light"
             color="red"
             size="sm"
-            onClick={() => console.log(`ops apaguei ${paciente.nome_completo}`)}
+            onClick={() => handleClick(paciente.id)}
           >
             <IconTrash style={{ width: rem(14), height: rem(14) }} />
           </ActionIcon>
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ));
+  ))
 
   return (
     <Card withBorder radius="md" p="md">
       <Group mb="md">
         <TextInput
           placeholder="Buscar por nome ou email..."
-          leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} />}
+          leftSection={
+            <IconSearch style={{ width: rem(16), height: rem(16) }} />
+          }
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           style={{ flex: 1 }}
         />
       </Group>
@@ -145,27 +190,27 @@ function TabelaPacientes() {
         )}
       </Table.ScrollContainer>
     </Card>
-  );
+  )
 }
 
 function PacientesPage() {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <PageLayout
       breadcrumbs={[
-        { label: "Dashboard", href: "/app" },
-        { label: "Pacientes", isCurrentPage: true },
+        { label: 'Dashboard', href: '/app' },
+        { label: 'Pacientes', isCurrentPage: true },
       ]}
       title="Pacientes"
       description="Gerencie o cadastro e acompanhe o histórico dos seus pacientes"
       primaryAction={{
-        label: "Novo Paciente",
+        label: 'Novo Paciente',
         icon: <IconPlus style={{ width: rem(16), height: rem(16) }} />,
-        onClick: () => router.navigate({ to: "/app/pacientes/novo" }),
+        onClick: () => router.navigate({ to: '/app/pacientes/novo' }),
       }}
     >
       <TabelaPacientes />
     </PageLayout>
-  );
+  )
 }
