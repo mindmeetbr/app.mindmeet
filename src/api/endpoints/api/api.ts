@@ -33,10 +33,12 @@ import type {
   CustomLogin,
   CustomRegister,
   Jwt,
+  Paciente,
   PasswordChange,
   PasswordReset,
   PasswordResetConfirm,
   PatchedAnotacao,
+  PatchedPaciente,
   PatchedUserDetails,
   ResendEmailVerification,
   RestAuthDetail,
@@ -1740,7 +1742,375 @@ export function useApiMeProfileRetrieve<TData = Awaited<ReturnType<typeof apiMeP
 
 
 
-export const apiPsicologosRetrieve = (
+/**
+ * Retorna uma lista com todos os pacientes associados a um psicólogo.
+ * @summary Lista todos os pacientes
+ */
+export const pacienteList = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Paciente[]>(
+      {url: `/api/pacientes/`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getPacienteListQueryKey = () => {
+    return [`/api/pacientes/`] as const;
+    }
+
+    
+export const getPacienteListQueryOptions = <TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPacienteListQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteList>>> = ({ signal }) => pacienteList(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PacienteListQueryResult = NonNullable<Awaited<ReturnType<typeof pacienteList>>>
+export type PacienteListQueryError = ErrorType<null>
+
+
+export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteList>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteList>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Lista todos os pacientes
+ */
+
+export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPacienteListQueryOptions(options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * Retorna todos os dados referentes a um paciente.
+ * @summary Obtém detalhes sobre um paciente
+ */
+export const pacienteDetail = (
+    idPaciente: string,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Paciente>(
+      {url: `/api/pacientes/${idPaciente}/`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getPacienteDetailQueryKey = (idPaciente?: string,) => {
+    return [`/api/pacientes/${idPaciente}/`] as const;
+    }
+
+    
+export const getPacienteDetailQueryOptions = <TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPacienteDetailQueryKey(idPaciente);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteDetail>>> = ({ signal }) => pacienteDetail(idPaciente, requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(idPaciente), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PacienteDetailQueryResult = NonNullable<Awaited<ReturnType<typeof pacienteDetail>>>
+export type PacienteDetailQueryError = ErrorType<null | null>
+
+
+export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(
+ idPaciente: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteDetail>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteDetail>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(
+ idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteDetail>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteDetail>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(
+ idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Obtém detalhes sobre um paciente
+ */
+
+export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(
+ idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPacienteDetailQueryOptions(idPaciente,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * Apaga todos os dados e objetos atrelados a um paciente
+ * @summary Apaga um paciente
+ */
+export const pacienteDelete = (
+    idPaciente: string,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<null>(
+      {url: `/api/pacientes/${idPaciente}/apagar/`, method: 'DELETE'
+    },
+      options);
+    }
+  
+
+
+export const getPacienteDeleteMutationOptions = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteDelete>>, TError,{idPaciente: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof pacienteDelete>>, TError,{idPaciente: string}, TContext> => {
+
+const mutationKey = ['pacienteDelete'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteDelete>>, {idPaciente: string}> = (props) => {
+          const {idPaciente} = props ?? {};
+
+          return  pacienteDelete(idPaciente,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PacienteDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof pacienteDelete>>>
+    
+    export type PacienteDeleteMutationError = ErrorType<null | null>
+
+    /**
+ * @summary Apaga um paciente
+ */
+export const usePacienteDelete = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteDelete>>, TError,{idPaciente: string}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof pacienteDelete>>,
+        TError,
+        {idPaciente: string},
+        TContext
+      > => {
+
+      const mutationOptions = getPacienteDeleteMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    /**
+ * Recebe um objeto JSON e atualiza ou cria os campos de um paciente.
+ * @summary Atualiza os dados de um paciente
+ */
+export const pacienteUpdate = (
+    idPaciente: string,
+    patchedPaciente: BodyType<NonReadonly<PatchedPaciente>>,
+ options?: SecondParameter<typeof customInstance>,) => {
+      
+      
+      return customInstance<Paciente>(
+      {url: `/api/pacientes/${idPaciente}/editar/`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: patchedPaciente
+    },
+      options);
+    }
+  
+
+
+export const getPacienteUpdateMutationOptions = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteUpdate>>, TError,{idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof pacienteUpdate>>, TError,{idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>}, TContext> => {
+
+const mutationKey = ['pacienteUpdate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteUpdate>>, {idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>}> = (props) => {
+          const {idPaciente,data} = props ?? {};
+
+          return  pacienteUpdate(idPaciente,data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PacienteUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof pacienteUpdate>>>
+    export type PacienteUpdateMutationBody = BodyType<NonReadonly<PatchedPaciente>>
+    export type PacienteUpdateMutationError = ErrorType<null | null>
+
+    /**
+ * @summary Atualiza os dados de um paciente
+ */
+export const usePacienteUpdate = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteUpdate>>, TError,{idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof pacienteUpdate>>,
+        TError,
+        {idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>},
+        TContext
+      > => {
+
+      const mutationOptions = getPacienteUpdateMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    /**
+ * Recebe um objeto JSON e cria um paciente vinculado ao psicólogo da requisição.
+ * @summary Cria um novo paciente
+ */
+export const pacienteCreate = (
+    paciente: BodyType<NonReadonly<Paciente>>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Paciente>(
+      {url: `/api/pacientes/criar/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: paciente, signal
+    },
+      options);
+    }
+  
+
+
+export const getPacienteCreateMutationOptions = <TError = ErrorType<null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteCreate>>, TError,{data: BodyType<NonReadonly<Paciente>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof pacienteCreate>>, TError,{data: BodyType<NonReadonly<Paciente>>}, TContext> => {
+
+const mutationKey = ['pacienteCreate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteCreate>>, {data: BodyType<NonReadonly<Paciente>>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  pacienteCreate(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PacienteCreateMutationResult = NonNullable<Awaited<ReturnType<typeof pacienteCreate>>>
+    export type PacienteCreateMutationBody = BodyType<NonReadonly<Paciente>>
+    export type PacienteCreateMutationError = ErrorType<null>
+
+    /**
+ * @summary Cria um novo paciente
+ */
+export const usePacienteCreate = <TError = ErrorType<null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof pacienteCreate>>, TError,{data: BodyType<NonReadonly<Paciente>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof pacienteCreate>>,
+        TError,
+        {data: BodyType<NonReadonly<Paciente>>},
+        TContext
+      > => {
+
+      const mutationOptions = getPacienteCreateMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    export const apiPsicologosRetrieve = (
     
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
