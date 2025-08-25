@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import {
   Title,
   Card,
@@ -17,11 +17,11 @@ import {
   Tabs,
   Modal,
   TextInput,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { useForm } from "@mantine/form";
-import { DatesProvider, DatePickerInput, TimeInput } from "@mantine/dates";
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
+import { useForm } from '@mantine/form'
+import { DatesProvider, DatePickerInput, TimeInput } from '@mantine/dates'
 import {
   IconEdit,
   IconCalendar,
@@ -33,54 +33,54 @@ import {
   IconNotes,
   IconDeviceFloppy,
   IconPencil,
-} from "@tabler/icons-react";
-import { useState } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/pt-br";
-import { PageLayout } from "../../../components/layout";
+} from '@tabler/icons-react'
+import { useState } from 'react'
+import dayjs from 'dayjs'
+import 'dayjs/locale/pt-br'
+import { PageLayout } from '../../../components/layout'
 import {
   useAnotacaoList,
   useAnotacaoUpdate,
   useAnotacaoCreate,
   usePacienteDetail,
-} from "../../../api/endpoints/api/api";
-import type { Anotacao } from "../../../api/models";
+} from '../../../api/endpoints/api/api'
+import type { Anotacao } from '../../../api/models'
 
-export const Route = createFileRoute("/app/pacientes/$id")({
+export const Route = createFileRoute('/app/pacientes/$id')({
   component: PacienteDetalhePage,
-});
+})
 
 const calcularIdade = (dataNascimento: string) => {
-  return dayjs().diff(dayjs(dataNascimento), "year");
-};
+  return dayjs().diff(dayjs(dataNascimento), 'year')
+}
 
 function BotaoNovaConsulta() {
-  const [opened, { open, close }] = useDisclosure(false);
-  const { id } = Route.useParams();
-  const { mutate } = useAnotacaoCreate();
+  const [opened, { open, close }] = useDisclosure(false)
+  const { id } = Route.useParams()
+  const { mutate: criarAnotacao } = useAnotacaoCreate()
   const form = useForm({
-    mode: "uncontrolled",
+    mode: 'uncontrolled',
     initialValues: {
-      titulo: "",
-      descricao: "",
+      titulo: '',
+      descricao: '',
       data: null,
       hora: null,
-      apresentada: "",
-      identificada: "",
+      apresentada: '',
+      identificada: '',
     },
-  });
+  })
 
   function handleSubmit(values) {
-    const dataStr = values.data?.trim() || null;
-    const horaStr = values.hora?.trim() || "";
-    let datetimeFinal = new Date().toISOString();
+    const dataStr = values.data?.trim() || null
+    const horaStr = values.hora?.trim() || ''
+    let datetimeFinal = new Date().toISOString()
 
     if (dataStr && horaStr) {
-      let [hh, mm] = horaStr.split(":").map((v) => v.padStart(2, "0"));
-      mm = mm || "00";
-      datetimeFinal = `${dataStr}T${hh}:${mm}:00`;
+      let [hh, mm] = horaStr.split(':').map(v => v.padStart(2, '0'))
+      mm = mm || '00'
+      datetimeFinal = `${dataStr}T${hh}:${mm}:00`
     } else if (dataStr) {
-      datetimeFinal = dataStr;
+      datetimeFinal = dataStr
     }
 
     const dados = {
@@ -88,29 +88,29 @@ function BotaoNovaConsulta() {
       data: {
         titulo: values.titulo,
         descricao: values.descricao,
-        queixaApresentada: values.apresentada,
-        queixaIdentificada: values.identificada,
+        queixa_apresentada: values.apresentada,
+        queixa_identificada: values.identificada,
         data: datetimeFinal,
       },
-    };
-    mutate(dados, {
+    }
+    criarAnotacao(dados, {
       onSuccess: () => {
         notifications.show({
-          title: "Sucesso!",
-          message: "Nova anotação criada com sucesso",
-          color: "green",
-        });
-        form.reset();
-        close();
+          title: 'Sucesso!',
+          message: 'Nova anotação criada com sucesso',
+          color: 'green',
+        })
+        form.reset()
+        close()
       },
       onError: () => {
         notifications.show({
-          title: "Erro!",
-          message: "Não foi possível criar a anotação, tente novamente",
-          color: "red",
-        });
+          title: 'Erro!',
+          message: 'Não foi possível criar a anotação, tente novamente',
+          color: 'red',
+        })
       },
-    });
+    })
   }
 
   return (
@@ -142,8 +142,8 @@ function BotaoNovaConsulta() {
               radius="md"
               size="md"
               leftSection={<IconNotes size={18} />}
-              key={form.key("titulo")}
-              {...form.getInputProps("titulo")}
+              key={form.key('titulo')}
+              {...form.getInputProps('titulo')}
             />
 
             <TextInput
@@ -152,11 +152,11 @@ function BotaoNovaConsulta() {
               radius="md"
               size="md"
               leftSection={<IconNotes size={18} />}
-              key={form.key("descricao")}
-              {...form.getInputProps("descricao")}
+              key={form.key('descricao')}
+              {...form.getInputProps('descricao')}
             />
 
-            <DatesProvider settings={{ locale: "pt-br" }}>
+            <DatesProvider settings={{ locale: 'pt-br' }}>
               <Group grow align="flex-end">
                 <DatePickerInput
                   label="Data"
@@ -165,8 +165,8 @@ function BotaoNovaConsulta() {
                   size="md"
                   radius="md"
                   leftSection={<IconCalendar size={18} />}
-                  key={form.key("data")}
-                  {...form.getInputProps("data")}
+                  key={form.key('data')}
+                  {...form.getInputProps('data')}
                 />
 
                 <TimeInput
@@ -175,8 +175,8 @@ function BotaoNovaConsulta() {
                   radius="md"
                   size="md"
                   leftSection={<IconClockHour3 size={18} />}
-                  key={form.key("hora")}
-                  {...form.getInputProps("hora")}
+                  key={form.key('hora')}
+                  {...form.getInputProps('hora')}
                 />
               </Group>
             </DatesProvider>
@@ -187,8 +187,8 @@ function BotaoNovaConsulta() {
               radius="md"
               autosize
               minRows={3}
-              key={form.key("apresentada")}
-              {...form.getInputProps("apresentada")}
+              key={form.key('apresentada')}
+              {...form.getInputProps('apresentada')}
             />
 
             <Textarea
@@ -197,8 +197,8 @@ function BotaoNovaConsulta() {
               radius="md"
               autosize
               minRows={3}
-              key={form.key("identificada")}
-              {...form.getInputProps("identificada")}
+              key={form.key('identificada')}
+              {...form.getInputProps('identificada')}
             />
 
             <Group mt="sm">
@@ -211,34 +211,38 @@ function BotaoNovaConsulta() {
       </Modal>
 
       <Button
-        leftSection={<IconCalendar style={{ width: rem(16), height: rem(16) }} />}
+        leftSection={
+          <IconCalendar style={{ width: rem(16), height: rem(16) }} />
+        }
         onClick={open}
       >
         Nova Anotação
       </Button>
     </>
-  );
+  )
 }
 
 function LinhaDoTempo() {
-  const { id } = Route.useParams();
-  const { data, isLoading, isError } = useAnotacaoList(id);
-  const { mutate } = useAnotacaoUpdate();
+  const { id } = Route.useParams()
+  const { data, isLoading, isError } = useAnotacaoList(id)
+  const { mutate: editarAnotacao } = useAnotacaoUpdate()
 
-  const [editingConsultaId, setEditingConsultaId] = useState<number | null>(null);
-  const [descTemp, setDescTemp] = useState("");
-  const [apresentadaTemp, setApresentadaTemp] = useState("");
-  const [identificadaTemp, setIdentificadaTemp] = useState("");
+  const [editingConsultaId, setEditingConsultaId] = useState<number | null>(
+    null
+  )
+  const [descTemp, setDescTemp] = useState('')
+  const [apresentadaTemp, setApresentadaTemp] = useState('')
+  const [identificadaTemp, setIdentificadaTemp] = useState('')
 
   const handleEditConsulta = (consulta: Anotacao) => {
-    setEditingConsultaId(consulta.id);
-    setDescTemp(consulta.descricao ? consulta.descricao : "");
-    setApresentadaTemp(consulta.queixa_apresentada ? consulta.queixa_apresentada : "");
-    setIdentificadaTemp(consulta.queixa_identificada ? consulta.queixa_identificada : "");
-  };
+    setEditingConsultaId(consulta.id)
+    setDescTemp(consulta.descricao as string)
+    setApresentadaTemp(consulta.queixa_apresentada as string)
+    setIdentificadaTemp(consulta.queixa_identificada as string)
+  }
 
   const handleSaveConsulta = (consultaId: number) => {
-    mutate({
+    editarAnotacao({
       paciente: id,
       pkAnotacao: consultaId,
       data: {
@@ -246,36 +250,41 @@ function LinhaDoTempo() {
         queixa_apresentada: apresentadaTemp,
         queixa_identificada: identificadaTemp,
       },
-    });
+    })
 
-    setEditingConsultaId(null);
-    setDescTemp("");
-    setApresentadaTemp("");
-    setIdentificadaTemp("");
+    setEditingConsultaId(null)
+    setDescTemp('')
+    setApresentadaTemp('')
+    setIdentificadaTemp('')
 
     notifications.show({
-      title: "Anotação editada com sucesso!",
-      message: "Recarregue a página para ver as alterações",
-    });
-  };
+      title: 'Anotação editada com sucesso!',
+      message: 'Recarregue a página para ver as alterações',
+    })
+  }
 
   const handleCancelEdit = () => {
-    setEditingConsultaId(null);
-    setDescTemp("");
-    setApresentadaTemp("");
-    setIdentificadaTemp("");
-  };
+    setEditingConsultaId(null)
+    setDescTemp('')
+    setApresentadaTemp('')
+    setIdentificadaTemp('')
+  }
 
   if (isLoading) {
-    return <p>Carregando anotações...</p>;
+    return <p>Carregando anotações...</p>
   }
 
   if (isError) {
-    return <p>Não foi possível recuperar as anotações sobre o paciente, tente novamente.</p>;
+    return (
+      <p>
+        Não foi possível recuperar as anotações sobre o paciente, tente
+        novamente.
+      </p>
+    )
   }
 
   if (!data) {
-    return <p>Nenhuma anotação sobre o paciente!</p>;
+    return <p>Nenhuma anotação sobre o paciente!</p>
   }
 
   return (
@@ -283,16 +292,22 @@ function LinhaDoTempo() {
       {data.map((consulta: Anotacao, index) => (
         <Timeline.Item
           key={consulta.id}
-          bullet={<IconClockHour3 style={{ width: rem(12), height: rem(12) }} />}
+          bullet={
+            <IconClockHour3 style={{ width: rem(12), height: rem(12) }} />
+          }
           title={
             <Group justify="space-between">
               <div>
                 {/* <Text fw={500}>{consulta.tipo}</Text> */}
                 <Text size="sm" c="dimmed">
-                  {dayjs(consulta.data).format("DD/MM/YYYY[ - ]HH:mm")}
+                  {dayjs(consulta.data).format('DD/MM/YYYY[ - ]HH:mm')}
                 </Text>
               </div>
-              <ActionIcon variant="light" size="sm" onClick={() => handleEditConsulta(consulta)}>
+              <ActionIcon
+                variant="light"
+                size="sm"
+                onClick={() => handleEditConsulta(consulta)}
+              >
                 <IconPencil style={{ width: rem(14), height: rem(14) }} />
               </ActionIcon>
             </Group>
@@ -306,13 +321,13 @@ function LinhaDoTempo() {
               {editingConsultaId === consulta.id ? (
                 <Textarea
                   value={descTemp}
-                  onChange={(e) => setDescTemp(e.target.value)}
+                  onChange={e => setDescTemp(e.target.value)}
                   rows={3}
                   placeholder="Descrição da sessão..."
                 />
               ) : (
                 <Text size="sm" c="dimmed">
-                  {consulta.descricao ? consulta.descricao : "Sem descrição"}
+                  {consulta.descricao ? consulta.descricao : 'Sem descrição'}
                 </Text>
               )}
             </div>
@@ -324,7 +339,7 @@ function LinhaDoTempo() {
               {editingConsultaId === consulta.id ? (
                 <Textarea
                   value={apresentadaTemp}
-                  onChange={(e) => setApresentadaTemp(e.target.value)}
+                  onChange={e => setApresentadaTemp(e.target.value)}
                   rows={3}
                   placeholder="Queixa apresentada..."
                 />
@@ -332,7 +347,7 @@ function LinhaDoTempo() {
                 <Text size="sm" c="dimmed">
                   {consulta.queixa_apresentada
                     ? consulta.queixa_apresentada
-                    : "Nenhuma queixa apresentada."}
+                    : 'Nenhuma queixa apresentada.'}
                 </Text>
               )}
             </div>
@@ -345,19 +360,27 @@ function LinhaDoTempo() {
                 <Stack>
                   <Textarea
                     value={identificadaTemp}
-                    onChange={(e) => setIdentificadaTemp(e.target.value)}
+                    onChange={e => setIdentificadaTemp(e.target.value)}
                     rows={3}
                     placeholder="Queixa identificada..."
                   />
                   <Group>
                     <Button
                       size="xs"
-                      leftSection={<IconDeviceFloppy style={{ width: rem(12), height: rem(12) }} />}
+                      leftSection={
+                        <IconDeviceFloppy
+                          style={{ width: rem(12), height: rem(12) }}
+                        />
+                      }
                       onClick={() => handleSaveConsulta(consulta.id)}
                     >
                       Salvar
                     </Button>
-                    <Button size="xs" variant="outline" onClick={handleCancelEdit}>
+                    <Button
+                      size="xs"
+                      variant="outline"
+                      onClick={handleCancelEdit}
+                    >
                       Cancelar
                     </Button>
                   </Group>
@@ -366,7 +389,7 @@ function LinhaDoTempo() {
                 <Text size="sm" c="dimmed">
                   {consulta.queixa_identificada
                     ? consulta.queixa_identificada
-                    : "Nenhuma queixa identificada."}
+                    : 'Nenhuma queixa identificada.'}
                 </Text>
               )}
             </div>
@@ -374,51 +397,48 @@ function LinhaDoTempo() {
         </Timeline.Item>
       ))}
     </Timeline>
-  );
+  )
 }
 
 function PacienteDetalhePage() {
-  const { id } = Route.useParams();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState("perfil");
-  const { data: paciente, isLoading, isError } = usePacienteDetail(id);
-
-  const estadoCivil = {
-    S: "Solteiro(a)",
-    C: "Casado(a)",
-    D: "Divorciado(a)",
-    V: "Viúvo(a)",
-    UE: "União Estável",
-  };
+  const { id } = Route.useParams()
+  const router = useRouter()
+  const [activeTab, setActiveTab] = useState('perfil')
+  const { data: paciente, isLoading, isError } = usePacienteDetail(id)
 
   if (isLoading) {
-    return <Text>Carregando paciente...</Text>;
+    return <Text>Carregando paciente...</Text>
   }
 
   if (isError) {
-    return <Text>Não foi possível carregar os dados do paciente, tente novamente.</Text>;
+    return (
+      <Text>
+        Não foi possível carregar os dados do paciente, tente novamente.
+      </Text>
+    )
   }
 
   return (
     <PageLayout
       breadcrumbs={[
-        { label: "Pacientes", href: "/app/pacientes" },
+        { label: 'Pacientes', href: '/app/pacientes' },
         { label: paciente!.nome_completo, isCurrentPage: true },
       ]}
       title={paciente!.nome_completo}
       primaryAction={{
-        label: "Editar",
+        label: 'Editar',
         icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
-        variant: "light",
-        onClick: () => router.navigate({ to: "/app/pacientes/novo", search: { id } }),
+        variant: 'light',
+        onClick: () =>
+          router.navigate({ to: '/app/pacientes/novo', search: { id } }),
       }}
       headerChildren={
         <Group gap="md" mt="xs">
           <Avatar size={60} radius="md">
             {paciente!.nome_completo
-              .split(" ")
-              .map((n) => n[0])
-              .join("")
+              .split(' ')
+              .map(n => n[0])
+              .join('')
               .slice(0, 2)}
           </Avatar>
           <Group gap="md">
@@ -436,13 +456,17 @@ function PacienteDetalhePage() {
         <Tabs.List>
           <Tabs.Tab
             value="perfil"
-            leftSection={<IconUser style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconUser style={{ width: rem(16), height: rem(16) }} />
+            }
           >
             Perfil
           </Tabs.Tab>
           <Tabs.Tab
             value="consultas"
-            leftSection={<IconCalendar style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconCalendar style={{ width: rem(16), height: rem(16) }} />
+            }
           >
             Consultas
           </Tabs.Tab>
@@ -455,15 +479,17 @@ function PacienteDetalhePage() {
                 <Stack gap="md" align="center">
                   <Avatar size={120} radius="md">
                     {paciente!.nome_completo
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
+                      .split(' ')
+                      .map(n => n[0])
+                      .join('')
                       .slice(0, 2)}
                   </Avatar>
 
-                  <div style={{ textAlign: "center" }}>
+                  <div style={{ textAlign: 'center' }}>
                     <Title order={3}>{paciente!.nome_completo}</Title>
-                    <Text c="dimmed">{calcularIdade(paciente!.data_nascimento)} anos</Text>
+                    <Text c="dimmed">
+                      {calcularIdade(paciente!.data_nascimento)} anos
+                    </Text>
                   </div>
 
                   <Stack gap="xs" w="100%">
@@ -473,7 +499,9 @@ function PacienteDetalhePage() {
                     </Group>
                     {paciente!.numero_celular && (
                       <Group gap="xs">
-                        <IconPhone style={{ width: rem(16), height: rem(16) }} />
+                        <IconPhone
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
                         <Text size="sm">{paciente!.numero_celular}</Text>
                       </Group>
                     )}
@@ -485,9 +513,12 @@ function PacienteDetalhePage() {
                       paciente!.endereco.endereco &&
                       paciente!.endereco.bairro && (
                         <Group gap="xs">
-                          <IconMapPin style={{ width: rem(16), height: rem(16) }} />
+                          <IconMapPin
+                            style={{ width: rem(16), height: rem(16) }}
+                          />
                           <Text size="sm">
-                            {paciente!.endereco.endereco}, {paciente!.endereco.bairro}
+                            {paciente!.endereco.endereco},{' '}
+                            {paciente!.endereco.bairro}
                           </Text>
                         </Group>
                       )}
@@ -517,7 +548,7 @@ function PacienteDetalhePage() {
                         RG:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.rg ? paciente!.rg : "Sem RG cadastrado"}
+                        {paciente!.rg ? paciente!.rg : 'Sem RG cadastrado'}
                       </Text>
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -526,8 +557,8 @@ function PacienteDetalhePage() {
                       </Text>
                       <Text size="sm" c="dimmed">
                         {paciente!.estado_civil
-                          ? estadoCivil[paciente!.estado_civil]
-                          : "Sem estado civil cadastrado"}
+                          ? paciente!.estado_civil
+                          : 'Sem estado civil cadastrado'}
                       </Text>
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -535,7 +566,9 @@ function PacienteDetalhePage() {
                         Profissão:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.profissao ? paciente!.profissao : "Sem profissão cadastrada"}
+                        {paciente!.profissao
+                          ? paciente!.profissao
+                          : 'Sem profissão cadastrada'}
                       </Text>
                     </Grid.Col>
                     <Grid.Col span={12}>
@@ -543,7 +576,7 @@ function PacienteDetalhePage() {
                         Data de Nascimento:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {dayjs(paciente!.data_nascimento).format("DD/MM/YYYY")}
+                        {dayjs(paciente!.data_nascimento).format('DD/MM/YYYY')}
                       </Text>
                     </Grid.Col>
                   </Grid>
@@ -563,7 +596,7 @@ function PacienteDetalhePage() {
                         <Text size="sm" c="dimmed">
                           {paciente!.informacoes_clinicas.queixa_principal
                             ? paciente!.informacoes_clinicas.queixa_principal
-                            : "Sem queixa principal cadastrada"}
+                            : 'Sem queixa principal cadastrada'}
                         </Text>
                       </div>
                       <div>
@@ -573,7 +606,7 @@ function PacienteDetalhePage() {
                         <Text size="sm" c="dimmed">
                           {paciente!.informacoes_clinicas.medicamentos_atuais
                             ? paciente!.informacoes_clinicas.medicamentos_atuais
-                            : "Sem medicamentos cadastrados"}
+                            : 'Sem medicamentos cadastrados'}
                         </Text>
                       </div>
                       <div>
@@ -583,7 +616,7 @@ function PacienteDetalhePage() {
                         <Text size="sm" c="dimmed">
                           {paciente!.informacoes_clinicas.alergias
                             ? paciente!.informacoes_clinicas.alergias
-                            : "Sem alergias cadastradas"}
+                            : 'Sem alergias cadastradas'}
                         </Text>
                       </div>
                     </Stack>
@@ -606,7 +639,7 @@ function PacienteDetalhePage() {
                         <Text size="sm" c="dimmed">
                           {paciente!.contato_emergencia.nome
                             ? paciente!.contato_emergencia.nome
-                            : "Sem nome para contato de emergência"}
+                            : 'Sem nome para contato de emergência'}
                         </Text>
                       </Grid.Col>
                       <Grid.Col span={4}>
@@ -616,7 +649,7 @@ function PacienteDetalhePage() {
                         <Text size="sm" c="dimmed">
                           {paciente!.contato_emergencia.numero_telefone
                             ? paciente!.contato_emergencia.numero_telefone
-                            : "Sem número para contato de emergência"}
+                            : 'Sem número para contato de emergência'}
                         </Text>
                       </Grid.Col>
                     </Grid>
@@ -641,5 +674,5 @@ function PacienteDetalhePage() {
         </Tabs.Panel>
       </Tabs>
     </PageLayout>
-  );
+  )
 }
