@@ -1,45 +1,36 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
-import { Table, ActionIcon, rem, Flex } from '@mantine/core'
+import { Table, ActionIcon, rem, Flex, Text } from '@mantine/core'
 import dayjs from 'dayjs'
 import { IconEye, IconTrash } from '@tabler/icons-react'
+import { useNotificacaoList } from '../../../api/endpoints/api/api'
 
 export const Route = createFileRoute('/app/notificacoes/')({
   component: PaginaNotificacoes,
 })
 
-const mockNotificacoes = [
-  {
-    id: 'd82fe288-f4ea-41c2-aa30-19382a4b2dd5',
-    titulo: 'Confirmação de estagiário',
-    mensagem:
-      'Olá pedro.guilherme.dsa,\r\n\r\nO estagiário v.marques (v.marques@email.com) se cadastrou e está aguardando sua aprovação. Por favor, clique no link abaixo para aprovar a conta:',
-    lida: false,
-    data_criacao: '2025-08-30T14:08:47-03:00',
-    tipo: 'CONFIRMACAO',
-    dados_extras: {
-      id: 'ZDYyYmM2MDYtZDVjYy00OGY4LTg1YTAtZjFmNGZlNjkyODdj',
-      token: 'cvcpyn-fe8c547f6a7a2bc70ae900476c111c54',
-    },
-  },
-  {
-    id: 'e644b512-5eee-4cb6-996c-d45749b3ef01',
-    titulo: 'Confirmação de estagiário',
-    mensagem:
-      'Olá pedro.guilherme.dsa,\r\n\r\nO estagiário sabra.lilian (sabra.lilian@email.com) se cadastrou e está aguardando sua aprovação. Por favor, clique no link abaixo para aprovar a conta:',
-    lida: true,
-    data_criacao: '2025-08-29T18:55:26-03:00',
-    tipo: 'CONFIRMACAO',
-    dados_extras: {
-      id: 'MjZkZGZiODMtOTFhMS00YzBmLWFiNDUtY2JjZmM5YzhlMzRl',
-      token: 'cvb8ke-6ac5af4b545080509985dc649c80bc30',
-    },
-  },
-]
-
 function TabelaNotificacoes() {
   // adicionar filtros: texto, lida;
-  const linhas = mockNotificacoes.map(notificacao => (
+
+  const { data: notificacoes, isLoading, isError } = useNotificacaoList()
+
+  if (isLoading) {
+    return <Text fs="xl">Carregando notificações...</Text>
+  }
+
+  if (isError) {
+    return (
+      <Text fs="xl">
+        Não foi possível carregar suas notificações, tente novamente.
+      </Text>
+    )
+  }
+
+  if (!notificacoes) {
+    return <p>Nenhuma notificação encontrada.</p>
+  }
+
+  const linhas = notificacoes.map(notificacao => (
     <Table.Tr key={notificacao.id}>
       <Table.Td>{notificacao.titulo}</Table.Td>
       <Table.Td>
@@ -84,8 +75,6 @@ function TabelaNotificacoes() {
 }
 
 function PaginaNotificacoes() {
-  // TODO: chamar api e listar todas as notificações + link para detalhes
-  // não lidas mais claras que as lidas
   return (
     <PageLayout
       breadcrumbs={[
