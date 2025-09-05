@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import {
   Card,
   TextInput,
@@ -16,6 +16,7 @@ import {
   useApiAuthUserRetrieve,
 } from '../api/endpoints/api/api'
 import useAuthStore from '../stores/auth-store'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
@@ -23,6 +24,7 @@ export const Route = createFileRoute('/login')({
 
 function RouteComponent() {
   const authStore = useAuthStore()
+  const router = useRouter()
   const { isAuthenticated } = authStore
 
   const { data: user } = useApiAuthUserRetrieve({
@@ -36,6 +38,7 @@ function RouteComponent() {
     mutation: {
       onSuccess: data => {
         authStore.login(data.access)
+        router.navigate({ to: '/app' })
       },
     },
   })
@@ -49,8 +52,8 @@ function RouteComponent() {
   const form = useForm({
     initialValues: {
       email: '',
+      username: '',
       password: '',
-      username: ''
     },
     validate: values => {
       const result = schema.safeParse(values)
@@ -61,12 +64,16 @@ function RouteComponent() {
     },
   })
 
-  const handleSubmit = (values: { email: string; username: string; password: string }) => {
+  const handleSubmit = (values: {
+    email: string
+    username: string
+    password: string
+  }) => {
     login({
       data: {
         email: values.email,
         username: values.username,
-        password: values.password
+        password: values.password,
       },
     })
   }
@@ -98,8 +105,11 @@ function RouteComponent() {
             <Title order={2} mb="xs">
               Bem-vindo de volta
             </Title>
-            <Text c="dimmed" size="sm">
+            <Text c="dimmed" size="sm" mb="xs">
               Faça login para continuar
+            </Text>
+            <Text size="sm">
+              Ainda não tem uma conta? <Link to="/cadastro">Crie uma!</Link>
             </Text>
           </div>
 

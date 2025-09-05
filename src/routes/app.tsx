@@ -14,13 +14,14 @@ import {
 import {
   IconDashboard,
   IconSettings,
-  IconCalendar,
+  // IconCalendar,
   IconUsers,
   IconLogout,
   IconChevronDown,
   IconClock,
   IconEye,
   IconEyeOff,
+  IconBell,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
@@ -29,10 +30,20 @@ export const Route = createFileRoute('/app')({
   component: AppLayout,
 })
 
+const getNotificacaoLabel = () => {
+  const novaNotificacao = Math.random() > 0.5
+  if (novaNotificacao) {
+    return 'Notificações (Nova)'
+  }
+  return 'Notificações'
+}
+
 function AppLayout() {
   const { user, logout } = useAuthStore()
   const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
   const router = useRouterState()
+
+  const labelNotif = getNotificacaoLabel()
 
   const isActive = (path: string) => {
     return (
@@ -155,6 +166,12 @@ function AppLayout() {
             <IconSettings style={{ width: rem(16), height: rem(16) }} />
           }
           active={isActive('/app/configuracoes')}
+        />
+        <NavLink
+          href="/app/notificacoes"
+          label={labelNotif}
+          leftSection={<IconBell style={{ width: rem(16), height: rem(16) }} />}
+          active={isActive('/app/notificacoes')}
         />
       </AppShell.Navbar>
 

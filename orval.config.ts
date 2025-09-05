@@ -3,7 +3,8 @@ import { defineConfig } from 'orval'
 export default defineConfig({
   sipe: {
     input: {
-      target: 'http://localhost:8000/api/schema',
+      //target: 'http://localhost:8000/api/schema',
+      target: 'schema.json',
     },
     output: {
       mode: 'tags-split',
