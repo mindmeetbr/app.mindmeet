@@ -30,6 +30,7 @@ import type {
   CustomLogin,
   CustomRegister,
   Jwt,
+  MUser,
   Notificacao,
   Paciente,
   PasswordChange,
@@ -1659,77 +1660,84 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
       return useMutation(mutationOptions , queryClient);
     }
-    export const apiMeProfileRetrieve = (
+    /**
+ * Retorna todas as informações referentes ao usuário que fez a requisição
+ * @summary Retorna os dados do usuário da requisição
+ */
+export const profileView = (
     
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
       
       
-      return customInstance<null>(
+      return customInstance<MUser>(
       {url: `/api/me/profile/`, method: 'GET', signal
     },
       options);
     }
   
 
-export const getApiMeProfileRetrieveQueryKey = () => {
+export const getProfileViewQueryKey = () => {
     return [`/api/me/profile/`] as const;
     }
 
     
-export const getApiMeProfileRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getProfileViewQueryOptions = <TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getApiMeProfileRetrieveQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getProfileViewQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof apiMeProfileRetrieve>>> = ({ signal }) => apiMeProfileRetrieve(requestOptions, signal);
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof profileView>>> = ({ signal }) => profileView(requestOptions, signal);
 
       
 
       
 
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ApiMeProfileRetrieveQueryResult = NonNullable<Awaited<ReturnType<typeof apiMeProfileRetrieve>>>
-export type ApiMeProfileRetrieveQueryError = ErrorType<unknown>
+export type ProfileViewQueryResult = NonNullable<Awaited<ReturnType<typeof profileView>>>
+export type ProfileViewQueryError = ErrorType<unknown>
 
 
-export function useApiMeProfileRetrieve<TData = Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError = ErrorType<unknown>>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData>> & Pick<
+export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof apiMeProfileRetrieve>>,
+          Awaited<ReturnType<typeof profileView>>,
           TError,
-          Awaited<ReturnType<typeof apiMeProfileRetrieve>>
+          Awaited<ReturnType<typeof profileView>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApiMeProfileRetrieve<TData = Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData>> & Pick<
+export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof apiMeProfileRetrieve>>,
+          Awaited<ReturnType<typeof profileView>>,
           TError,
-          Awaited<ReturnType<typeof apiMeProfileRetrieve>>
+          Awaited<ReturnType<typeof profileView>>
         > , 'initialData'
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useApiMeProfileRetrieve<TData = Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Retorna os dados do usuário da requisição
+ */
 
-export function useApiMeProfileRetrieve<TData = Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError = ErrorType<unknown>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiMeProfileRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getApiMeProfileRetrieveQueryOptions(options)
+  const queryOptions = getProfileViewQueryOptions(options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -3124,6 +3132,71 @@ export const useUserCreate = <TError = ErrorType<null>,
       > => {
 
       const mutationOptions = getUserCreateMutationOptions(options);
+
+      return useMutation(mutationOptions , queryClient);
+    }
+    /**
+ * Recebe um objeto JSON e atualiza os dados do usuário com base nele
+ * @summary Atualiza os dados de um usuário
+ */
+export const userUpdate = (
+    mUser: BodyType<NonReadonly<MUser>>,
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<MUser>(
+      {url: `/api/users/editar/`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: mUser, signal
+    },
+      options);
+    }
+  
+
+
+export const getUserUpdateMutationOptions = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof userUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof userUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext> => {
+
+const mutationKey = ['userUpdate'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof userUpdate>>, {data: BodyType<NonReadonly<MUser>>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  userUpdate(data,requestOptions)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UserUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof userUpdate>>>
+    export type UserUpdateMutationBody = BodyType<NonReadonly<MUser>>
+    export type UserUpdateMutationError = ErrorType<null | null>
+
+    /**
+ * @summary Atualiza os dados de um usuário
+ */
+export const useUserUpdate = <TError = ErrorType<null | null>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof userUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof userUpdate>>,
+        TError,
+        {data: BodyType<NonReadonly<MUser>>},
+        TContext
+      > => {
+
+      const mutationOptions = getUserUpdateMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }
