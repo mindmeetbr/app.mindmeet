@@ -10,7 +10,7 @@ export interface PatchedAnotacao {
   data?: string;
   /** @maxLength 255 */
   titulo?: string;
-  descricao?: string;
+  registros?: string;
   /** @maxLength 255 */
   queixa_apresentada?: string;
   /** @maxLength 255 */

@@ -31,6 +31,7 @@ import type {
   CustomRegister,
   Jwt,
   Notificacao,
+  NotificacoesPendentes,
   Paciente,
   PasswordChange,
   PasswordReset,
@@ -1906,6 +1907,94 @@ export function useNotificacaoDetail<TData = Awaited<ReturnType<typeof notificac
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getNotificacaoDetailQueryOptions(idNotif,options)
+
+  const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
+
+
+
+/**
+ * Retorna todas as notificações não lidas do usuário logado, além do número total dessas
+ * @summary Lista as notificações não lidas de um usuário
+ */
+export const notificacaoPendenteList = (
+    
+ options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<NotificacoesPendentes>(
+      {url: `/api/notificacoes/pendentes/`, method: 'GET', signal
+    },
+      options);
+    }
+  
+
+export const getNotificacaoPendenteListQueryKey = () => {
+    return [`/api/notificacoes/pendentes/`] as const;
+    }
+
+    
+export const getNotificacaoPendenteListQueryOptions = <TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getNotificacaoPendenteListQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof notificacaoPendenteList>>> = ({ signal }) => notificacaoPendenteList(requestOptions, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type NotificacaoPendenteListQueryResult = NonNullable<Awaited<ReturnType<typeof notificacaoPendenteList>>>
+export type NotificacaoPendenteListQueryError = ErrorType<null | null>
+
+
+export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof notificacaoPendenteList>>,
+          TError,
+          Awaited<ReturnType<typeof notificacaoPendenteList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof notificacaoPendenteList>>,
+          TError,
+          Awaited<ReturnType<typeof notificacaoPendenteList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Lista as notificações não lidas de um usuário
+ */
+
+export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getNotificacaoPendenteListQueryOptions(options)
 
   const query = useQuery(queryOptions , queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

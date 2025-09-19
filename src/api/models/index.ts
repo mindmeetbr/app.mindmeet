@@ -24,6 +24,7 @@ export * from './informacoes';
 export * from './jwt';
 export * from './notificacao';
 export * from './notificacaoDadosExtras';
+export * from './notificacoesPendentes';
 export * from './paciente';
 export * from './pacienteAnamnese';
 export * from './pacienteContatoEmergencia';
