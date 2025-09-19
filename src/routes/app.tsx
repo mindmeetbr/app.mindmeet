@@ -22,35 +22,35 @@ import {
   IconEye,
   IconEyeOff,
   IconBell,
+  IconBellExclamation,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
+import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/app')({
   component: AppLayout,
 })
 
-const getNotificacaoLabel = () => {
-  const novaNotificacao = Math.random() > 0.5
-  if (novaNotificacao) {
-    return 'Notificações (Nova)'
-  }
-  return 'Notificações'
-}
-
 function AppLayout() {
   const { user, logout } = useAuthStore()
   const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
   const router = useRouterState()
-
-  const labelNotif = getNotificacaoLabel()
+  const [temNaoLidas, setTemNaoLidas] = useState(false)
+  const { data: pendentes, isError, isLoading } = useNotificacaoPendenteList()
 
   const isActive = (path: string) => {
     return (
       router.location.pathname === path ||
-      router.location.pathname.startsWith(path + '/')
+      router.location.pathname.startsWith(`${path}/`)
     )
   }
+
+  useEffect(() => {
+    if (!pendentes || isError || isLoading) setTemNaoLidas(false)
+    else setTemNaoLidas(true)
+  }, [pendentes, isError, isLoading])
 
   return (
     <AppShell
@@ -169,8 +169,16 @@ function AppLayout() {
         />
         <NavLink
           href="/app/notificacoes"
-          label={labelNotif}
-          leftSection={<IconBell style={{ width: rem(16), height: rem(16) }} />}
+          label="Notificações"
+          leftSection={
+            temNaoLidas ? (
+              <IconBellExclamation
+                style={{ width: rem(16), height: rem(16), color: 'red' }}
+              />
+            ) : (
+              <IconBell style={{ width: rem(16), height: rem(16) }} />
+            )
+          }
           active={isActive('/app/notificacoes')}
         />
       </AppShell.Navbar>
