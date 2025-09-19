@@ -34,7 +34,7 @@ export const Route = createFileRoute('/app/pacientes/')({
 
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
-  const { data, isLoading, isError } = usePacienteList()
+  const { data: pacientes, isLoading, isError } = usePacienteList()
   const { mutate: apagarPaciente } = usePacienteDelete()
 
   const calcularIdade = (dataNascimento: string) => {
@@ -73,15 +73,15 @@ function TabelaPacientes() {
     return <p>Carregando pacientes...</p>
   }
 
-  if (isError) {
+  if (isError || !pacientes) {
     return <p>Não foi possível carregar seus pacientes, tente novamente.</p>
   }
 
-  if (data?.length === 0) {
+  if (pacientes.length === 0) {
     return <p>Nenhum paciente cadastrado.</p>
   }
 
-  const pacientesFiltrados = data!.filter(
+  const pacientesFiltrados = pacientes.filter(
     paciente =>
       paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
