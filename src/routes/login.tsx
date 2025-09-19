@@ -27,7 +27,7 @@ function RouteComponent() {
   const router = useRouter()
   const { isAuthenticated } = authStore
 
-  const { data: user } = useApiAuthUserRetrieve({
+  const { data: _user } = useApiAuthUserRetrieve({
     query: {
       enabled: isAuthenticated,
       queryKey: ['user'],
@@ -44,14 +44,14 @@ function RouteComponent() {
   })
 
   const schema = z.object({
-    email: z.email('Invalid email address'),
+    // email: z.email('Invalid email address'),
     username: z.string('Invalid username'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
   })
 
   const form = useForm({
     initialValues: {
-      email: '',
+      // email: '',
       username: '',
       password: '',
     },
@@ -65,13 +65,13 @@ function RouteComponent() {
   })
 
   const handleSubmit = (values: {
-    email: string
+    // email: string
     username: string
     password: string
   }) => {
     login({
       data: {
-        email: values.email,
+        // email: values.email,
         username: values.username,
         password: values.password,
       },
@@ -95,11 +95,11 @@ function RouteComponent() {
         withBorder
         style={{ width: '100%', maxWidth: '400px' }}
       >
-        {user && (
+        {/* {user && (
           <Stack gap="lg">
             <Text>Bem-vindo, {user.username}</Text>
           </Stack>
-        )}
+        )} */}
         <Stack gap="lg">
           <div style={{ textAlign: 'center' }}>
             <Title order={2} mb="xs">
@@ -115,12 +115,12 @@ function RouteComponent() {
 
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="md">
-              <TextInput
+              {/* <TextInput
                 label="Email"
                 placeholder="ciro@mindmeet.com.br"
                 required
                 {...form.getInputProps('email')}
-              />
+              /> */}
 
               <TextInput
                 label="Nome de usuário"
