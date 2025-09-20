@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
 import {
   Card,
   TextInput,
@@ -19,6 +19,12 @@ import useAuthStore from '../stores/auth-store'
 import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (isAuthenticated) {
+      throw redirect({ to: '/app' })
+    }
+  },
   component: RouteComponent,
 })
 
