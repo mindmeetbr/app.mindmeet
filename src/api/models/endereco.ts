@@ -7,18 +7,16 @@
 
 export interface Endereco {
   readonly id: string;
-  /** @maxLength 9 */
-  cep?: string;
   /** @maxLength 255 */
-  endereco?: string;
+  rua?: string;
   /** @maxLength 10 */
   numero?: string;
   /** @maxLength 100 */
   complemento?: string;
   /** @maxLength 100 */
-  bairro?: string;
+  cep?: string;
   /** @maxLength 100 */
   cidade?: string;
-  /** @maxLength 2 */
+  /** @maxLength 100 */
   uf?: string;
 }

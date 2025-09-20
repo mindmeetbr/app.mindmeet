@@ -1,30 +1,31 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { 
-  Grid, 
-  Card, 
-  Text, 
-  Title, 
-  Group, 
-  Stack, 
-  Badge, 
-  Avatar, 
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import {
+  Grid,
+  Card,
+  Text,
+  // Title,
+  Group,
+  Stack,
+  Badge,
+  Avatar,
   Progress,
   SimpleGrid,
   rem,
-  Button
+  // Button
 } from '@mantine/core'
 import { FinancialValue } from '../../components/ui/FinancialValue'
 import { PageLayout } from '../../components/layout'
-import { 
-  IconCalendar, 
-  IconUsers, 
-  IconClock, 
+import {
+  IconCalendar,
+  IconUsers,
+  IconClock,
   IconTrendingUp,
   IconCalendarCheck,
   IconCalendarX
 } from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
+import { useProfileView } from '../../api/endpoints/api/api'
 
 dayjs.locale('pt-br')
 
@@ -129,14 +130,20 @@ function StatCard({ icon, title, value, description, color }: any) {
 }
 
 function Dashboard() {
+  const { data: user, isError } = useProfileView()
   const { stats, proximosAgendamentos, agendamentosRecentes } = mockData
+  const router = useRouter()
+
+  if (!user || isError) {
+    router.navigate({to: '/login'})
+  }
 
   return (
     <PageLayout
       title="Dashboard"
       description="Visão geral das suas atividades e métricas"
     >
-      
+
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
         <StatCard
           icon={<IconCalendar style={{ width: rem(24), height: rem(24) }} />}
@@ -163,7 +170,7 @@ function Dashboard() {
           icon={<IconTrendingUp style={{ width: rem(24), height: rem(24) }} />}
           title="Faturamento"
           value={
-            <FinancialValue 
+            <FinancialValue
               value={stats.faturamentoMes.toLocaleString('pt-BR')}
               prefix="R$ "
               showToggleButton={true}
@@ -185,7 +192,7 @@ function Dashboard() {
                 {proximosAgendamentos.length} agendamentos
               </Badge>
             </Group>
-            
+
             <Stack gap="md">
               {proximosAgendamentos.map((agendamento) => (
                 <Group key={agendamento.id} justify="apart" p="md" style={{ borderRadius: '8px', backgroundColor: 'var(--mantine-color-gray-0)' }}>
@@ -198,7 +205,7 @@ function Dashboard() {
                       </Text>
                     </div>
                   </Group>
-                  
+
                   <div>
                     <Text size="sm" ta="right">
                       {dayjs(agendamento.data).format('DD/MM/YYYY')}
@@ -207,9 +214,9 @@ function Dashboard() {
                       {agendamento.horario}
                     </Text>
                   </div>
-                  
-                  <Badge 
-                    variant="light" 
+
+                  <Badge
+                    variant="light"
                     color={agendamento.status === 'confirmado' ? 'green' : 'orange'}
                   >
                     {agendamento.status}
@@ -228,7 +235,7 @@ function Dashboard() {
                   Taxa de Ocupação
                 </Text>
               </Group>
-              
+
               <Stack gap="sm">
                 <div>
                   <Group justify="apart" mb={5}>
@@ -237,7 +244,7 @@ function Dashboard() {
                   </Group>
                   <Progress value={85} color="blue" size="sm" />
                 </div>
-                
+
                 <div>
                   <Group justify="apart" mb={5}>
                     <Text size="sm">Próxima Semana</Text>
@@ -254,7 +261,7 @@ function Dashboard() {
                   Atividade Recente
                 </Text>
               </Group>
-              
+
               <Stack gap="sm">
                 {agendamentosRecentes.map((item) => (
                   <Group key={item.id} justify="apart">
@@ -269,9 +276,9 @@ function Dashboard() {
                         <Text size="xs" c="dimmed">{item.data}</Text>
                       </div>
                     </Group>
-                    <Badge 
-                      size="xs" 
-                      variant="light" 
+                    <Badge
+                      size="xs"
+                      variant="light"
                       color={item.status === 'realizada' ? 'green' : 'red'}
                     >
                       {item.status}
