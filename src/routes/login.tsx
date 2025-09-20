@@ -44,15 +44,15 @@ function RouteComponent() {
   })
 
   const schema = z.object({
-    // email: z.email('Invalid email address'),
-    username: z.string('Invalid username'),
+    email: z.email('Invalid email address'),
+    // username: z.string('Invalid username'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
   })
 
   const form = useForm({
     initialValues: {
-      // email: '',
-      username: '',
+      email: '',
+      // username: '',
       password: '',
     },
     validate: values => {
@@ -65,14 +65,14 @@ function RouteComponent() {
   })
 
   const handleSubmit = (values: {
-    // email: string
-    username: string
+    email: string
+    // username: string
     password: string
   }) => {
     login({
       data: {
-        // email: values.email,
-        username: values.username,
+        email: values.email,
+        // username: values.username,
         password: values.password,
       },
     })
@@ -115,23 +115,23 @@ function RouteComponent() {
 
           <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="md">
-              {/* <TextInput
+              <TextInput
                 label="Email"
-                placeholder="ciro@mindmeet.com.br"
+                placeholder="Digite seu e-mail"
                 required
                 {...form.getInputProps('email')}
-              /> */}
+              />
 
-              <TextInput
+              {/* <TextInput
                 label="Nome de usuário"
                 placeholder="ciro.moura"
                 required
                 {...form.getInputProps('username')}
-              />
+              /> */}
 
               <PasswordInput
                 label="Senha"
-                placeholder="********"
+                placeholder="Digite sua senha"
                 required
                 {...form.getInputProps('password')}
               />
