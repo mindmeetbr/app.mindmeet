@@ -1,4 +1,9 @@
-import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useLocation,
+  useRouter,
+} from '@tanstack/react-router'
 import {
   Card,
   TextInput,
@@ -17,6 +22,9 @@ import {
 } from '../api/endpoints/api/api'
 import useAuthStore from '../stores/auth-store'
 import { Link } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
+import { showNotification } from '@mantine/notifications'
+import { IconCheck } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
@@ -32,6 +40,8 @@ function RouteComponent() {
   const authStore = useAuthStore()
   const router = useRouter()
   const { isAuthenticated } = authStore
+  const state = useLocation().state as { mensagem?: string }
+  const notifMostrada = useRef(false)
 
   const { data: _user } = useApiAuthUserRetrieve({
     query: {
@@ -39,6 +49,20 @@ function RouteComponent() {
       queryKey: ['user'],
     },
   })
+
+  useEffect(() => {
+    const mensagem = state?.mensagem
+    if (!notifMostrada.current && mensagem) {
+      showNotification({
+        title: 'Sucesso!',
+        message: mensagem,
+        color: 'green',
+        autoClose: false,
+        icon: <IconCheck size={16} />,
+      })
+      notifMostrada.current = true
+    }
+  }, [state?.mensagem])
 
   const { mutate: login } = useApiAuthLoginCreate({
     mutation: {
