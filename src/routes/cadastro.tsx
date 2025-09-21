@@ -12,7 +12,7 @@ import {
   Stepper,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { DateInput } from '@mantine/dates'
+import { DatePickerInput, DatesProvider } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { useUserCreate } from '../api/endpoints/api/api'
@@ -25,6 +25,8 @@ import {
   IconCircleCheck,
 } from '@tabler/icons-react'
 import { useState } from 'react'
+import 'dayjs/locale/pt-br'
+import dayjs from 'dayjs'
 export const Route = createFileRoute('/cadastro')({
   component: PaginaCadastro,
 })
@@ -36,7 +38,7 @@ function PaginaCadastro() {
   const camposPasso = [
     ['nomeCompleto', 'username', 'email', 'dataNascimento'],
     ['senha'],
-    ['isEstagiario', 'crp', 'emailSupervisor'],
+    ['isEstagiario', 'crp', 'supervisor'],
   ]
 
   const avancarEtapa = () => {
@@ -61,10 +63,10 @@ function PaginaCadastro() {
       username: '',
       email: '',
       senha: '',
-      dataNascimento: '',
+      dataNascimento: null,
       crp: '',
       isEstagiario: false,
-      emailSupervisor: '',
+      supervisor: '',
     },
     validate: {
       nomeCompleto: value =>
@@ -91,8 +93,12 @@ function PaginaCadastro() {
         return null
       },
 
-      dataNascimento: value =>
-        !Number.isNaN(Date.parse(value)) ? null : 'Data de nascimento inválida',
+      dataNascimento: value => {
+        if (!value) return 'Data de nascimento é obrigatória'
+        if (dayjs(value).isAfter(dayjs()))
+          return 'A data não pode estar no futuro'
+        return null
+      },
 
       crp: (value, values) => {
         if (values.isEstagiario) return null
@@ -102,7 +108,7 @@ function PaginaCadastro() {
             : 'CRP inválido. Use o formato 00/00000'
       },
 
-      emailSupervisor: (value, values) => {
+      supervisor: (value, values) => {
         if (!values.isEstagiario) return null
         else return /^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'
       },
@@ -110,30 +116,46 @@ function PaginaCadastro() {
   })
 
   const handleSubmit = (values: typeof form.values) => {
+    const dataFormatada = dayjs(values.dataNascimento).format('YYYY-MM-DD')
     const data = {
       nome_completo: values.nomeCompleto,
       username: values.username,
       email: values.email,
       password: values.senha,
-      data_nascimento: values.dataNascimento,
-      crp: values.crp,
+      data_nascimento: dataFormatada,
       is_estagiario: values.isEstagiario,
-      supervisor: values.emailSupervisor,
+      crp: values.isEstagiario ? undefined : values.crp,
+      supervisor: values.isEstagiario ? values.supervisor : undefined,
     }
 
     criarUsuario(
       { data },
       {
         onSuccess: () => {
-          router.navigate({ to: '/login' })
+          form.clearErrors()
+          if (data.is_estagiario) {
+            router.navigate({
+              to: '/login',
+              state: {
+                mensagem:
+                  'Ainda é preciso a confirmação do seu supervisor para poder utilizar a plataforma',
+              },
+            })
+          } else {
+            router.navigate({
+              to: '/login',
+              state: { mensagem: 'Cadastro concluído. Aproveite!' },
+            })
+          }
         },
-        onError: () => {
-          // TODO: mostrar outros erros futuramente
+        onError: error => {
+          form.setErrors(error.response?.data)
           notifications.show({
-            c: 'red',
+            color: 'red',
             autoClose: 10000,
             title: 'Erro!',
-            message: 'Não foi possível criar sua conta, tente novamente.',
+            message:
+              'Não foi possível criar sua conta. Certifique-se de que todos os campos estão corretos e tente novamente.',
             icon: <IconX />,
           })
         },
@@ -206,17 +228,17 @@ function PaginaCadastro() {
                     {...form.getInputProps('email')}
                     error={form.errors.email}
                   />
-                  <DateInput
-                    label="Data de nascimento"
-                    placeholder="dd/mm/aaaa"
-                    valueFormat="DD/MM/YYYY"
-                    locale="pt-BR"
-                    clearable
-                    popoverProps={{ disabled: true }}
-                    required
-                    {...form.getInputProps('dataNascimento')}
-                    error={form.errors.dataNascimento}
-                  />
+                  <DatesProvider settings={{ locale: 'pt-br' }}>
+                    <DatePickerInput
+                      label="Data de nascimento"
+                      placeholder="Selecione sua data da nascimento"
+                      valueFormat="DD/MM/YYYY"
+                      clearable
+                      required
+                      {...form.getInputProps('dataNascimento')}
+                      error={form.errors.dataNascimento}
+                    />
+                  </DatesProvider>
                 </Stack>
                 <Group justify="flex-end" mt="xl">
                   <Button onClick={avancarEtapa}>Próximo</Button>
@@ -252,7 +274,18 @@ function PaginaCadastro() {
                       label="É estagiário?"
                       description="Marque somente se for estagiário"
                       withThumbIndicator={false}
-                      {...form.getInputProps('isEstagiario')}
+                      {...form.getInputProps('isEstagiario', {
+                        type: 'checkbox',
+                      })}
+                      onChange={e => {
+                        form.setFieldValue(
+                          'isEstagiario',
+                          e.currentTarget.checked
+                        )
+                        if (!e.currentTarget.checked)
+                          form.setFieldValue('crp', '')
+                        else form.setFieldValue('supervisor', '')
+                      }}
                       error={form.errors.isEstagiario}
                     />
                     {form.getValues().isEstagiario ? (
@@ -261,8 +294,8 @@ function PaginaCadastro() {
                         placeholder="Insira o email do seu supervisor"
                         description="Buscaremos este email no nosso sistema e, caso ele exista, enviaremos uma notifição ao usuário para confirmação"
                         required={form.getValues().isEstagiario}
-                        error={form.errors.isEstagiario}
-                        {...form.getInputProps('emailSupervisor')}
+                        error={form.errors.supervisor}
+                        {...form.getInputProps('supervisor')}
                       />
                     ) : (
                       <TextInput
