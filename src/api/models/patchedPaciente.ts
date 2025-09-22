@@ -19,7 +19,7 @@ export interface PatchedPaciente {
   endereco?: PatchedPacienteEndereco;
   /** @nullable */
   informacoes_clinicas?: PatchedPacienteInformacoesClinicas;
-  readonly psicologo?: string;
+  readonly acompanhado_por?: string;
   /** @maxLength 255 */
   nome_completo?: string;
   data_nascimento?: string;
