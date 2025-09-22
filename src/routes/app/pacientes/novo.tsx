@@ -112,7 +112,7 @@ function NovoPacientePage() {
         expectativas: '',
         historia_doenca_atual: '',
         historico_familiar: '',
-        antecedente_psiquiatrico: '',
+        aspectos_observados: '',
         uso_substancias: '',
         observacoes: '',
       },
@@ -518,10 +518,10 @@ function NovoPacientePage() {
               <Grid>
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <Textarea
-                    label="Antecedentes Psiquiátricos"
+                    label="Aspectos a serem observados"
                     placeholder="Tratamentos anteriores, internações..."
                     rows={3}
-                    {...form.getInputProps('anamnese.antecedente_psiquiatrico')}
+                    {...form.getInputProps('anamnese.aspectos_observados')}
                   />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6 }}>

@@ -33,7 +33,7 @@ const mockUserData = {
   email: 'ana.silva@email.com',
   phone: '(11) 99999-9999',
   crp: 'CRP 06/123456',
-  especialidade: 'Psicologia Clínica',
+  abordagem: 'Psicanálise',
   bio: 'Psicóloga especialista em terapia cognitivo-comportamental com mais de 10 anos de experiência. Atendimento a adultos, adolescentes e casais.',
   avatar: null,
   endereco: {
@@ -143,7 +143,7 @@ function Configuracoes() {
                     <Text size="xl" fw={600}>
                       {userData.firstName} {userData.lastName}
                     </Text>
-                    <Text c="dimmed">{userData.especialidade}</Text>
+                    <Text c="dimmed">{userData.abordagem}</Text>
                     <Text c="dimmed" size="sm">{userData.crp}</Text>
                   </Stack>
                 </Group>
@@ -193,16 +193,16 @@ function Configuracoes() {
                   </Grid.Col>
                   <Grid.Col span={{ base: 12, sm: 6 }}>
                     <Select
-                      label="Especialidade"
-                      value={userData.especialidade}
-                      onChange={(value) => setUserData(prev => ({ ...prev, especialidade: value || '' }))}
+                      label="Abordagem"
+                      value={userData.abordagem}
+                      onChange={(value) => setUserData(prev => ({ ...prev, abordagem: value || '' }))}
                       disabled={!isEditing}
                       data={[
-                        'Psicologia Clínica',
-                        'Psicologia Infantil',
-                        'Psicologia do Casal',
-                        'Neuropsicologia',
-                        'Psicologia Organizacional'
+                        'Psicanálise',
+                        'Terapia Cognitivo-Comportamental (TCC)',
+                        'Gestalt-terapia',
+                        'Humanista',
+                        'Psicologia Analítica'
                       ]}
                     />
                   </Grid.Col>
