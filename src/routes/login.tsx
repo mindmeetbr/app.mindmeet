@@ -70,13 +70,29 @@ function RouteComponent() {
         authStore.login(data.access)
         router.navigate({ to: '/app' })
       },
-    },
-  })
+      onError: (error: any) => {
+        // erros gerados automaticamente no backend
+        const errosBackend = error?.response.data
+        if (errosBackend) {
+          form.setErrors(errosBackend)
+
+          if (errosBackend.non_field_errors) {
+          showNotification({
+            title: "Erro de login",
+            message: errosBackend.non_field_errors[0],
+            color: "red",
+          })
+        }
+        }
+      },
+    }
+  }
+)
 
   const schema = z.object({
-    email: z.email('Invalid email address'),
+    email: z.email('Endereço de email inválido'),
     // username: z.string('Invalid username'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z.string().min(8, 'A senha deve possuir no mínimo 8 caracteres'),
   })
 
   const form = useForm({
@@ -87,8 +103,10 @@ function RouteComponent() {
     },
     validate: values => {
       const result = schema.safeParse(values)
-      if (!result.success) {
-        return z.treeifyError(result.error)
+      if (result.error) {
+        // return z.treeifyError(result.error)
+        const erros = z.flattenError(result.error)
+        return erros.fieldErrors
       }
       return {}
     },
@@ -149,6 +167,7 @@ function RouteComponent() {
                 label="Email"
                 placeholder="Digite seu e-mail"
                 required
+                error={form.errors.email}
                 {...form.getInputProps('email')}
               />
 
@@ -163,6 +182,7 @@ function RouteComponent() {
                 label="Senha"
                 placeholder="Digite sua senha"
                 required
+                error={form.errors.password}
                 {...form.getInputProps('password')}
               />
 
