@@ -29,7 +29,7 @@ export interface PatchedPaciente {
   numero_telefone?: string;
   /** @maxLength 15 */
   numero_celular?: string;
-  /** @maxLength 11 */
+  /** @maxLength 14 */
   cpf?: string;
   /** @maxLength 12 */
   rg?: string;

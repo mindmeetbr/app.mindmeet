@@ -12,7 +12,7 @@ import {
   // Divider,
   Title,
 } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
+// import { notifications } from '@mantine/notifications'
 import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useForm } from '@mantine/form'
@@ -143,6 +143,13 @@ function NovoPacientePage() {
     },
   })
 
+  const setError = (error: any) => {
+    const errosBackend = error?.response.data
+    if (errosBackend) {
+      form.setErrors(errosBackend)
+    }
+  }
+
   const handleSubmit = (values: typeof form.values) => {
     setIsSubmitting(true)
     try {
@@ -156,13 +163,15 @@ function NovoPacientePage() {
                 params: { id: pacienteId! },
               })
             },
-            onError: () => {
-              notifications.show({
-                title: 'Erro',
-                message:
-                  'Não foi possível salvar as alterações, tente novamente.',
-                color: 'red',
-              })
+            onError: (error: any) => {
+              setError(error)
+
+              // notifications.show({
+              //   title: 'Erro',
+              //   message:
+              //     'Não foi possível salvar as alterações, tente novamente.',
+              //   color: 'red',
+              // })
             },
           }
         )
@@ -173,12 +182,13 @@ function NovoPacientePage() {
             onSuccess: () => {
               router.navigate({ to: '/app/pacientes' })
             },
-            onError: () => {
-              notifications.show({
-                title: 'Erro',
-                message: 'Não foi possível salvar o paciente, tente novamente.',
-                color: 'red',
-              })
+            onError: (error: any) => {
+              setError(error)
+              // notifications.show({
+              //   title: 'Erro',
+              //   message: 'Não foi possível salvar o paciente, tente novamente.',
+              //   color: 'red',
+              // })
             },
           }
         )
@@ -296,6 +306,7 @@ function NovoPacientePage() {
                     label="CPF"
                     placeholder="000.000.000-00"
                     required
+                    maxLength={14}
                     {...form.getInputProps('cpf')}
                   />
                 </Grid.Col>
