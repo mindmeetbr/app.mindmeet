@@ -49,7 +49,7 @@ export const Route = createFileRoute('/app')({
 })
 
 function AppLayout() {
-  const { logout } = useAuthStore()
+  const { isAuthenticated, logout } = useAuthStore()
   const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
   const router = useRouterState()
   const redirector = useRouter()
@@ -66,13 +66,18 @@ function AppLayout() {
 
   const handleLogoutClick = () => {
     logout()
-    redirector.navigate({ to: '/login' })
   }
 
   useEffect(() => {
     if (!pendentes || isError || isLoading) setTemNaoLidas(false)
     else if (pendentes.nao_lidas > 0) setTemNaoLidas(true)
   }, [pendentes, isError, isLoading])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      redirector.navigate({ to: '/login' })
+    }
+  }, [isAuthenticated, redirector])
 
   return (
     <AppShell

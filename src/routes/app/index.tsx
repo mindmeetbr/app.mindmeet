@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import {
   Grid,
   Card,
@@ -21,11 +21,11 @@ import {
   IconClock,
   IconTrendingUp,
   IconCalendarCheck,
-  IconCalendarX
+  IconCalendarX,
 } from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
-import { useProfileView } from '../../api/endpoints/api/api'
+// import { useProfileView } from '../../api/endpoints/api/api'
 
 dayjs.locale('pt-br')
 
@@ -38,7 +38,7 @@ const mockData = {
     totalAgendamentos: 156,
     agendamentosHoje: 8,
     pacientesAtivos: 42,
-    faturamentoMes: 15750
+    faturamentoMes: 15750,
   },
   proximosAgendamentos: [
     {
@@ -48,7 +48,7 @@ const mockData = {
       horario: '09:00',
       data: dayjs().format('YYYY-MM-DD'),
       tipo: 'Consulta Individual',
-      status: 'confirmado'
+      status: 'confirmado',
     },
     {
       id: 2,
@@ -57,7 +57,7 @@ const mockData = {
       horario: '10:30',
       data: dayjs().format('YYYY-MM-DD'),
       tipo: 'Terapia de Casal',
-      status: 'pendente'
+      status: 'pendente',
     },
     {
       id: 3,
@@ -66,7 +66,7 @@ const mockData = {
       horario: '14:00',
       data: dayjs().add(1, 'day').format('YYYY-MM-DD'),
       tipo: 'Consulta Individual',
-      status: 'confirmado'
+      status: 'confirmado',
     },
     {
       id: 4,
@@ -75,29 +75,29 @@ const mockData = {
       horario: '15:30',
       data: dayjs().add(1, 'day').format('YYYY-MM-DD'),
       tipo: 'Avaliação Psicológica',
-      status: 'confirmado'
-    }
+      status: 'confirmado',
+    },
   ],
   agendamentosRecentes: [
     {
       id: 1,
       paciente: 'Laura Oliveira',
       data: dayjs().subtract(1, 'day').format('DD/MM'),
-      status: 'realizada'
+      status: 'realizada',
     },
     {
       id: 2,
       paciente: 'Carlos Mendes',
       data: dayjs().subtract(2, 'day').format('DD/MM'),
-      status: 'cancelada'
+      status: 'cancelada',
     },
     {
       id: 3,
       paciente: 'Julia Ferreira',
       data: dayjs().subtract(3, 'day').format('DD/MM'),
-      status: 'realizada'
-    }
-  ]
+      status: 'realizada',
+    },
+  ],
 }
 
 function StatCard({ icon, title, value, description, color }: any) {
@@ -121,30 +121,27 @@ function StatCard({ icon, title, value, description, color }: any) {
             {description}
           </Text>
         </div>
-        <div style={{ color }}>
-          {icon}
-        </div>
+        <div style={{ color }}>{icon}</div>
       </Group>
     </Card>
   )
 }
 
 function Dashboard() {
-  const { data: user, isError } = useProfileView()
+  // const { data: user, isError } = useProfileView()
   const { stats, proximosAgendamentos, agendamentosRecentes } = mockData
-  const router = useRouter()
+  // const router = useRouter()
 
-  if (!user || isError) {
-    router.navigate({to: '/login'})
-  }
+  // if (!user || isError) {
+  //   router.navigate({to: '/login'})
+  // }
 
   return (
     <PageLayout
       title="Dashboard"
       description="Visão geral das suas atividades e métricas"
     >
-
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
         <StatCard
           icon={<IconCalendar style={{ width: rem(24), height: rem(24) }} />}
           title="Total de Agendamentos"
@@ -194,8 +191,16 @@ function Dashboard() {
             </Group>
 
             <Stack gap="md">
-              {proximosAgendamentos.map((agendamento) => (
-                <Group key={agendamento.id} justify="apart" p="md" style={{ borderRadius: '8px', backgroundColor: 'var(--mantine-color-gray-0)' }}>
+              {proximosAgendamentos.map(agendamento => (
+                <Group
+                  key={agendamento.id}
+                  justify="apart"
+                  p="md"
+                  style={{
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--mantine-color-gray-0)',
+                  }}
+                >
                   <Group>
                     <Avatar size="sm" />
                     <div>
@@ -217,7 +222,9 @@ function Dashboard() {
 
                   <Badge
                     variant="light"
-                    color={agendamento.status === 'confirmado' ? 'green' : 'orange'}
+                    color={
+                      agendamento.status === 'confirmado' ? 'green' : 'orange'
+                    }
                   >
                     {agendamento.status}
                   </Badge>
@@ -240,7 +247,9 @@ function Dashboard() {
                 <div>
                   <Group justify="apart" mb={5}>
                     <Text size="sm">Esta Semana</Text>
-                    <Text size="sm" fw={500}>85%</Text>
+                    <Text size="sm" fw={500}>
+                      85%
+                    </Text>
                   </Group>
                   <Progress value={85} color="blue" size="sm" />
                 </div>
@@ -248,7 +257,9 @@ function Dashboard() {
                 <div>
                   <Group justify="apart" mb={5}>
                     <Text size="sm">Próxima Semana</Text>
-                    <Text size="sm" fw={500}>92%</Text>
+                    <Text size="sm" fw={500}>
+                      92%
+                    </Text>
                   </Group>
                   <Progress value={92} color="green" size="sm" />
                 </div>
@@ -263,17 +274,25 @@ function Dashboard() {
               </Group>
 
               <Stack gap="sm">
-                {agendamentosRecentes.map((item) => (
+                {agendamentosRecentes.map(item => (
                   <Group key={item.id} justify="apart">
                     <Group gap="xs">
                       {item.status === 'realizada' ? (
-                        <IconCalendarCheck style={{ width: rem(16), height: rem(16) }} color="var(--mantine-color-green-6)" />
+                        <IconCalendarCheck
+                          style={{ width: rem(16), height: rem(16) }}
+                          color="var(--mantine-color-green-6)"
+                        />
                       ) : (
-                        <IconCalendarX style={{ width: rem(16), height: rem(16) }} color="var(--mantine-color-red-6)" />
+                        <IconCalendarX
+                          style={{ width: rem(16), height: rem(16) }}
+                          color="var(--mantine-color-red-6)"
+                        />
                       )}
                       <div>
                         <Text size="sm">{item.paciente}</Text>
-                        <Text size="xs" c="dimmed">{item.data}</Text>
+                        <Text size="xs" c="dimmed">
+                          {item.data}
+                        </Text>
                       </div>
                     </Group>
                     <Badge
