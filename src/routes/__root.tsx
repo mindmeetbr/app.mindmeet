@@ -1,4 +1,4 @@
-import { AppShell, Button, Group, Text, Flex } from '@mantine/core'
+import { Button, Group, Text, Flex, Divider } from '@mantine/core'
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import classes from './__root.module.css'
@@ -9,8 +9,8 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <AppShell header={{ height: 45 }} padding="md">
-      <AppShell.Header>
+    <>
+      <header style={{ height: 45 }}>
         <Flex justify="space-between" align="center" h="100%" w="100%" px="md">
           {/* esquerda */}
           <Flex flex={1} justify="flex-start">
@@ -71,11 +71,12 @@ function RootComponent() {
             </Group>
           </Flex>
         </Flex>
-      </AppShell.Header>
-      <AppShell.Main>
+        <Divider />
+      </header>
+      <main>
         <Outlet />
-        <TanStackRouterDevtools />
-      </AppShell.Main>
-    </AppShell>
+      </main>
+      <TanStackRouterDevtools />
+    </>
   )
 }
