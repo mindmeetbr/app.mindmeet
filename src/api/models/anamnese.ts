@@ -11,7 +11,7 @@ export interface Anamnese {
   expectativas?: string;
   historia_doenca_atual?: string;
   historico_familiar?: string;
-  antecedente_psiquiatrico?: string;
+  aspectos_observados?: string;
   uso_substancias?: string;
   observacoes?: string;
 }

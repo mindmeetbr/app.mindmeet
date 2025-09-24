@@ -1,0 +1,13 @@
+.link {
+  text-decoration: none;
+  transition: color 0.4s ease;
+}
+
+.link:hover {
+  color: #339af0
+}
+
+.link.active {
+  font-weight: bold;
+  color: #339af0;
+}

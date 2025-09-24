@@ -21,7 +21,7 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
 import { useForm } from '@mantine/form'
-import { DatesProvider, DatePickerInput, TimeInput } from '@mantine/dates'
+import { DateTimePicker } from '@mantine/dates'
 import {
   IconEdit,
   IconCalendar,
@@ -58,39 +58,28 @@ function BotaoNovaConsulta() {
   const [opened, { open, close }] = useDisclosure(false)
   const { id } = Route.useParams()
   const { mutate: criarAnotacao } = useAnotacaoCreate()
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
       titulo: '',
-      descricao: '',
-      data: null,
-      hora: null,
+      registros: '',
+      data: new Date(),
       apresentada: '',
       identificada: '',
     },
   })
 
   function handleSubmit(values) {
-    const dataStr = values.data?.trim() || null
-    const horaStr = values.hora?.trim() || ''
-    let datetimeFinal = new Date().toISOString()
-
-    if (dataStr && horaStr) {
-      let [hh, mm] = horaStr.split(':').map(v => v.padStart(2, '0'))
-      mm = mm || '00'
-      datetimeFinal = `${dataStr}T${hh}:${mm}:00`
-    } else if (dataStr) {
-      datetimeFinal = dataStr
-    }
-
+    const dataFormatada = new Date(values.data).toISOString()
     const dados = {
       paciente: id,
       data: {
         titulo: values.titulo,
-        descricao: values.descricao,
+        registros: values.registros,
         queixa_apresentada: values.apresentada,
         queixa_identificada: values.identificada,
-        data: datetimeFinal,
+        data: dataFormatada,
       },
     }
     criarAnotacao(dados, {
@@ -146,59 +135,45 @@ function BotaoNovaConsulta() {
               {...form.getInputProps('titulo')}
             />
 
-            <TextInput
-              label="Descrição"
-              placeholder="Descrição da anotação"
+            <Group grow align="flex-end">
+              <TextInput
+                label="Queixa Apresentada"
+                placeholder="..."
+                radius="md"
+                key={form.key('apresentada')}
+                {...form.getInputProps('apresentada')}
+              />
+
+              <TextInput
+                label="Queixa Identificada"
+                placeholder="..."
+                radius="md"
+                key={form.key('identificada')}
+                {...form.getInputProps('identificada')}
+              />
+            </Group>
+
+            <DateTimePicker
+              locale="pt-br"
+              valueFormat="DD [de] MMMM [de] YYYY, HH:mm"
+              label="Data"
+              placeholder="Selecione a data"
+              size="md"
+              radius="md"
+              withSeconds={false}
+              key={form.key('data')}
+              {...form.getInputProps('data')}
+            />
+
+            <Textarea
+              label="Registros Gerais"
+              placeholder="..."
               radius="md"
               size="md"
-              leftSection={<IconNotes size={18} />}
-              key={form.key('descricao')}
-              {...form.getInputProps('descricao')}
-            />
-
-            <DatesProvider settings={{ locale: 'pt-br' }}>
-              <Group grow align="flex-end">
-                <DatePickerInput
-                  label="Data"
-                  placeholder="Selecione uma data"
-                  defaultDate={new Date()}
-                  size="md"
-                  radius="md"
-                  leftSection={<IconCalendar size={18} />}
-                  key={form.key('data')}
-                  {...form.getInputProps('data')}
-                />
-
-                <TimeInput
-                  label="Hora"
-                  placeholder="Selecione a hora"
-                  radius="md"
-                  size="md"
-                  leftSection={<IconClockHour3 size={18} />}
-                  key={form.key('hora')}
-                  {...form.getInputProps('hora')}
-                />
-              </Group>
-            </DatesProvider>
-
-            <Textarea
-              label="Queixa Apresentada"
-              placeholder="..."
-              radius="md"
               autosize
               minRows={3}
-              key={form.key('apresentada')}
-              {...form.getInputProps('apresentada')}
-            />
-
-            <Textarea
-              label="Queixa Identificada"
-              placeholder="..."
-              radius="md"
-              autosize
-              minRows={3}
-              key={form.key('identificada')}
-              {...form.getInputProps('identificada')}
+              key={form.key('registros')}
+              {...form.getInputProps('registros')}
             />
 
             <Group mt="sm">
@@ -230,13 +205,13 @@ function LinhaDoTempo() {
   const [editingConsultaId, setEditingConsultaId] = useState<number | null>(
     null
   )
-  const [descTemp, setDescTemp] = useState('')
+  const [registrosTemp, setRegistrosTemp] = useState('')
   const [apresentadaTemp, setApresentadaTemp] = useState('')
   const [identificadaTemp, setIdentificadaTemp] = useState('')
 
   const handleEditConsulta = (consulta: Anotacao) => {
     setEditingConsultaId(consulta.id)
-    setDescTemp(consulta.descricao as string)
+    setRegistrosTemp(consulta.registros as string)
     setApresentadaTemp(consulta.queixa_apresentada as string)
     setIdentificadaTemp(consulta.queixa_identificada as string)
   }
@@ -246,14 +221,14 @@ function LinhaDoTempo() {
       paciente: id,
       pkAnotacao: consultaId,
       data: {
-        descricao: descTemp,
+        registros: registrosTemp,
         queixa_apresentada: apresentadaTemp,
         queixa_identificada: identificadaTemp,
       },
     })
 
     setEditingConsultaId(null)
-    setDescTemp('')
+    setRegistrosTemp('')
     setApresentadaTemp('')
     setIdentificadaTemp('')
 
@@ -265,7 +240,7 @@ function LinhaDoTempo() {
 
   const handleCancelEdit = () => {
     setEditingConsultaId(null)
-    setDescTemp('')
+    setRegistrosTemp('')
     setApresentadaTemp('')
     setIdentificadaTemp('')
   }
@@ -284,12 +259,12 @@ function LinhaDoTempo() {
   }
 
   if (!data) {
-    return <p>Nenhuma anotação sobre o paciente!</p>
+    return <p>Nenhuma anotação sobre o paciente</p>
   }
 
   return (
     <Timeline active={data.length} bulletSize={24} lineWidth={2}>
-      {data.map((consulta: Anotacao, index) => (
+      {data.map((consulta: Anotacao, _) => (
         <Timeline.Item
           key={consulta.id}
           bullet={
@@ -320,14 +295,14 @@ function LinhaDoTempo() {
               </Text>
               {editingConsultaId === consulta.id ? (
                 <Textarea
-                  value={descTemp}
-                  onChange={e => setDescTemp(e.target.value)}
+                  value={registrosTemp}
+                  onChange={e => setRegistrosTemp(e.target.value)}
                   rows={3}
                   placeholder="Descrição da sessão..."
                 />
               ) : (
                 <Text size="sm" c="dimmed">
-                  {consulta.descricao ? consulta.descricao : 'Sem descrição'}
+                  {consulta.registros ? consulta.registros : 'Sem descrição'}
                 </Text>
               )}
             </div>
@@ -337,10 +312,9 @@ function LinhaDoTempo() {
                 Queixa Apresentada:
               </Text>
               {editingConsultaId === consulta.id ? (
-                <Textarea
+                <TextInput
                   value={apresentadaTemp}
                   onChange={e => setApresentadaTemp(e.target.value)}
-                  rows={3}
                   placeholder="Queixa apresentada..."
                 />
               ) : (
@@ -358,10 +332,9 @@ function LinhaDoTempo() {
               </Text>
               {editingConsultaId === consulta.id ? (
                 <Stack>
-                  <Textarea
+                  <TextInput
                     value={identificadaTemp}
                     onChange={e => setIdentificadaTemp(e.target.value)}
-                    rows={3}
                     placeholder="Queixa identificada..."
                   />
                   <Group>
@@ -410,7 +383,7 @@ function PacienteDetalhePage() {
     return <Text>Carregando paciente...</Text>
   }
 
-  if (isError) {
+  if (isError || !paciente) {
     return (
       <Text>
         Não foi possível carregar os dados do paciente, tente novamente.
@@ -422,9 +395,9 @@ function PacienteDetalhePage() {
     <PageLayout
       breadcrumbs={[
         { label: 'Pacientes', href: '/app/pacientes' },
-        { label: paciente!.nome_completo, isCurrentPage: true },
+        { label: paciente.nome_completo, isCurrentPage: true },
       ]}
-      title={paciente!.nome_completo}
+      title={paciente.nome_completo}
       primaryAction={{
         label: 'Editar',
         icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
@@ -435,7 +408,7 @@ function PacienteDetalhePage() {
       headerChildren={
         <Group gap="md" mt="xs">
           <Avatar size={60} radius="md">
-            {paciente!.nome_completo
+            {paciente.nome_completo
               .split(' ')
               .map(n => n[0])
               .join('')
@@ -443,10 +416,10 @@ function PacienteDetalhePage() {
           </Avatar>
           <Group gap="md">
             <Text size="sm" c="dimmed">
-              {calcularIdade(paciente!.data_nascimento)} anos
+              {calcularIdade(paciente.data_nascimento)} anos
             </Text>
             <Text size="sm" c="dimmed">
-              CPF: {paciente!.cpf}
+              CPF: {paciente.cpf}
             </Text>
           </Group>
         </Group>
@@ -478,7 +451,7 @@ function PacienteDetalhePage() {
               <Card withBorder radius="md" p="xl">
                 <Stack gap="md" align="center">
                   <Avatar size={120} radius="md">
-                    {paciente!.nome_completo
+                    {paciente.nome_completo
                       .split(' ')
                       .map(n => n[0])
                       .join('')
@@ -486,39 +459,38 @@ function PacienteDetalhePage() {
                   </Avatar>
 
                   <div style={{ textAlign: 'center' }}>
-                    <Title order={3}>{paciente!.nome_completo}</Title>
+                    <Title order={3}>{paciente.nome_completo}</Title>
                     <Text c="dimmed">
-                      {calcularIdade(paciente!.data_nascimento)} anos
+                      {calcularIdade(paciente.data_nascimento)} anos
                     </Text>
                   </div>
 
                   <Stack gap="xs" w="100%">
                     <Group gap="xs">
                       <IconPhone style={{ width: rem(16), height: rem(16) }} />
-                      <Text size="sm">{paciente!.numero_telefone}</Text>
+                      <Text size="sm">{paciente.numero_telefone}</Text>
                     </Group>
-                    {paciente!.numero_celular && (
+                    {paciente.numero_celular && (
                       <Group gap="xs">
                         <IconPhone
                           style={{ width: rem(16), height: rem(16) }}
                         />
-                        <Text size="sm">{paciente!.numero_celular}</Text>
+                        <Text size="sm">{paciente.numero_celular}</Text>
                       </Group>
                     )}
                     <Group gap="xs">
                       <IconMail style={{ width: rem(16), height: rem(16) }} />
-                      <Text size="sm">{paciente!.email}</Text>
+                      <Text size="sm">{paciente.email}</Text>
                     </Group>
-                    {paciente!.endereco &&
-                      paciente!.endereco.endereco &&
-                      paciente!.endereco.bairro && (
+                    {paciente.endereco?.endereco &&
+                      paciente.endereco.bairro && (
                         <Group gap="xs">
                           <IconMapPin
                             style={{ width: rem(16), height: rem(16) }}
                           />
                           <Text size="sm">
-                            {paciente!.endereco.endereco},{' '}
-                            {paciente!.endereco.bairro}
+                            {paciente.endereco.endereco},{' '}
+                            {paciente.endereco.bairro}
                           </Text>
                         </Group>
                       )}
@@ -540,7 +512,7 @@ function PacienteDetalhePage() {
                         CPF:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.cpf}
+                        {paciente.cpf}
                       </Text>
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -548,7 +520,7 @@ function PacienteDetalhePage() {
                         RG:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.rg ? paciente!.rg : 'Sem RG cadastrado'}
+                        {paciente.rg ? paciente.rg : 'Sem RG cadastrado'}
                       </Text>
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -556,8 +528,8 @@ function PacienteDetalhePage() {
                         Estado Civil:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.estado_civil
-                          ? paciente!.estado_civil
+                        {paciente.estado_civil
+                          ? paciente.estado_civil
                           : 'Sem estado civil cadastrado'}
                       </Text>
                     </Grid.Col>
@@ -566,8 +538,8 @@ function PacienteDetalhePage() {
                         Profissão:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {paciente!.profissao
-                          ? paciente!.profissao
+                        {paciente.profissao
+                          ? paciente.profissao
                           : 'Sem profissão cadastrada'}
                       </Text>
                     </Grid.Col>
@@ -576,7 +548,7 @@ function PacienteDetalhePage() {
                         Data de Nascimento:
                       </Text>
                       <Text size="sm" c="dimmed">
-                        {dayjs(paciente!.data_nascimento).format('DD/MM/YYYY')}
+                        {dayjs(paciente.data_nascimento).format('DD/MM/YYYY')}
                       </Text>
                     </Grid.Col>
                   </Grid>
@@ -587,15 +559,15 @@ function PacienteDetalhePage() {
                   <Title order={4} mb="md">
                     Informações Clínicas
                   </Title>
-                  {paciente!.informacoes_clinicas ? (
+                  {paciente.informacoes_clinicas ? (
                     <Stack gap="md">
                       <div>
                         <Text size="sm" fw={500}>
                           Queixa Principal:
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {paciente!.informacoes_clinicas.queixa_principal
-                            ? paciente!.informacoes_clinicas.queixa_principal
+                          {paciente.informacoes_clinicas.queixa_principal
+                            ? paciente.informacoes_clinicas.queixa_principal
                             : 'Sem queixa principal cadastrada'}
                         </Text>
                       </div>
@@ -604,8 +576,8 @@ function PacienteDetalhePage() {
                           Medicamentos Atuais:
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {paciente!.informacoes_clinicas.medicamentos_atuais
-                            ? paciente!.informacoes_clinicas.medicamentos_atuais
+                          {paciente.informacoes_clinicas.medicamentos_atuais
+                            ? paciente.informacoes_clinicas.medicamentos_atuais
                             : 'Sem medicamentos cadastrados'}
                         </Text>
                       </div>
@@ -614,8 +586,8 @@ function PacienteDetalhePage() {
                           Alergias:
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {paciente!.informacoes_clinicas.alergias
-                            ? paciente!.informacoes_clinicas.alergias
+                          {paciente.informacoes_clinicas.alergias
+                            ? paciente.informacoes_clinicas.alergias
                             : 'Sem alergias cadastradas'}
                         </Text>
                       </div>
@@ -630,15 +602,15 @@ function PacienteDetalhePage() {
                   <Title order={4} mb="md">
                     Contato de Emergência
                   </Title>
-                  {paciente!.contato_emergencia ? (
+                  {paciente.contato_emergencia ? (
                     <Grid>
                       <Grid.Col span={8}>
                         <Text size="sm" fw={500}>
                           Nome:
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {paciente!.contato_emergencia.nome
-                            ? paciente!.contato_emergencia.nome
+                          {paciente.contato_emergencia.nome
+                            ? paciente.contato_emergencia.nome
                             : 'Sem nome para contato de emergência'}
                         </Text>
                       </Grid.Col>
@@ -647,8 +619,8 @@ function PacienteDetalhePage() {
                           Telefone:
                         </Text>
                         <Text size="sm" c="dimmed">
-                          {paciente!.contato_emergencia.numero_telefone
-                            ? paciente!.contato_emergencia.numero_telefone
+                          {paciente.contato_emergencia.numero_telefone
+                            ? paciente.contato_emergencia.numero_telefone
                             : 'Sem número para contato de emergência'}
                         </Text>
                       </Grid.Col>

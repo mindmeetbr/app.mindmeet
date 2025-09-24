@@ -10,12 +10,6 @@
  */
 export interface UserDetails {
   readonly pk: string;
-  /**
-   * Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
-   * @maxLength 150
-   * @pattern ^[\w.@+-]+$
-   */
-  username: string;
   readonly email: string;
   readonly first_name: string;
   readonly last_name: string;

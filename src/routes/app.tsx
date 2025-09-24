@@ -1,4 +1,10 @@
-import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useRouter,
+  useRouterState,
+} from '@tanstack/react-router'
 import {
   AppShell,
   Text,
@@ -22,35 +28,56 @@ import {
   IconEye,
   IconEyeOff,
   IconBell,
+  IconBellExclamation,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
+import {
+  useNotificacaoPendenteList,
+  useProfileView,
+} from '../api/endpoints/api/api'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/app')({
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
+    if (!isAuthenticated) {
+      throw redirect({ to: '/login' })
+    }
+  },
   component: AppLayout,
 })
 
-const getNotificacaoLabel = () => {
-  const novaNotificacao = Math.random() > 0.5
-  if (novaNotificacao) {
-    return 'Notificações (Nova)'
-  }
-  return 'Notificações'
-}
-
 function AppLayout() {
-  const { user, logout } = useAuthStore()
+  const { isAuthenticated, logout } = useAuthStore()
   const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
   const router = useRouterState()
-
-  const labelNotif = getNotificacaoLabel()
+  const redirector = useRouter()
+  const [temNaoLidas, setTemNaoLidas] = useState(false)
+  const { data: pendentes, isError, isLoading } = useNotificacaoPendenteList()
+  const { data: user } = useProfileView()
 
   const isActive = (path: string) => {
     return (
       router.location.pathname === path ||
-      router.location.pathname.startsWith(path + '/')
+      router.location.pathname.startsWith(`${path}/`)
     )
   }
+
+  const handleLogoutClick = () => {
+    logout()
+  }
+
+  useEffect(() => {
+    if (!pendentes || isError || isLoading) setTemNaoLidas(false)
+    else if (pendentes.nao_lidas > 0) setTemNaoLidas(true)
+  }, [pendentes, isError, isLoading])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      redirector.navigate({ to: '/login' })
+    }
+  }, [isAuthenticated, redirector])
 
   return (
     <AppShell
@@ -92,7 +119,7 @@ function AppLayout() {
                   <Group gap={7}>
                     <Avatar size={32} radius="xl" />
                     <Text fw={500} size="sm" lh={1} mr={3}>
-                      {user?.first_name || 'Usuário'}
+                      {user?.email || user?.nome_completo || 'Usuário'}
                     </Text>
                     <IconChevronDown
                       style={{ width: rem(12), height: rem(12) }}
@@ -115,7 +142,7 @@ function AppLayout() {
                   leftSection={
                     <IconLogout style={{ width: rem(14), height: rem(14) }} />
                   }
-                  onClick={logout}
+                  onClick={handleLogoutClick}
                   color="red"
                 >
                   Sair
@@ -169,8 +196,16 @@ function AppLayout() {
         />
         <NavLink
           href="/app/notificacoes"
-          label={labelNotif}
-          leftSection={<IconBell style={{ width: rem(16), height: rem(16) }} />}
+          label="Notificações"
+          leftSection={
+            temNaoLidas ? (
+              <IconBellExclamation
+                style={{ width: rem(16), height: rem(16), color: 'red' }}
+              />
+            ) : (
+              <IconBell style={{ width: rem(16), height: rem(16) }} />
+            )
+          }
           active={isActive('/app/notificacoes')}
         />
       </AppShell.Navbar>

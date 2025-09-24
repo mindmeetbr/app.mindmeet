@@ -22,5 +22,5 @@ export interface CriarMUser {
   /** @maxLength 10 */
   crp?: string;
   is_estagiario?: boolean;
-  supervisor: string;
+  supervisor?: string;
 }
