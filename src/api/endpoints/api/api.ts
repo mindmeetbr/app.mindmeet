@@ -84,23 +84,23 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 export const apiAgendaRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/agenda/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiAgendaRetrieveQueryKey = () => {
     return [`/api/agenda/`] as const;
     }
 
-
+    
 export const getApiAgendaRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiAgendaRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAgendaRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -108,13 +108,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiAgendaRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiAgendaRetrieve>>> = ({ signal }) => apiAgendaRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiAgendaRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -150,7 +150,7 @@ export function useApiAgendaRetrieve<TData = Awaited<ReturnType<typeof apiAgenda
 
 export function useApiAgendaRetrieve<TData = Awaited<ReturnType<typeof apiAgendaRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAgendaRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiAgendaRetrieveQueryOptions(options)
@@ -165,23 +165,23 @@ export function useApiAgendaRetrieve<TData = Awaited<ReturnType<typeof apiAgenda
 
 
 export const apiAgendamentosRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/agendamentos/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiAgendamentosRetrieveQueryKey = () => {
     return [`/api/agendamentos/`] as const;
     }
 
-
+    
 export const getApiAgendamentosRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiAgendamentosRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAgendamentosRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -189,13 +189,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiAgendamentosRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiAgendamentosRetrieve>>> = ({ signal }) => apiAgendamentosRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiAgendamentosRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -231,7 +231,7 @@ export function useApiAgendamentosRetrieve<TData = Awaited<ReturnType<typeof api
 
 export function useApiAgendamentosRetrieve<TData = Awaited<ReturnType<typeof apiAgendamentosRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAgendamentosRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiAgendamentosRetrieveQueryOptions(options)
@@ -253,20 +253,20 @@ export const anotacaoList = (
     paciente: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Anotacao[]>(
       {url: `/api/anotacoes/${paciente}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getAnotacaoListQueryKey = (paciente?: string,) => {
     return [`/api/anotacoes/${paciente}/`] as const;
     }
 
-
+    
 export const getAnotacaoListQueryOptions = <TData = Awaited<ReturnType<typeof anotacaoList>>, TError = ErrorType<null>>(paciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -274,13 +274,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getAnotacaoListQueryKey(paciente);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof anotacaoList>>> = ({ signal }) => anotacaoList(paciente, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(paciente), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -319,7 +319,7 @@ export function useAnotacaoList<TData = Awaited<ReturnType<typeof anotacaoList>>
 
 export function useAnotacaoList<TData = Awaited<ReturnType<typeof anotacaoList>>, TError = ErrorType<null>>(
  paciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getAnotacaoListQueryOptions(paciente,options)
@@ -342,21 +342,21 @@ export const anotacaoDetail = (
     pkAnotacao: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Anotacao>(
       {url: `/api/anotacoes/${paciente}/${pkAnotacao}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getAnotacaoDetailQueryKey = (paciente?: string,
     pkAnotacao?: number,) => {
     return [`/api/anotacoes/${paciente}/${pkAnotacao}/`] as const;
     }
 
-
+    
 export const getAnotacaoDetailQueryOptions = <TData = Awaited<ReturnType<typeof anotacaoDetail>>, TError = ErrorType<null | null>>(paciente: string,
     pkAnotacao: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
@@ -365,13 +365,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getAnotacaoDetailQueryKey(paciente,pkAnotacao);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof anotacaoDetail>>> = ({ signal }) => anotacaoDetail(paciente,pkAnotacao, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(paciente && pkAnotacao), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -414,7 +414,7 @@ export function useAnotacaoDetail<TData = Awaited<ReturnType<typeof anotacaoDeta
 export function useAnotacaoDetail<TData = Awaited<ReturnType<typeof anotacaoDetail>>, TError = ErrorType<null | null>>(
  paciente: string,
     pkAnotacao: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getAnotacaoDetailQueryOptions(paciente,pkAnotacao,options)
@@ -436,14 +436,14 @@ export const anotacaoDelete = (
     paciente: string,
     pkAnotacao: number,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/anotacoes/${paciente}/${pkAnotacao}/apagar/`, method: 'DELETE'
     },
       options);
     }
-
+  
 
 
 export const getAnotacaoDeleteMutationOptions = <TError = ErrorType<null | null>,
@@ -457,7 +457,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof anotacaoDelete>>, {paciente: string;pkAnotacao: number}> = (props) => {
@@ -466,13 +466,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  anotacaoDelete(paciente,pkAnotacao,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type AnotacaoDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof anotacaoDelete>>>
-
+    
     export type AnotacaoDeleteMutationError = ErrorType<null | null>
 
     /**
@@ -500,8 +500,8 @@ export const anotacaoUpdate = (
     pkAnotacao: number,
     patchedAnotacao: BodyType<NonReadonly<PatchedAnotacao>>,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<Anotacao>(
       {url: `/api/anotacoes/${paciente}/${pkAnotacao}/editar/`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
@@ -509,7 +509,7 @@ export const anotacaoUpdate = (
     },
       options);
     }
-
+  
 
 
 export const getAnotacaoUpdateMutationOptions = <TError = ErrorType<null | null>,
@@ -523,7 +523,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof anotacaoUpdate>>, {paciente: string;pkAnotacao: number;data: BodyType<NonReadonly<PatchedAnotacao>>}> = (props) => {
@@ -532,7 +532,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  anotacaoUpdate(paciente,pkAnotacao,data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -566,8 +566,8 @@ export const anotacaoCreate = (
     criarAnotacao: BodyType<NonReadonly<CriarAnotacao>>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Anotacao>(
       {url: `/api/anotacoes/${paciente}/criar/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -575,7 +575,7 @@ export const anotacaoCreate = (
     },
       options);
     }
-
+  
 
 
 export const getAnotacaoCreateMutationOptions = <TError = ErrorType<null | null>,
@@ -589,7 +589,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof anotacaoCreate>>, {paciente: string;data: BodyType<NonReadonly<CriarAnotacao>>}> = (props) => {
@@ -598,7 +598,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  anotacaoCreate(paciente,data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -636,8 +636,8 @@ export const apiAuthLoginCreate = (
     customLogin: BodyType<CustomLogin>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Jwt>(
       {url: `/api/auth/login/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -645,7 +645,7 @@ export const apiAuthLoginCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthLoginCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -659,7 +659,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthLoginCreate>>, {data: BodyType<CustomLogin>}> = (props) => {
@@ -668,7 +668,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthLoginCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -697,17 +697,17 @@ assigned to the current User object.
 Accepts/Returns nothing.
  */
 export const apiAuthLogoutCreate = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/logout/`, method: 'POST', signal
     },
       options);
     }
-
+  
 
 
 export const getApiAuthLogoutCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -721,22 +721,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthLogoutCreate>>, void> = () => {
-
+          
 
           return  apiAuthLogoutCreate(requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiAuthLogoutCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiAuthLogoutCreate>>>
-
+    
     export type ApiAuthLogoutCreateMutationError = ErrorType<unknown>
 
     export const useApiAuthLogoutCreate = <TError = ErrorType<unknown>,
@@ -762,8 +762,8 @@ export const apiAuthPasswordChangeCreate = (
     passwordChange: BodyType<PasswordChange>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/password/change/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -771,7 +771,7 @@ export const apiAuthPasswordChangeCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthPasswordChangeCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -785,7 +785,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthPasswordChangeCreate>>, {data: BodyType<PasswordChange>}> = (props) => {
@@ -794,7 +794,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthPasswordChangeCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -826,8 +826,8 @@ export const apiAuthPasswordResetCreate = (
     passwordReset: BodyType<PasswordReset>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/password/reset/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -835,7 +835,7 @@ export const apiAuthPasswordResetCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthPasswordResetCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -849,7 +849,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthPasswordResetCreate>>, {data: BodyType<PasswordReset>}> = (props) => {
@@ -858,7 +858,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthPasswordResetCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -892,8 +892,8 @@ export const apiAuthPasswordResetConfirmCreate = (
     passwordResetConfirm: BodyType<PasswordResetConfirm>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/password/reset/confirm/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -901,7 +901,7 @@ export const apiAuthPasswordResetConfirmCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthPasswordResetConfirmCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -915,7 +915,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthPasswordResetConfirmCreate>>, {data: BodyType<PasswordResetConfirm>}> = (props) => {
@@ -924,7 +924,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthPasswordResetConfirmCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -950,8 +950,8 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     customRegister: BodyType<CustomRegister>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Jwt>(
       {url: `/api/auth/registration/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -959,7 +959,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     },
       options);
     }
-
+  
 
 
 export const getApiAuthRegistrationCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -973,7 +973,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthRegistrationCreate>>, {data: BodyType<CustomRegister>}> = (props) => {
@@ -982,7 +982,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthRegistrationCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1008,8 +1008,8 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     resendEmailVerification: BodyType<ResendEmailVerification>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/registration/resend-email/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -1017,7 +1017,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     },
       options);
     }
-
+  
 
 
 export const getApiAuthRegistrationResendEmailCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -1031,7 +1031,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthRegistrationResendEmailCreate>>, {data: BodyType<ResendEmailVerification>}> = (props) => {
@@ -1040,7 +1040,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthRegistrationResendEmailCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1066,8 +1066,8 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     verifyEmail: BodyType<VerifyEmail>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<RestAuthDetail>(
       {url: `/api/auth/registration/verify-email/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -1075,7 +1075,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     },
       options);
     }
-
+  
 
 
 export const getApiAuthRegistrationVerifyEmailCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -1089,7 +1089,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthRegistrationVerifyEmailCreate>>, {data: BodyType<VerifyEmail>}> = (props) => {
@@ -1098,7 +1098,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthRegistrationVerifyEmailCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1128,8 +1128,8 @@ export const apiAuthTokenRefreshCreate = (
     tokenRefresh: BodyType<NonReadonly<TokenRefresh>>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<TokenRefresh>(
       {url: `/api/auth/token/refresh/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -1137,7 +1137,7 @@ export const apiAuthTokenRefreshCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthTokenRefreshCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -1151,7 +1151,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthTokenRefreshCreate>>, {data: BodyType<NonReadonly<TokenRefresh>>}> = (props) => {
@@ -1160,7 +1160,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthTokenRefreshCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1190,8 +1190,8 @@ export const apiAuthTokenVerifyCreate = (
     tokenVerify: BodyType<TokenVerify>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<TokenVerify>(
       {url: `/api/auth/token/verify/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -1199,7 +1199,7 @@ export const apiAuthTokenVerifyCreate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthTokenVerifyCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -1213,7 +1213,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthTokenVerifyCreate>>, {data: BodyType<TokenVerify>}> = (props) => {
@@ -1222,7 +1222,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthTokenVerifyCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1255,23 +1255,23 @@ Read-only fields: pk, email
 Returns UserModel fields.
  */
 export const apiAuthUserRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<UserDetails>(
       {url: `/api/auth/user/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiAuthUserRetrieveQueryKey = () => {
     return [`/api/auth/user/`] as const;
     }
 
-
+    
 export const getApiAuthUserRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiAuthUserRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAuthUserRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1279,13 +1279,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiAuthUserRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiAuthUserRetrieve>>> = ({ signal }) => apiAuthUserRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiAuthUserRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1321,7 +1321,7 @@ export function useApiAuthUserRetrieve<TData = Awaited<ReturnType<typeof apiAuth
 
 export function useApiAuthUserRetrieve<TData = Awaited<ReturnType<typeof apiAuthUserRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAuthUserRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiAuthUserRetrieveQueryOptions(options)
@@ -1348,8 +1348,8 @@ Returns UserModel fields.
 export const apiAuthUserUpdate = (
     userDetails: BodyType<NonReadonly<UserDetails>>,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<UserDetails>(
       {url: `/api/auth/user/`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
@@ -1357,7 +1357,7 @@ export const apiAuthUserUpdate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthUserUpdateMutationOptions = <TError = ErrorType<unknown>,
@@ -1371,7 +1371,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserUpdate>>, {data: BodyType<NonReadonly<UserDetails>>}> = (props) => {
@@ -1380,7 +1380,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthUserUpdate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1415,8 +1415,8 @@ Returns UserModel fields.
 export const apiAuthUserPartialUpdate = (
     patchedUserDetails: BodyType<NonReadonly<PatchedUserDetails>>,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<UserDetails>(
       {url: `/api/auth/user/`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
@@ -1424,7 +1424,7 @@ export const apiAuthUserPartialUpdate = (
     },
       options);
     }
-
+  
 
 
 export const getApiAuthUserPartialUpdateMutationOptions = <TError = ErrorType<unknown>,
@@ -1438,7 +1438,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, {data: BodyType<NonReadonly<PatchedUserDetails>>}> = (props) => {
@@ -1447,7 +1447,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiAuthUserPartialUpdate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -1470,23 +1470,23 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(mutationOptions , queryClient);
     }
     export const apiAvailabilityRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/availability/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiAvailabilityRetrieveQueryKey = () => {
     return [`/api/availability/`] as const;
     }
 
-
+    
 export const getApiAvailabilityRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiAvailabilityRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAvailabilityRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1494,13 +1494,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiAvailabilityRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiAvailabilityRetrieve>>> = ({ signal }) => apiAvailabilityRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiAvailabilityRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1536,7 +1536,7 @@ export function useApiAvailabilityRetrieve<TData = Awaited<ReturnType<typeof api
 
 export function useApiAvailabilityRetrieve<TData = Awaited<ReturnType<typeof apiAvailabilityRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiAvailabilityRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiAvailabilityRetrieveQueryOptions(options)
@@ -1551,16 +1551,16 @@ export function useApiAvailabilityRetrieve<TData = Awaited<ReturnType<typeof api
 
 
 export const apiAvailabilityAtualizarUpdate = (
-
+    
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/availability/atualizar/`, method: 'PUT'
     },
       options);
     }
-
+  
 
 
 export const getApiAvailabilityAtualizarUpdateMutationOptions = <TError = ErrorType<unknown>,
@@ -1574,22 +1574,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAvailabilityAtualizarUpdate>>, void> = () => {
-
+          
 
           return  apiAvailabilityAtualizarUpdate(requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiAvailabilityAtualizarUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof apiAvailabilityAtualizarUpdate>>>
-
+    
     export type ApiAvailabilityAtualizarUpdateMutationError = ErrorType<unknown>
 
     export const useApiAvailabilityAtualizarUpdate = <TError = ErrorType<unknown>,
@@ -1606,17 +1606,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       return useMutation(mutationOptions , queryClient);
     }
     export const apiMarcarAgendamentoCreate = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/marcar-agendamento/`, method: 'POST', signal
     },
       options);
     }
-
+  
 
 
 export const getApiMarcarAgendamentoCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -1630,22 +1630,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiMarcarAgendamentoCreate>>, void> = () => {
-
+          
 
           return  apiMarcarAgendamentoCreate(requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiMarcarAgendamentoCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiMarcarAgendamentoCreate>>>
-
+    
     export type ApiMarcarAgendamentoCreateMutationError = ErrorType<unknown>
 
     export const useApiMarcarAgendamentoCreate = <TError = ErrorType<unknown>,
@@ -1666,23 +1666,23 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Retorna os dados do usuário da requisição
  */
 export const profileView = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<MUser>(
       {url: `/api/me/profile/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getProfileViewQueryKey = () => {
     return [`/api/me/profile/`] as const;
     }
 
-
+    
 export const getProfileViewQueryOptions = <TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1690,13 +1690,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getProfileViewQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof profileView>>> = ({ signal }) => profileView(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1735,7 +1735,7 @@ export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, 
 
 export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getProfileViewQueryOptions(options)
@@ -1754,23 +1754,23 @@ export function useProfileView<TData = Awaited<ReturnType<typeof profileView>>, 
  * @summary Lista todas as notificações de um usuário
  */
 export const notificacaoList = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Notificacao[]>(
       {url: `/api/notificacoes/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getNotificacaoListQueryKey = () => {
     return [`/api/notificacoes/`] as const;
     }
 
-
+    
 export const getNotificacaoListQueryOptions = <TData = Awaited<ReturnType<typeof notificacaoList>>, TError = ErrorType<null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1778,13 +1778,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getNotificacaoListQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof notificacaoList>>> = ({ signal }) => notificacaoList(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificacaoList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1823,7 +1823,7 @@ export function useNotificacaoList<TData = Awaited<ReturnType<typeof notificacao
 
 export function useNotificacaoList<TData = Awaited<ReturnType<typeof notificacaoList>>, TError = ErrorType<null>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getNotificacaoListQueryOptions(options)
@@ -1845,20 +1845,20 @@ export const notificacaoDetail = (
     idNotif: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Notificacao>(
       {url: `/api/notificacoes/${idNotif}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getNotificacaoDetailQueryKey = (idNotif?: string,) => {
     return [`/api/notificacoes/${idNotif}/`] as const;
     }
 
-
+    
 export const getNotificacaoDetailQueryOptions = <TData = Awaited<ReturnType<typeof notificacaoDetail>>, TError = ErrorType<null | null>>(idNotif: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1866,13 +1866,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getNotificacaoDetailQueryKey(idNotif);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof notificacaoDetail>>> = ({ signal }) => notificacaoDetail(idNotif, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(idNotif), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificacaoDetail>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1911,7 +1911,7 @@ export function useNotificacaoDetail<TData = Awaited<ReturnType<typeof notificac
 
 export function useNotificacaoDetail<TData = Awaited<ReturnType<typeof notificacaoDetail>>, TError = ErrorType<null | null>>(
  idNotif: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getNotificacaoDetailQueryOptions(idNotif,options)
@@ -1930,23 +1930,23 @@ export function useNotificacaoDetail<TData = Awaited<ReturnType<typeof notificac
  * @summary Lista as notificações não lidas de um usuário
  */
 export const notificacaoPendenteList = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<NotificacoesPendentes>(
       {url: `/api/notificacoes/pendentes/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getNotificacaoPendenteListQueryKey = () => {
     return [`/api/notificacoes/pendentes/`] as const;
     }
 
-
+    
 export const getNotificacaoPendenteListQueryOptions = <TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -1954,13 +1954,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getNotificacaoPendenteListQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof notificacaoPendenteList>>> = ({ signal }) => notificacaoPendenteList(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -1999,7 +1999,7 @@ export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof not
 
 export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof notificacaoPendenteList>>, TError = ErrorType<null | null>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof notificacaoPendenteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getNotificacaoPendenteListQueryOptions(options)
@@ -2018,23 +2018,23 @@ export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof not
  * @summary Lista todos os pacientes
  */
 export const pacienteList = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Paciente[]>(
       {url: `/api/pacientes/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getPacienteListQueryKey = () => {
     return [`/api/pacientes/`] as const;
     }
 
-
+    
 export const getPacienteListQueryOptions = <TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2042,13 +2042,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getPacienteListQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteList>>> = ({ signal }) => pacienteList(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2087,7 +2087,7 @@ export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>
 
 export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>, TError = ErrorType<null>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getPacienteListQueryOptions(options)
@@ -2109,20 +2109,20 @@ export const pacienteDetail = (
     idPaciente: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Paciente>(
       {url: `/api/pacientes/${idPaciente}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getPacienteDetailQueryKey = (idPaciente?: string,) => {
     return [`/api/pacientes/${idPaciente}/`] as const;
     }
 
-
+    
 export const getPacienteDetailQueryOptions = <TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2130,13 +2130,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getPacienteDetailQueryKey(idPaciente);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteDetail>>> = ({ signal }) => pacienteDetail(idPaciente, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(idPaciente), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2175,7 +2175,7 @@ export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDeta
 
 export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDetail>>, TError = ErrorType<null | null>>(
  idPaciente: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof pacienteDetail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getPacienteDetailQueryOptions(idPaciente,options)
@@ -2196,14 +2196,14 @@ export function usePacienteDetail<TData = Awaited<ReturnType<typeof pacienteDeta
 export const pacienteDelete = (
     idPaciente: string,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/pacientes/${idPaciente}/apagar/`, method: 'DELETE'
     },
       options);
     }
-
+  
 
 
 export const getPacienteDeleteMutationOptions = <TError = ErrorType<null | null>,
@@ -2217,7 +2217,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteDelete>>, {idPaciente: string}> = (props) => {
@@ -2226,13 +2226,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  pacienteDelete(idPaciente,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type PacienteDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof pacienteDelete>>>
-
+    
     export type PacienteDeleteMutationError = ErrorType<null | null>
 
     /**
@@ -2259,8 +2259,8 @@ export const pacienteUpdate = (
     idPaciente: string,
     patchedPaciente: BodyType<NonReadonly<PatchedPaciente>>,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<Paciente>(
       {url: `/api/pacientes/${idPaciente}/editar/`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
@@ -2268,7 +2268,7 @@ export const pacienteUpdate = (
     },
       options);
     }
-
+  
 
 
 export const getPacienteUpdateMutationOptions = <TError = ErrorType<null | null>,
@@ -2282,7 +2282,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteUpdate>>, {idPaciente: string;data: BodyType<NonReadonly<PatchedPaciente>>}> = (props) => {
@@ -2291,7 +2291,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  pacienteUpdate(idPaciente,data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -2324,8 +2324,8 @@ export const pacienteCreate = (
     paciente: BodyType<NonReadonly<Paciente>>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<Paciente>(
       {url: `/api/pacientes/criar/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -2333,7 +2333,7 @@ export const pacienteCreate = (
     },
       options);
     }
-
+  
 
 
 export const getPacienteCreateMutationOptions = <TError = ErrorType<null>,
@@ -2347,7 +2347,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof pacienteCreate>>, {data: BodyType<NonReadonly<Paciente>>}> = (props) => {
@@ -2356,7 +2356,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  pacienteCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -2382,23 +2382,23 @@ export const usePacienteCreate = <TError = ErrorType<null>,
       return useMutation(mutationOptions , queryClient);
     }
     export const apiPsicologosRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/psicologos/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiPsicologosRetrieveQueryKey = () => {
     return [`/api/psicologos/`] as const;
     }
 
-
+    
 export const getApiPsicologosRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiPsicologosRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2406,13 +2406,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiPsicologosRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiPsicologosRetrieve>>> = ({ signal }) => apiPsicologosRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2448,7 +2448,7 @@ export function useApiPsicologosRetrieve<TData = Awaited<ReturnType<typeof apiPs
 
 export function useApiPsicologosRetrieve<TData = Awaited<ReturnType<typeof apiPsicologosRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiPsicologosRetrieveQueryOptions(options)
@@ -2466,14 +2466,14 @@ export const apiPsicologosSolicitacaoConsultaCreate = (
     psicologoId: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/psicologos/${psicologoId}/solicitacao_consulta/`, method: 'POST', signal
     },
       options);
     }
-
+  
 
 
 export const getApiPsicologosSolicitacaoConsultaCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -2487,7 +2487,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiPsicologosSolicitacaoConsultaCreate>>, {psicologoId: string}> = (props) => {
@@ -2496,13 +2496,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiPsicologosSolicitacaoConsultaCreate(psicologoId,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiPsicologosSolicitacaoConsultaCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiPsicologosSolicitacaoConsultaCreate>>>
-
+    
     export type ApiPsicologosSolicitacaoConsultaCreateMutationError = ErrorType<unknown>
 
     export const useApiPsicologosSolicitacaoConsultaCreate = <TError = ErrorType<unknown>,
@@ -2522,20 +2522,20 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     username: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/psicologos/${username}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiPsicologosRetrieve2QueryKey = (username?: string,) => {
     return [`/api/psicologos/${username}/`] as const;
     }
 
-
+    
 export const getApiPsicologosRetrieve2QueryOptions = <TData = Awaited<ReturnType<typeof apiPsicologosRetrieve2>>, TError = ErrorType<unknown>>(username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve2>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2543,13 +2543,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiPsicologosRetrieve2QueryKey(username);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiPsicologosRetrieve2>>> = ({ signal }) => apiPsicologosRetrieve2(username, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(username), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve2>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2585,7 +2585,7 @@ export function useApiPsicologosRetrieve2<TData = Awaited<ReturnType<typeof apiP
 
 export function useApiPsicologosRetrieve2<TData = Awaited<ReturnType<typeof apiPsicologosRetrieve2>>, TError = ErrorType<unknown>>(
  username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosRetrieve2>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiPsicologosRetrieve2QueryOptions(username,options)
@@ -2603,20 +2603,20 @@ export const apiPsicologosDisponibilidadeRetrieve = (
     username: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/psicologos/${username}/disponibilidade/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiPsicologosDisponibilidadeRetrieveQueryKey = (username?: string,) => {
     return [`/api/psicologos/${username}/disponibilidade/`] as const;
     }
 
-
+    
 export const getApiPsicologosDisponibilidadeRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>, TError = ErrorType<unknown>>(username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2624,13 +2624,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiPsicologosDisponibilidadeRetrieveQueryKey(username);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>> = ({ signal }) => apiPsicologosDisponibilidadeRetrieve(username, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(username), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2666,7 +2666,7 @@ export function useApiPsicologosDisponibilidadeRetrieve<TData = Awaited<ReturnTy
 
 export function useApiPsicologosDisponibilidadeRetrieve<TData = Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>, TError = ErrorType<unknown>>(
  username: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiPsicologosDisponibilidadeRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiPsicologosDisponibilidadeRetrieveQueryOptions(username,options)
@@ -2681,23 +2681,23 @@ export function useApiPsicologosDisponibilidadeRetrieve<TData = Awaited<ReturnTy
 
 
 export const apiSolicitacoesRetrieve = (
-
+    
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiSolicitacoesRetrieveQueryKey = () => {
     return [`/api/solicitacoes/`] as const;
     }
 
-
+    
 export const getApiSolicitacoesRetrieveQueryOptions = <TData = Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2705,13 +2705,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiSolicitacoesRetrieveQueryKey();
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>> = ({ signal }) => apiSolicitacoesRetrieve(requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2747,7 +2747,7 @@ export function useApiSolicitacoesRetrieve<TData = Awaited<ReturnType<typeof api
 
 export function useApiSolicitacoesRetrieve<TData = Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiSolicitacoesRetrieveQueryOptions(options)
@@ -2765,20 +2765,20 @@ export const apiSolicitacoesRetrieve2 = (
     id: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/${id}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getApiSolicitacoesRetrieve2QueryKey = (id?: number,) => {
     return [`/api/solicitacoes/${id}/`] as const;
     }
 
-
+    
 export const getApiSolicitacoesRetrieve2QueryOptions = <TData = Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>, TError = ErrorType<unknown>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
@@ -2786,13 +2786,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getApiSolicitacoesRetrieve2QueryKey(id);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>> = ({ signal }) => apiSolicitacoesRetrieve2(id, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -2828,7 +2828,7 @@ export function useApiSolicitacoesRetrieve2<TData = Awaited<ReturnType<typeof ap
 
 export function useApiSolicitacoesRetrieve2<TData = Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>, TError = ErrorType<unknown>>(
  id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof apiSolicitacoesRetrieve2>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getApiSolicitacoesRetrieve2QueryOptions(id,options)
@@ -2846,14 +2846,14 @@ export const apiSolicitacoesAceitarCreate = (
     id: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/${id}/aceitar/`, method: 'POST', signal
     },
       options);
     }
-
+  
 
 
 export const getApiSolicitacoesAceitarCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -2867,7 +2867,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiSolicitacoesAceitarCreate>>, {id: number}> = (props) => {
@@ -2876,13 +2876,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiSolicitacoesAceitarCreate(id,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiSolicitacoesAceitarCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiSolicitacoesAceitarCreate>>>
-
+    
     export type ApiSolicitacoesAceitarCreateMutationError = ErrorType<unknown>
 
     export const useApiSolicitacoesAceitarCreate = <TError = ErrorType<unknown>,
@@ -2901,14 +2901,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export const apiSolicitacoesEditarUpdate = (
     id: number,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/${id}/editar/`, method: 'PUT'
     },
       options);
     }
-
+  
 
 
 export const getApiSolicitacoesEditarUpdateMutationOptions = <TError = ErrorType<unknown>,
@@ -2922,7 +2922,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiSolicitacoesEditarUpdate>>, {id: number}> = (props) => {
@@ -2931,13 +2931,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiSolicitacoesEditarUpdate(id,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiSolicitacoesEditarUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof apiSolicitacoesEditarUpdate>>>
-
+    
     export type ApiSolicitacoesEditarUpdateMutationError = ErrorType<unknown>
 
     export const useApiSolicitacoesEditarUpdate = <TError = ErrorType<unknown>,
@@ -2956,14 +2956,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export const apiSolicitacoesEditarPartialUpdate = (
     id: number,
  options?: SecondParameter<typeof customInstance>,) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/${id}/editar/`, method: 'PATCH'
     },
       options);
     }
-
+  
 
 
 export const getApiSolicitacoesEditarPartialUpdateMutationOptions = <TError = ErrorType<unknown>,
@@ -2977,7 +2977,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiSolicitacoesEditarPartialUpdate>>, {id: number}> = (props) => {
@@ -2986,13 +2986,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiSolicitacoesEditarPartialUpdate(id,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiSolicitacoesEditarPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof apiSolicitacoesEditarPartialUpdate>>>
-
+    
     export type ApiSolicitacoesEditarPartialUpdateMutationError = ErrorType<unknown>
 
     export const useApiSolicitacoesEditarPartialUpdate = <TError = ErrorType<unknown>,
@@ -3012,14 +3012,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     id: number,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/solicitacoes/${id}/rejeitar/`, method: 'POST', signal
     },
       options);
     }
-
+  
 
 
 export const getApiSolicitacoesRejeitarCreateMutationOptions = <TError = ErrorType<unknown>,
@@ -3033,7 +3033,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiSolicitacoesRejeitarCreate>>, {id: number}> = (props) => {
@@ -3042,13 +3042,13 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  apiSolicitacoesRejeitarCreate(id,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiSolicitacoesRejeitarCreateMutationResult = NonNullable<Awaited<ReturnType<typeof apiSolicitacoesRejeitarCreate>>>
-
+    
     export type ApiSolicitacoesRejeitarCreateMutationError = ErrorType<unknown>
 
     export const useApiSolicitacoesRejeitarCreate = <TError = ErrorType<unknown>,
@@ -3073,21 +3073,21 @@ export const aprovarEstagiario = (
     token: string,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<null>(
       {url: `/api/users/aprovar/${id}/${token}/`, method: 'GET', signal
     },
       options);
     }
-
+  
 
 export const getAprovarEstagiarioQueryKey = (id?: string,
     token?: string,) => {
     return [`/api/users/aprovar/${id}/${token}/`] as const;
     }
 
-
+    
 export const getAprovarEstagiarioQueryOptions = <TData = Awaited<ReturnType<typeof aprovarEstagiario>>, TError = ErrorType<null | null>>(id: string,
     token: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof aprovarEstagiario>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
@@ -3096,13 +3096,13 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getAprovarEstagiarioQueryKey(id,token);
 
-
+  
 
     const queryFn: QueryFunction<Awaited<ReturnType<typeof aprovarEstagiario>>> = ({ signal }) => aprovarEstagiario(id,token, requestOptions, signal);
 
+      
 
-
-
+      
 
    return  { queryKey, queryFn, enabled: !!(id && token), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof aprovarEstagiario>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
 }
@@ -3145,7 +3145,7 @@ export function useAprovarEstagiario<TData = Awaited<ReturnType<typeof aprovarEs
 export function useAprovarEstagiario<TData = Awaited<ReturnType<typeof aprovarEstagiario>>, TError = ErrorType<null | null>>(
  id: string,
     token: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof aprovarEstagiario>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
+ , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getAprovarEstagiarioQueryOptions(id,token,options)
@@ -3167,8 +3167,8 @@ export const userCreate = (
     criarMUser: BodyType<CriarMUser>,
  options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
 ) => {
-
-
+      
+      
       return customInstance<CriarMUser>(
       {url: `/api/users/cadastrar/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
@@ -3176,7 +3176,7 @@ export const userCreate = (
     },
       options);
     }
-
+  
 
 
 export const getUserCreateMutationOptions = <TError = ErrorType<null>,
@@ -3190,7 +3190,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       : {...options, mutation: {...options.mutation, mutationKey}}
       : {mutation: { mutationKey, }, request: undefined};
 
-
+      
 
 
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof userCreate>>, {data: BodyType<CriarMUser>}> = (props) => {
@@ -3199,7 +3199,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
           return  userCreate(data,requestOptions)
         }
 
-
+        
 
 
   return  { mutationFn, ...mutationOptions }}
@@ -3224,3 +3224,4 @@ export const useUserCreate = <TError = ErrorType<null>,
 
       return useMutation(mutationOptions , queryClient);
     }
+    
