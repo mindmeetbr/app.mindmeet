@@ -9,6 +9,7 @@ import {
   Card,
   rem,
   Flex,
+  Badge,
 } from '@mantine/core'
 import {
   IconPlus,
@@ -99,9 +100,16 @@ function TabelaPacientes() {
               .slice(0, 2)}
           </Avatar>
           <div>
-            <Text fw={500} size="sm">
-              {paciente.nome_completo}
-            </Text>
+            <Group gap="sm">
+              <Text fw={500} size="sm">
+                {paciente.nome_completo}
+              </Text>
+              {paciente.acompanhado_por && (
+                <Badge variant="outline" size="sm">
+                  {paciente.acompanhado_por}
+                </Badge>
+              )}
+            </Group>
             <Text size="sm" c="dimmed">
               {paciente.cpf}
             </Text>
@@ -138,7 +146,12 @@ function TabelaPacientes() {
             </ActionIcon>
           </Link>
           <Link to="/app/pacientes/novo" search={{ id: paciente.id }}>
-            <ActionIcon variant="light" color="orange" size="sm">
+            <ActionIcon
+              variant="light"
+              color="orange"
+              size="sm"
+              disabled={!!paciente.acompanhado_por}
+            >
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
@@ -146,6 +159,7 @@ function TabelaPacientes() {
             variant="light"
             color="red"
             size="sm"
+            disabled={!!paciente.acompanhado_por}
             onClick={() => handleClick(paciente.id)}
           >
             <IconTrash style={{ width: rem(14), height: rem(14) }} />

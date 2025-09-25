@@ -14,7 +14,7 @@ import {
 } from '@mantine/core'
 // import { notifications } from '@mantine/notifications'
 import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from '@mantine/form'
 import { PageLayout } from '../../../components/layout'
 import {
@@ -41,6 +41,15 @@ function NovoPacientePage() {
   const { mutate: criarPaciente } = usePacienteCreate()
   const { mutate: editarPaciente } = usePacienteUpdate()
   const { data: paciente, isSuccess } = usePacienteDetail(pacienteId as string)
+
+  useEffect(() => {
+    if (paciente?.acompanhado_por) {
+      router.navigate({
+        to: '/app/pacientes/$id',
+        params: { id: pacienteId as string },
+      })
+    }
+  }, [paciente, router, pacienteId])
 
   const listaEstados = [
     'AC',

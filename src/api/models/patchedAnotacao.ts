@@ -7,6 +7,7 @@
 
 export interface PatchedAnotacao {
   readonly id?: number;
+  readonly escrita_por?: string;
   data?: string;
   /** @maxLength 255 */
   titulo?: string;

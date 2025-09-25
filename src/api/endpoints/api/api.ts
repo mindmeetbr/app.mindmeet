@@ -246,7 +246,7 @@ export function useApiAgendamentosRetrieve<TData = Awaited<ReturnType<typeof api
 
 
 /**
- * Retorna uma lista com todas as anotações associadas ao paciente.
+ * Retorna uma lista com todas as anotações associadas ao paciente. Também vísivel ao supervisor do psicólogo.
  * @summary Lista todas as anotações de um paciente
  */
 export const anotacaoList = (
@@ -334,7 +334,7 @@ export function useAnotacaoList<TData = Awaited<ReturnType<typeof anotacaoList>>
 
 
 /**
- * Retorna todos os dados de uma anotação vinculada a um paciente.
+ * Retorna todos os dados de uma anotação vinculada a um paciente. Também vísivel ao supervisor do psicólogo.
  * @summary Obtém detalhes sobre uma anotação
  */
 export const anotacaoDetail = (
@@ -2014,7 +2014,7 @@ export function useNotificacaoPendenteList<TData = Awaited<ReturnType<typeof not
 
 
 /**
- * Retorna uma lista com todos os pacientes associados a um psicólogo.
+ * Retorna uma lista com todos os pacientes associados a um psicólogo. Também vísivel ao supervisor do psicólogo.
  * @summary Lista todos os pacientes
  */
 export const pacienteList = (
@@ -2102,7 +2102,7 @@ export function usePacienteList<TData = Awaited<ReturnType<typeof pacienteList>>
 
 
 /**
- * Retorna todos os dados referentes a um paciente.
+ * Retorna todos os dados referentes a um paciente. Também vísivel ao supervisor do psicólogo.
  * @summary Obtém detalhes sobre um paciente
  */
 export const pacienteDetail = (

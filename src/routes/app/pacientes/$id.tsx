@@ -6,7 +6,7 @@ import {
   Group,
   Button,
   Text,
-  // Badge,
+  Badge,
   Avatar,
   Grid,
   // Divider,
@@ -17,6 +17,7 @@ import {
   Tabs,
   Modal,
   TextInput,
+  Tooltip,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -54,7 +55,7 @@ const calcularIdade = (dataNascimento: string) => {
   return dayjs().diff(dayjs(dataNascimento), 'year')
 }
 
-function BotaoNovaConsulta() {
+function BotaoNovaConsulta({ desativado }: { desativado?: boolean }) {
   const [opened, { open, close }] = useDisclosure(false)
   const { id } = Route.useParams()
   const { mutate: criarAnotacao } = useAnotacaoCreate()
@@ -158,7 +159,7 @@ function BotaoNovaConsulta() {
               valueFormat="DD [de] MMMM [de] YYYY, HH:mm"
               label="Data"
               placeholder="Selecione a data"
-              size="md"
+              size="sm"
               radius="md"
               withSeconds={false}
               key={form.key('data')}
@@ -190,6 +191,7 @@ function BotaoNovaConsulta() {
           <IconCalendar style={{ width: rem(16), height: rem(16) }} />
         }
         onClick={open}
+        disabled={desativado}
       >
         Nova Anotação
       </Button>
@@ -197,7 +199,7 @@ function BotaoNovaConsulta() {
   )
 }
 
-function LinhaDoTempo() {
+function LinhaDoTempo({ podeEditar }: { podeEditar?: boolean }) {
   const { id } = Route.useParams()
   const { data, isLoading, isError } = useAnotacaoList(id)
   const { mutate: editarAnotacao } = useAnotacaoUpdate()
@@ -264,7 +266,7 @@ function LinhaDoTempo() {
 
   return (
     <Timeline active={data.length} bulletSize={24} lineWidth={2}>
-      {data.map((consulta: Anotacao, _) => (
+      {data.map((consulta: Anotacao) => (
         <Timeline.Item
           key={consulta.id}
           bullet={
@@ -278,13 +280,15 @@ function LinhaDoTempo() {
                   {dayjs(consulta.data).format('DD/MM/YYYY[ - ]HH:mm')}
                 </Text>
               </div>
-              <ActionIcon
-                variant="light"
-                size="sm"
-                onClick={() => handleEditConsulta(consulta)}
-              >
-                <IconPencil style={{ width: rem(14), height: rem(14) }} />
-              </ActionIcon>
+              {podeEditar && (
+                <ActionIcon
+                  variant="light"
+                  size="sm"
+                  onClick={() => handleEditConsulta(consulta)}
+                >
+                  <IconPencil style={{ width: rem(14), height: rem(14) }} />
+                </ActionIcon>
+              )}
             </Group>
           }
         >
@@ -398,13 +402,18 @@ function PacienteDetalhePage() {
         { label: paciente.nome_completo, isCurrentPage: true },
       ]}
       title={paciente.nome_completo}
-      primaryAction={{
-        label: 'Editar',
-        icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
-        variant: 'light',
-        onClick: () =>
-          router.navigate({ to: '/app/pacientes/novo', search: { id } }),
-      }}
+      primaryAction={
+        // se existe acompanhado -> supervisor que está olhando
+        paciente.acompanhado_por
+          ? undefined
+          : {
+              label: 'Editar',
+              icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
+              variant: 'light',
+              onClick: () =>
+                router.navigate({ to: '/app/pacientes/novo', search: { id } }),
+            }
+      }
       headerChildren={
         <Group gap="md" mt="xs">
           <Avatar size={60} radius="md">
@@ -463,6 +472,15 @@ function PacienteDetalhePage() {
                     <Text c="dimmed">
                       {calcularIdade(paciente.data_nascimento)} anos
                     </Text>
+                    {paciente?.acompanhado_por && (
+                      <Tooltip
+                        label={`Acompanhado por ${paciente.acompanhado_por}`}
+                      >
+                        <Badge variant="outline">
+                          {paciente.acompanhado_por}
+                        </Badge>
+                      </Tooltip>
+                    )}
                   </div>
 
                   <Stack gap="xs" w="100%">
@@ -638,10 +656,10 @@ function PacienteDetalhePage() {
           <Card withBorder radius="md" p="xl">
             <Group justify="space-between" mb="lg">
               <Title order={4}>Linha do Tempo das Consultas</Title>
-              <BotaoNovaConsulta />
+              <BotaoNovaConsulta desativado={!!paciente?.acompanhado_por} />
             </Group>
 
-            <LinhaDoTempo />
+            <LinhaDoTempo podeEditar={!paciente?.acompanhado_por} />
           </Card>
         </Tabs.Panel>
       </Tabs>
