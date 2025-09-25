@@ -17,6 +17,7 @@ import {
   Tabs,
   Modal,
   TextInput,
+  Tooltip,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -158,7 +159,7 @@ function BotaoNovaConsulta({ desativado }: { desativado?: boolean }) {
               valueFormat="DD [de] MMMM [de] YYYY, HH:mm"
               label="Data"
               placeholder="Selecione a data"
-              size="md"
+              size="sm"
               radius="md"
               withSeconds={false}
               key={form.key('data')}
@@ -401,13 +402,18 @@ function PacienteDetalhePage() {
         { label: paciente.nome_completo, isCurrentPage: true },
       ]}
       title={paciente.nome_completo}
-      primaryAction={{
-        label: 'Editar',
-        icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
-        variant: 'light',
-        onClick: () =>
-          router.navigate({ to: '/app/pacientes/novo', search: { id } }),
-      }}
+      primaryAction={
+        // se existe acompanhado -> supervisor que está olhando
+        paciente.acompanhado_por
+          ? undefined
+          : {
+              label: 'Editar',
+              icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
+              variant: 'light',
+              onClick: () =>
+                router.navigate({ to: '/app/pacientes/novo', search: { id } }),
+            }
+      }
       headerChildren={
         <Group gap="md" mt="xs">
           <Avatar size={60} radius="md">
@@ -467,9 +473,13 @@ function PacienteDetalhePage() {
                       {calcularIdade(paciente.data_nascimento)} anos
                     </Text>
                     {paciente?.acompanhado_por && (
-                      <Badge variant="outline">
-                        Acompanhado por {paciente.acompanhado_por}
-                      </Badge>
+                      <Tooltip
+                        label={`Acompanhado por ${paciente.acompanhado_por}`}
+                      >
+                        <Badge variant="outline">
+                          {paciente.acompanhado_por}
+                        </Badge>
+                      </Tooltip>
                     )}
                   </div>
 
