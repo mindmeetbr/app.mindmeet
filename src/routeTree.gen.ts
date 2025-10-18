@@ -10,12 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CadastroIndexRouteImport } from './routes/cadastro/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as PsicologoIdRouteImport } from './routes/psicologo/$id'
+import { Route as CadastroPsicologoRouteImport } from './routes/cadastro/psicologo'
+import { Route as CadastroGestorRouteImport } from './routes/cadastro/gestor'
 import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
 import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
 import { Route as AppAprovarRouteImport } from './routes/app/aprovar'
@@ -28,11 +30,6 @@ import { Route as AppNotificacoesIdRouteImport } from './routes/app/notificacoes
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CadastroRoute = CadastroRouteImport.update({
-  id: '/cadastro',
-  path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -50,6 +47,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroIndexRoute = CadastroIndexRouteImport.update({
+  id: '/cadastro/',
+  path: '/cadastro/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -58,6 +60,16 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const PsicologoIdRoute = PsicologoIdRouteImport.update({
   id: '/psicologo/$id',
   path: '/psicologo/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroPsicologoRoute = CadastroPsicologoRouteImport.update({
+  id: '/cadastro/psicologo',
+  path: '/cadastro/psicologo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroGestorRoute = CadastroGestorRouteImport.update({
+  id: '/cadastro/gestor',
+  path: '/cadastro/gestor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppDisponibilidadeRoute = AppDisponibilidadeRouteImport.update({
@@ -105,13 +117,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
+  '/cadastro': typeof CadastroIndexRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
@@ -121,13 +135,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app': typeof AppIndexRoute
+  '/cadastro': typeof CadastroIndexRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
@@ -139,13 +155,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
+  '/cadastro/': typeof CadastroIndexRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
@@ -158,13 +176,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/app'
-    | '/cadastro'
     | '/login'
     | '/app/aprovar'
     | '/app/configuracoes'
     | '/app/disponibilidade'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app/'
+    | '/cadastro'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
@@ -174,13 +194,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/cadastro'
     | '/login'
     | '/app/aprovar'
     | '/app/configuracoes'
     | '/app/disponibilidade'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app'
+    | '/cadastro'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
@@ -191,13 +213,15 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/app'
-    | '/cadastro'
     | '/login'
     | '/app/aprovar'
     | '/app/configuracoes'
     | '/app/disponibilidade'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app/'
+    | '/cadastro/'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
@@ -209,9 +233,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
-  CadastroRoute: typeof CadastroRoute
   LoginRoute: typeof LoginRoute
+  CadastroGestorRoute: typeof CadastroGestorRoute
+  CadastroPsicologoRoute: typeof CadastroPsicologoRoute
   PsicologoIdRoute: typeof PsicologoIdRoute
+  CadastroIndexRoute: typeof CadastroIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -221,13 +247,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cadastro': {
-      id: '/cadastro'
-      path: '/cadastro'
-      fullPath: '/cadastro'
-      preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -251,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro/': {
+      id: '/cadastro/'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/': {
       id: '/app/'
       path: '/'
@@ -263,6 +289,20 @@ declare module '@tanstack/react-router' {
       path: '/psicologo/$id'
       fullPath: '/psicologo/$id'
       preLoaderRoute: typeof PsicologoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro/psicologo': {
+      id: '/cadastro/psicologo'
+      path: '/cadastro/psicologo'
+      fullPath: '/cadastro/psicologo'
+      preLoaderRoute: typeof CadastroPsicologoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro/gestor': {
+      id: '/cadastro/gestor'
+      path: '/cadastro/gestor'
+      fullPath: '/cadastro/gestor'
+      preLoaderRoute: typeof CadastroGestorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/disponibilidade': {
@@ -354,9 +394,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
-  CadastroRoute: CadastroRoute,
   LoginRoute: LoginRoute,
+  CadastroGestorRoute: CadastroGestorRoute,
+  CadastroPsicologoRoute: CadastroPsicologoRoute,
   PsicologoIdRoute: PsicologoIdRoute,
+  CadastroIndexRoute: CadastroIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

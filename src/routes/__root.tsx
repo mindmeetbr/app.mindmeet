@@ -17,9 +17,17 @@ function RootComponent() {
   const paginaInicial =
     matchRoute({ from: '/', to: '/' }) ||
     matchRoute({ from: '/', to: '/login' }) ||
-    matchRoute({ from: '/', to: '/cadastro' }) ||
+    matchRoute({ from: '/', to: '/cadastro', fuzzy: true }) ||
     matchRoute({ from: '/', to: '/psicologo/$id' }) ||
     matchRoute({ from: '/', to: '/about' })
+
+  const isCadastroIndex = matchRoute({
+    from: '/',
+    to: '/cadastro',
+    fuzzy: false,
+  })
+
+  const isLogin = matchRoute({ from: '/', to: '/login' })
 
   return (
     <>
@@ -82,17 +90,21 @@ function RootComponent() {
             {/* direita */}
             <Flex flex={1} justify="flex-end">
               <Group>
-                <Button
-                  variant="outline"
-                  size="xs"
-                  component={Link}
-                  to="/login"
-                >
-                  Entrar
-                </Button>
-                <Button size="xs" component={Link} to="/cadastro">
-                  Cadastrar-se
-                </Button>
+                {!isLogin && (
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    component={Link}
+                    to="/login"
+                  >
+                    Entrar
+                  </Button>
+                )}
+                {!isCadastroIndex && (
+                  <Button size="xs" component={Link} to="/cadastro">
+                    Cadastrar-se
+                  </Button>
+                )}
               </Group>
             </Flex>
           </Flex>

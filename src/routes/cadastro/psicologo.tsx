@@ -7,7 +7,7 @@ import {
   Text,
   Container,
   Card,
-  Switch,
+  // Switch,
   Group,
   Stepper,
 } from '@mantine/core'
@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-import { useUserCreate } from '../api/endpoints/api/api'
+import { useUserCreate } from '../../api/endpoints/api/api'
 import { notifications } from '@mantine/notifications'
 import {
   IconX,
@@ -27,7 +27,7 @@ import {
 import { useState } from 'react'
 import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
-export const Route = createFileRoute('/cadastro')({
+export const Route = createFileRoute('/cadastro/psicologo')({
   component: PaginaCadastro,
 })
 
@@ -37,8 +37,9 @@ function PaginaCadastro() {
   const [active, setActive] = useState(0)
   const camposPasso = [
     ['nomeCompleto', 'username', 'email', 'dataNascimento'],
-    ['senha'],
-    ['isEstagiario', 'crp', 'supervisor'],
+    ['password1', 'password2'],
+    // ['isEstagiario', 'crp', 'supervisor'],
+    ['crp'],
   ]
 
   const avancarEtapa = () => {
@@ -62,11 +63,12 @@ function PaginaCadastro() {
       nomeCompleto: '',
       username: '',
       email: '',
-      senha: '',
+      password1: '',
+      password2: '',
       dataNascimento: null,
       crp: '',
-      isEstagiario: false,
-      supervisor: '',
+      // isEstagiario: false,
+      // supervisor: '',
     },
     validate: {
       nomeCompleto: value =>
@@ -77,7 +79,7 @@ function PaginaCadastro() {
 
       email: value => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'),
 
-      senha: value => {
+      password1: value => {
         if (value.length < 8) {
           return 'A senha deve ter pelo menos 8 caracteres'
         }
@@ -93,6 +95,15 @@ function PaginaCadastro() {
         return null
       },
 
+      password2: (value, values) => {
+        if (value.length === 0)
+          return 'A confirmação da senha não pode ser vazia'
+        if (values.password1 && value !== values.password1) {
+          return 'As senhas não coincidem, tente novamente'
+        }
+        return null
+      },
+
       dataNascimento: value => {
         if (!value) return 'Data de nascimento é obrigatória'
         if (dayjs(value).isAfter(dayjs()))
@@ -100,18 +111,16 @@ function PaginaCadastro() {
         return null
       },
 
-      crp: (value, values) => {
-        if (values.isEstagiario) return null
-        else
-          return /^\d{2}\/\d{5}$/.test(value)
-            ? null
-            : 'CRP inválido. Use o formato 00/00000'
+      crp: value => {
+        return /^\d{2}\/\d{5}$/.test(value)
+          ? null
+          : 'CRP inválido. Use o formato 00/00000'
       },
 
-      supervisor: (value, values) => {
-        if (!values.isEstagiario) return null
-        else return /^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'
-      },
+      // supervisor: (value, values) => {
+      //   if (!values.isEstagiario) return null
+      //   else return /^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'
+      // },
     },
   })
 
@@ -121,32 +130,28 @@ function PaginaCadastro() {
       nome_completo: values.nomeCompleto,
       username: values.username,
       email: values.email,
-      password: values.senha,
+      password1: values.password1,
+      password2: values.password2,
       data_nascimento: dataFormatada,
-      is_estagiario: values.isEstagiario,
-      crp: values.isEstagiario ? undefined : values.crp,
-      supervisor: values.isEstagiario ? values.supervisor : undefined,
+      perfil_psicologo: {
+        crp: values.crp,
+      },
     }
+    // is_estagiario: values.isEstagiario,
+    // crp: values.isEstagiario ? undefined : values.crp,
+    // supervisor: values.isEstagiario ? values.supervisor : undefined,
+
+    console.log(JSON.stringify(data, null, 2))
 
     criarUsuario(
       { data },
       {
         onSuccess: () => {
           form.clearErrors()
-          if (data.is_estagiario) {
-            router.navigate({
-              to: '/login',
-              state: {
-                mensagem:
-                  'Ainda é preciso a confirmação do seu supervisor para poder utilizar a plataforma',
-              },
-            })
-          } else {
-            router.navigate({
-              to: '/login',
-              state: { mensagem: 'Cadastro concluído. Aproveite!' },
-            })
-          }
+          router.navigate({
+            to: '/login',
+            state: { mensagem: 'Cadastro concluído. Aproveite!' },
+          })
         },
         onError: error => {
           form.setErrors(error.response?.data)
@@ -228,7 +233,11 @@ function PaginaCadastro() {
                     {...form.getInputProps('email')}
                     error={form.errors.email}
                   />
-                  <DatesProvider settings={{ locale: 'pt-br' }}>
+                  <DatesProvider
+                    settings={{
+                      locale: 'pt-BR',
+                    }}
+                  >
                     <DatePickerInput
                       label="Data de nascimento"
                       placeholder="Selecione sua data da nascimento"
@@ -252,8 +261,15 @@ function PaginaCadastro() {
                     placeholder="Digite sua senha"
                     description="Deve conter um mínimo de 8 caracteres, letras maiúsculas e minúsculas e simbolos especiais"
                     required
-                    {...form.getInputProps('senha')}
-                    error={form.errors.senha}
+                    {...form.getInputProps('password1')}
+                    error={form.errors.password1}
+                  />
+                  <PasswordInput
+                    label="Confirme sua senha"
+                    placeholder="Digite sua senha novamente"
+                    required
+                    {...form.getInputProps('password2')}
+                    error={form.errors.password2}
                   />
                 </Stack>
                 <Group justify="space-between" mt="xl">
@@ -268,7 +284,17 @@ function PaginaCadastro() {
                 icon={<IconBriefcase size={18} />}
               >
                 <Stack gap="sm">
-                  <Group grow>
+                  <TextInput
+                    label="CRP"
+                    placeholder="00/00000"
+                    maxLength={8}
+                    required
+                    withAsterisk
+                    {...form.getInputProps('crp')}
+                    error={form.errors.crp}
+                  />
+                  {/*
+                  {/* <Group grow>
                     <Switch
                       size="sm"
                       label="É estagiário?"
@@ -307,7 +333,7 @@ function PaginaCadastro() {
                         error={form.errors.crp}
                       />
                     )}
-                  </Group>
+                  </Group> */}
                 </Stack>
                 <Group justify="space-between" mt="xl">
                   <Button variant="default" onClick={voltarEtapa}>
