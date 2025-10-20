@@ -9,8 +9,12 @@ import {
   ActionIcon,
   LoadingOverlay,
   Accordion,
+  Button,
+  Modal,
+  Select,
+  Flex,
 } from '@mantine/core'
-import { IconPlus, IconX } from '@tabler/icons-react'
+import { IconClockPlus, IconPlus, IconX } from '@tabler/icons-react'
 import { useState } from 'react'
 import { PageLayout } from '../../components/layout/PageLayout'
 
@@ -42,6 +46,107 @@ const DAYS_OF_WEEK = [
   { key: 'saturday', label: 'Sábado' },
   { key: 'sunday', label: 'Domingo' },
 ]
+
+const diasSemana = [
+  { value: '0', label: 'Segunda-feira' },
+  { value: '1', label: 'Terça-feira' },
+  { value: '2', label: 'Quarta-feira' },
+  { value: '3', label: 'Quinta-feira' },
+  { value: '4', label: 'Sexta-feira' },
+  { value: '5', label: 'Sábado' },
+  { value: '6', label: 'Domingo' },
+]
+
+function BotaoAdicionarHorarios() {
+  const [opened, setOpened] = useState(false)
+  const [formData, setFormData] = useState({
+    dia: '',
+    inicio: '',
+    fim: '',
+    duracao: '',
+    intervalo: '',
+  })
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSubmit = () => {
+    console.log(JSON.stringify(formData, null, 2))
+    // TODO: integrar com a api
+    setOpened(false)
+  }
+
+  return (
+    <>
+      <Group>
+        <Button
+          leftSection={<IconClockPlus size={16} />}
+          onClick={() => setOpened(true)}
+        >
+          Adicionar horário
+        </Button>
+      </Group>
+
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title="Adicionar horários"
+        centered
+      >
+        <Stack gap="sm">
+          <Select
+            label="Dia da semana"
+            placeholder="Selecione o dia"
+            data={diasSemana}
+            value={formData.dia}
+            onChange={value => handleChange('dia', value || '')}
+            required
+          />
+
+          <TextInput
+            type="time"
+            label="Horário de início"
+            value={formData.inicio}
+            onChange={e => handleChange('inicio', e.currentTarget.value)}
+            required
+          />
+
+          <TextInput
+            type="time"
+            label="Horário de fim"
+            value={formData.fim}
+            onChange={e => handleChange('fim', e.currentTarget.value)}
+            required
+          />
+
+          <TextInput
+            type="time"
+            label="Duração"
+            value={formData.duracao}
+            onChange={e => handleChange('duracao', e.currentTarget.value)}
+            required
+          />
+
+          <TextInput
+            type="time"
+            label="Intervalo"
+            value={formData.intervalo}
+            onChange={e => handleChange('intervalo', e.currentTarget.value)}
+            required
+          />
+
+          <Group justify="flex-end" mt="md">
+            <Button variant="light" onClick={() => setOpened(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit}>Salvar</Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
+  )
+}
 
 function RouteComponent() {
   const [availability, setAvailability] = useState<AvailabilityData>(() => {
@@ -147,107 +252,112 @@ function RouteComponent() {
         loading: loading,
       }}
     >
-      <Card withBorder p="xl" miw={600} style={{ maxWidth: 600 }}>
-        <LoadingOverlay visible={loading} />
-        <Accordion
-          variant="contained"
-          value={openItems}
-          onChange={setOpenItems}
-          multiple
-        >
-          {DAYS_OF_WEEK.map((day, index) => (
-            <Accordion.Item key={day.key} value={day.key}>
-              <Accordion.Control>
-                <Group justify="space-between" align="center" w="100%">
-                  <Group gap="md" align="center">
-                    <Switch
-                      checked={availability[day.key].enabled}
-                      onChange={() => toggleDay(day.key)}
-                      size="md"
-                      onClick={e => e.stopPropagation()}
-                    />
-                    <Text fw={500} size="sm">
-                      {day.label}
-                    </Text>
+      <Flex align="flex-start" justify="space-between" gap="lg" w="100%">
+        <Card withBorder p="xl" miw={600} style={{ maxWidth: 600 }}>
+          <LoadingOverlay visible={loading} />
+          <Accordion
+            variant="contained"
+            value={openItems}
+            onChange={setOpenItems}
+            multiple
+          >
+            {DAYS_OF_WEEK.map((day, index) => (
+              <Accordion.Item key={day.key} value={day.key}>
+                <Accordion.Control>
+                  <Group justify="space-between" align="center" w="100%">
+                    <Group gap="md" align="center">
+                      <Switch
+                        checked={availability[day.key].enabled}
+                        onChange={() => toggleDay(day.key)}
+                        size="md"
+                        onClick={e => e.stopPropagation()}
+                      />
+                      <Text fw={500} size="sm">
+                        {day.label}
+                      </Text>
+                    </Group>
+
+                    {availability[day.key].enabled && (
+                      <ActionIcon
+                        variant="filled"
+                        color="blue"
+                        size="sm"
+                        onClick={e => {
+                          e.stopPropagation()
+                          addTimeSlot(day.key)
+                        }}
+                        aria-label="Adicionar horário"
+                      >
+                        <IconPlus size={16} />
+                      </ActionIcon>
+                    )}
                   </Group>
+                </Accordion.Control>
 
-                  {availability[day.key].enabled && (
-                    <ActionIcon
-                      variant="filled"
-                      color="blue"
-                      size="sm"
-                      onClick={e => {
-                        e.stopPropagation()
-                        addTimeSlot(day.key)
-                      }}
-                      aria-label="Adicionar horário"
-                    >
-                      <IconPlus size={16} />
-                    </ActionIcon>
+                <Accordion.Panel>
+                  {availability[day.key].enabled ? (
+                    <Stack gap="sm" mt="md">
+                      {availability[day.key].timeSlots.map(
+                        (slot, slotIndex) => (
+                          <Group key={slot.id} gap="sm" align="center">
+                            <TextInput
+                              type="time"
+                              value={slot.startTime}
+                              onChange={e =>
+                                updateTimeSlot(
+                                  day.key,
+                                  slot.id,
+                                  'startTime',
+                                  e.target.value
+                                )
+                              }
+                              size="sm"
+                              style={{ width: 100 }}
+                            />
+                            <Text size="sm" c="dimmed">
+                              -
+                            </Text>
+                            <TextInput
+                              type="time"
+                              value={slot.endTime}
+                              onChange={e =>
+                                updateTimeSlot(
+                                  day.key,
+                                  slot.id,
+                                  'endTime',
+                                  e.target.value
+                                )
+                              }
+                              size="sm"
+                              style={{ width: 100 }}
+                            />
+                            {availability[day.key].timeSlots.length > 1 && (
+                              <ActionIcon
+                                variant="subtle"
+                                color="red"
+                                size="sm"
+                                onClick={() => removeTimeSlot(day.key, slot.id)}
+                                aria-label="Remover horário"
+                              >
+                                <IconX size={16} />
+                              </ActionIcon>
+                            )}
+                          </Group>
+                        )
+                      )}
+                    </Stack>
+                  ) : (
+                    <Text size="sm" c="dimmed" ta="center" py="md">
+                      Dia desabilitado
+                    </Text>
                   )}
-                </Group>
-              </Accordion.Control>
-
-              <Accordion.Panel>
-                {availability[day.key].enabled ? (
-                  <Stack gap="sm" mt="md">
-                    {availability[day.key].timeSlots.map((slot, slotIndex) => (
-                      <Group key={slot.id} gap="sm" align="center">
-                        <TextInput
-                          type="time"
-                          value={slot.startTime}
-                          onChange={e =>
-                            updateTimeSlot(
-                              day.key,
-                              slot.id,
-                              'startTime',
-                              e.target.value
-                            )
-                          }
-                          size="sm"
-                          style={{ width: 100 }}
-                        />
-                        <Text size="sm" c="dimmed">
-                          -
-                        </Text>
-                        <TextInput
-                          type="time"
-                          value={slot.endTime}
-                          onChange={e =>
-                            updateTimeSlot(
-                              day.key,
-                              slot.id,
-                              'endTime',
-                              e.target.value
-                            )
-                          }
-                          size="sm"
-                          style={{ width: 100 }}
-                        />
-                        {availability[day.key].timeSlots.length > 1 && (
-                          <ActionIcon
-                            variant="subtle"
-                            color="red"
-                            size="sm"
-                            onClick={() => removeTimeSlot(day.key, slot.id)}
-                            aria-label="Remover horário"
-                          >
-                            <IconX size={16} />
-                          </ActionIcon>
-                        )}
-                      </Group>
-                    ))}
-                  </Stack>
-                ) : (
-                  <Text size="sm" c="dimmed" ta="center" py="md">
-                    Dia desabilitado
-                  </Text>
-                )}
-              </Accordion.Panel>
-            </Accordion.Item>
-          ))}
-        </Accordion>
-      </Card>
+                </Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </Card>
+        <BotaoAdicionarHorarios />
+      </Flex>
     </PageLayout>
   )
 }
