@@ -4,14 +4,14 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { MUserSexo } from './mUserSexo';
+import type { PatchedMUserSexo } from './patchedMUserSexo';
 import type { Endereco } from './endereco';
 import type { PapelEnum } from './papelEnum';
 
-export interface MUser {
-  readonly id: string;
+export interface PatchedMUser {
+  readonly id?: string;
   /** @maxLength 255 */
-  nome_completo: string;
+  nome_completo?: string;
   /** @maxLength 254 */
   email?: string;
   /** @maxLength 14 */
@@ -20,8 +20,8 @@ export interface MUser {
   data_nascimento?: string | null;
   /** @maxLength 15 */
   numero_telefone?: string;
-  sexo?: typeof MUserSexo[keyof typeof MUserSexo] ;
-  readonly verificado: boolean;
+  sexo?: typeof PatchedMUserSexo[keyof typeof PatchedMUserSexo] ;
+  readonly verificado?: boolean;
   endereco?: Endereco;
   papel?: PapelEnum;
 }

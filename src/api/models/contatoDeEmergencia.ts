@@ -8,9 +8,9 @@
 export interface ContatoDeEmergencia {
   readonly id: string;
   /** @maxLength 50 */
-  nome?: string;
+  nome: string;
   /** @maxLength 15 */
-  numero_telefone?: string;
+  numero_telefone: string;
   /** @maxLength 20 */
   parentesco?: string;
 }

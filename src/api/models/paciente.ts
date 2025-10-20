@@ -19,7 +19,8 @@ export interface Paciente {
   endereco?: PacienteEndereco;
   /** @nullable */
   informacoes_clinicas?: PacienteInformacoesClinicas;
-  readonly acompanhado_por: string;
+  /** @nullable */
+  readonly acompanhado_por: string | null;
   /** @maxLength 255 */
   nome_completo: string;
   data_nascimento: string;

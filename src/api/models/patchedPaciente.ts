@@ -19,7 +19,8 @@ export interface PatchedPaciente {
   endereco?: PatchedPacienteEndereco;
   /** @nullable */
   informacoes_clinicas?: PatchedPacienteInformacoesClinicas;
-  readonly acompanhado_por?: string;
+  /** @nullable */
+  readonly acompanhado_por?: string | null;
   /** @maxLength 255 */
   nome_completo?: string;
   data_nascimento?: string;
