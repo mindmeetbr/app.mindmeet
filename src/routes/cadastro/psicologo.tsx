@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-import { useUserCreate } from '../../api/endpoints/api/api'
+import { usePsicologoCreate } from '../../api/endpoints/api/api'
 import { notifications } from '@mantine/notifications'
 import {
   IconX,
@@ -27,13 +27,14 @@ import {
 import { useState } from 'react'
 import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
+import { PapelEnum } from '../../api/models'
 export const Route = createFileRoute('/cadastro/psicologo')({
   component: PaginaCadastro,
 })
 
 function PaginaCadastro() {
   const router = useRouter()
-  const { mutate: criarUsuario } = useUserCreate()
+  const { mutate: criarUsuario } = usePsicologoCreate()
   const [active, setActive] = useState(0)
   const camposPasso = [
     ['nomeCompleto', 'username', 'email', 'dataNascimento'],
@@ -136,6 +137,7 @@ function PaginaCadastro() {
       perfil_psicologo: {
         crp: values.crp,
       },
+      papel: PapelEnum.PSICOLOGO,
     }
     // is_estagiario: values.isEstagiario,
     // crp: values.isEstagiario ? undefined : values.crp,

@@ -1,4 +1,9 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useRouter,
+} from '@tanstack/react-router'
 import useAuthStore from '../../stores/auth-store'
 import { useForm } from '@mantine/form'
 import { useState } from 'react'
@@ -20,8 +25,12 @@ import {
   IconCircleCheck,
   IconLock,
   IconUser,
+  IconX,
 } from '@tabler/icons-react'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
+import { usePsicologoCreate } from '../../api/endpoints/api/api'
+import { PapelEnum } from '../../api/models'
+import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/cadastro/gestor')({
   beforeLoad: () => {
@@ -34,8 +43,11 @@ export const Route = createFileRoute('/cadastro/gestor')({
 })
 
 function CadastroGestor() {
+  const router = useRouter()
+  const { mutate: criarGestor } = usePsicologoCreate()
+
   const camposPasso = [
-    ['nomeCompleto', 'username', 'email', 'dataNascimento'],
+    ['nome_completo', 'username', 'email', 'data_nascimento'],
     ['password1', 'password2'],
     ['instituicao.nome', 'instituicao.cnpj'],
   ]
@@ -59,10 +71,10 @@ function CadastroGestor() {
   const [active, setActive] = useState(0)
   const form = useForm({
     initialValues: {
-      nomeCompleto: '',
+      nome_completo: '',
       username: '',
       email: '',
-      dataNascimento: null,
+      data_nascimento: null,
       password1: '',
       password2: '',
       instituicao: {
@@ -87,7 +99,7 @@ function CadastroGestor() {
         },
       },
 
-      nomeCompleto: value =>
+      nome_completo: value =>
         value.trim().length > 0 ? null : 'Nome completo inválido',
 
       username: value =>
@@ -119,7 +131,7 @@ function CadastroGestor() {
         }
         return null
       },
-      dataNascimento: value => {
+      data_nascimento: value => {
         if (!value) return 'Data de nascimento é obrigatória'
         if (dayjs(value).isAfter(dayjs()))
           return 'A data não pode estar no futuro'
@@ -131,6 +143,33 @@ function CadastroGestor() {
   const handleSubmit = (values: typeof form.values) => {
     // TODO: Implementar isso
     console.log(JSON.stringify(values, null, 2))
+    const data = {
+      ...form.values,
+      papel: PapelEnum.GESTOR,
+    }
+    criarGestor(
+      { data },
+      {
+        onSuccess: () => {
+          form.clearErrors()
+          router.navigate({
+            to: '/login',
+            state: { mensagem: 'Cadastro concluído. Aproveite!' },
+          })
+        },
+        onError: error => {
+          form.setErrors(error.response?.data)
+          notifications.show({
+            color: 'red',
+            autoClose: 10000,
+            title: 'Erro!',
+            message:
+              'Não foi possível criar sua conta. Certifique-se de que todos os campos estão corretos e tente novamente.',
+            icon: <IconX />,
+          })
+        },
+      }
+    )
   }
   return (
     <Container
@@ -178,8 +217,8 @@ function CadastroGestor() {
                     label="Nome completo"
                     placeholder="Digite seu nome completo"
                     required
-                    {...form.getInputProps('nomeCompleto')}
-                    error={form.errors.nomeCompleto}
+                    {...form.getInputProps('nome_completo')}
+                    error={form.errors.nome_completo}
                   />
                   <TextInput
                     label="Seu nome de usuário"
@@ -206,8 +245,8 @@ function CadastroGestor() {
                       valueFormat="DD/MM/YYYY"
                       clearable
                       required
-                      {...form.getInputProps('dataNascimento')}
-                      error={form.errors.dataNascimento}
+                      {...form.getInputProps('data_nascimento')}
+                      error={form.errors.data_nascimento}
                     />
                   </DatesProvider>
                 </Stack>
