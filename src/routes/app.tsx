@@ -29,6 +29,7 @@ import {
   IconEyeOff,
   IconBell,
   IconBellExclamation,
+  IconBuildingCommunity,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
@@ -37,6 +38,7 @@ import {
   useProfileView,
 } from '../api/endpoints/api/api'
 import { useEffect, useState } from 'react'
+import { PapelEnum } from '../api/models'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -208,6 +210,19 @@ function AppLayout() {
           }
           active={isActive('/app/notificacoes')}
         />
+
+        {user?.papel === PapelEnum.GESTOR && (
+          <NavLink
+            href="/app/instituicao"
+            label="Instituição"
+            leftSection={
+              <IconBuildingCommunity
+                style={{ width: rem(16), height: rem(16) }}
+              />
+            }
+            active={isActive('/app/instituicao')}
+          />
+        )}
       </AppShell.Navbar>
 
       <AppShell.Main>
