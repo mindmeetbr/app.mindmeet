@@ -95,7 +95,7 @@ function NovoPacientePage() {
 
       endereco: {
         cep: '',
-        endereco: '',
+        rua: '',
         numero: '',
         complemento: '',
         bairro: '',
@@ -149,6 +149,11 @@ function NovoPacientePage() {
       data_nascimento: (value: string) =>
         !value ? 'Data de nascimento é obrigatória' : null,
       cpf: (value: string) => (!value ? 'CPF é obrigatório' : null),
+      contato_emergencia: {
+        nome: value => (!value ? 'Nome do contato é obrigatório' : null),
+        numero_telefone: value =>
+          !value ? 'Telefone do contato é obrigatório' : null,
+      },
     },
   })
 
@@ -367,9 +372,9 @@ function NovoPacientePage() {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <TextInput
-                    label="Endereço"
+                    label="Rua"
                     placeholder="Rua, Avenida..."
-                    {...form.getInputProps('endereco.endereco')}
+                    {...form.getInputProps('endereco.rua')}
                   />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 3 }}>
@@ -465,6 +470,8 @@ function NovoPacientePage() {
                   <TextInput
                     label="Nome"
                     placeholder="Nome do contato"
+                    required
+                    withAsterisk
                     {...form.getInputProps('contato_emergencia.nome')}
                   />
                 </Grid.Col>
@@ -472,6 +479,8 @@ function NovoPacientePage() {
                   <TextInput
                     label="Telefone"
                     placeholder="(11) 99999-9999"
+                    required
+                    withAsterisk
                     {...form.getInputProps(
                       'contato_emergencia.numero_telefone'
                     )}

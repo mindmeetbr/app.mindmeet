@@ -500,18 +500,16 @@ function PacienteDetalhePage() {
                       <IconMail style={{ width: rem(16), height: rem(16) }} />
                       <Text size="sm">{paciente.email}</Text>
                     </Group>
-                    {paciente.endereco?.endereco &&
-                      paciente.endereco.bairro && (
-                        <Group gap="xs">
-                          <IconMapPin
-                            style={{ width: rem(16), height: rem(16) }}
-                          />
-                          <Text size="sm">
-                            {paciente.endereco.endereco},{' '}
-                            {paciente.endereco.bairro}
-                          </Text>
-                        </Group>
-                      )}
+                    {paciente.endereco?.rua && paciente.endereco.bairro && (
+                      <Group gap="xs">
+                        <IconMapPin
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <Text size="sm">
+                          {paciente.endereco.rua}, {paciente.endereco.bairro}
+                        </Text>
+                      </Group>
+                    )}
                   </Stack>
                 </Stack>
               </Card>
