@@ -12,8 +12,8 @@ export interface CustomRegister {
    * @minLength 1
    * @maxLength 150
    */
-  username: string;
-  email?: string;
+  username?: string;
+  email: string;
   password1: string;
   password2: string;
   papel: string;
