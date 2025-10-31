@@ -27,10 +27,8 @@ import {
 import { useState } from 'react'
 import { PageLayout } from '../../../components/layout'
 import dayjs from 'dayjs'
-import {
-  useInstituicaoDetail,
-  usePacienteList,
-} from '../../../api/endpoints/api/api'
+import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
+import { useInstituicaoDetail } from '../../../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,

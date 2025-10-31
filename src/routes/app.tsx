@@ -34,11 +34,11 @@ import {
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
 import {
-  useNotificacaoPendenteList,
-  useProfileView,
+  useNotificacaoPendenteList
 } from '../api/endpoints/api/api'
 import { useEffect, useState } from 'react'
 import { PapelEnum } from '../api/models'
+import { useProfileView } from '../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {

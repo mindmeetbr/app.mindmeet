@@ -43,8 +43,8 @@ import {
   useAnotacaoList,
   useAnotacaoUpdate,
   useAnotacaoCreate,
-  usePacienteDetail,
 } from '../../../api/endpoints/api/api'
+import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
 import type { Anotacao } from '../../../api/models'
 
 export const Route = createFileRoute('/app/pacientes/$id')({

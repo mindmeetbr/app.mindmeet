@@ -16,7 +16,7 @@ import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import {
   useInstituicaoDetail,
   useInstituicaoUpdate,
-} from '../../../api/endpoints/api/api'
+} from '../../../api/endpoints/users/users'
 import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/app/instituicao/editar')({

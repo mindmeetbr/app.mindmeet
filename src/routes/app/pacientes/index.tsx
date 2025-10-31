@@ -26,7 +26,7 @@ import { PageLayout } from '../../../components/layout'
 import {
   usePacienteList,
   usePacienteDelete,
-} from '../../../api/endpoints/api/api'
+} from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/app/pacientes/')({

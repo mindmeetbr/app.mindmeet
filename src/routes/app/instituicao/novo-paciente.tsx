@@ -13,7 +13,7 @@ import {
 import { useForm } from '@mantine/form'
 import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import { PageLayout } from '../../../components/layout'
-import { usePacienteCreate } from '../../../api/endpoints/api/api'
+import { usePacienteCreate } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/app/instituicao/novo-paciente')({

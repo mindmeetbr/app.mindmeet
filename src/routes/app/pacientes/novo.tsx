@@ -21,7 +21,7 @@ import {
   usePacienteCreate,
   usePacienteUpdate,
   usePacienteDetail,
-} from '../../../api/endpoints/api/api'
+} from '../../../api/endpoints/pacientes/pacientes'
 
 export const Route = createFileRoute('/app/pacientes/novo')({
   component: NovoPacientePage,
