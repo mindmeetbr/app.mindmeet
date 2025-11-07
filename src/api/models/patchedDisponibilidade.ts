@@ -8,7 +8,7 @@ import type { DisponibilidadeDiaEnum } from './disponibilidadeDiaEnum';
 import type { Horario } from './horario';
 
 export interface PatchedDisponibilidade {
-  readonly id?: number;
+  readonly id?: string;
   /**
    * @minimum 0
    * @maximum 9223372036854776000

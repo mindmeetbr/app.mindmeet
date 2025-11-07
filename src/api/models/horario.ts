@@ -6,7 +6,7 @@
  */
 
 export interface Horario {
-  id?: number;
+  id?: string;
   inicio: string;
   fim: string;
   /** @nullable */
