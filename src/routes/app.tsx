@@ -30,6 +30,7 @@ import {
   IconBell,
   IconBellExclamation,
   IconBuildingCommunity,
+  IconCalendarWeek,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import usePreferencesStore from '../stores/preferences-store'
@@ -172,6 +173,12 @@ function AppLayout() {
           }
           active={isActive('/app/agendamentos')}
         /> */}
+        <NavLink
+          href="/app/agenda"
+          label="Agenda"
+          leftSection={<IconCalendarWeek style={{ width: rem(16), height: rem(16) }} />}
+          active={isActive("app/agenda")}
+        />
         <NavLink
           href="/app/disponibilidade"
           label="Disponibilidade"
