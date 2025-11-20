@@ -31,6 +31,7 @@ import {
   IconBuildingCommunity,
   IconSun,
   IconMoonStars,
+  IconCalendarWeek,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notificacoes'
@@ -174,6 +175,15 @@ function AppLayout() {
           label="Dashboard"
           leftSection={
             <IconDashboard style={{ width: rem(16), height: rem(16) }} />
+          }
+          activeOptions={{ exact: true }}
+        />
+        <NavLink
+          component={Link}
+          to="/app/agenda"
+          label="Agenda"
+          leftSection={
+            <IconCalendarWeek style={{ width: rem(16), height: rem(16) }} />
           }
           activeOptions={{ exact: true }}
         />

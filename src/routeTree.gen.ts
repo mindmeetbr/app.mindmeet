@@ -24,12 +24,15 @@ import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificac
 import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
 import { Route as AppDisponibilidadeIndexRouteImport } from './routes/app/disponibilidade/index'
 import { Route as AppConfiguracoesIndexRouteImport } from './routes/app/configuracoes/index'
+import { Route as AppAgendaIndexRouteImport } from './routes/app/agenda/index'
 import { Route as AppPacientesNovoRouteImport } from './routes/app/pacientes/novo'
 import { Route as AppPacientesIdRouteImport } from './routes/app/pacientes/$id'
 import { Route as AppNotificacoesIdRouteImport } from './routes/app/notificacoes/$id'
 import { Route as AppInstituicaoNovoPsicologoRouteImport } from './routes/app/instituicao/novo-psicologo'
 import { Route as AppInstituicaoNovoPacienteRouteImport } from './routes/app/instituicao/novo-paciente'
 import { Route as AppInstituicaoEditarRouteImport } from './routes/app/instituicao/editar'
+import { Route as AppAgendaNovoRouteImport } from './routes/app/agenda/novo'
+import { Route as AppAgendaIdRouteImport } from './routes/app/agenda/$id'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -106,6 +109,11 @@ const AppConfiguracoesIndexRoute = AppConfiguracoesIndexRouteImport.update({
   path: '/configuracoes/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAgendaIndexRoute = AppAgendaIndexRouteImport.update({
+  id: '/agenda/',
+  path: '/agenda/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPacientesNovoRoute = AppPacientesNovoRouteImport.update({
   id: '/pacientes/novo',
   path: '/pacientes/novo',
@@ -138,6 +146,16 @@ const AppInstituicaoEditarRoute = AppInstituicaoEditarRouteImport.update({
   path: '/instituicao/editar',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAgendaNovoRoute = AppAgendaNovoRouteImport.update({
+  id: '/agenda/novo',
+  path: '/agenda/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgendaIdRoute = AppAgendaIdRouteImport.update({
+  id: '/agenda/$id',
+  path: '/agenda/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -150,6 +168,8 @@ export interface FileRoutesByFullPath {
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
   '/cadastro': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
   '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
   '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
   '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
@@ -158,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
   '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -171,6 +192,8 @@ export interface FileRoutesByTo {
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app': typeof AppIndexRoute
   '/cadastro': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
   '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
   '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
   '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
@@ -179,6 +202,7 @@ export interface FileRoutesByTo {
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
   '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -195,6 +219,8 @@ export interface FileRoutesById {
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
   '/cadastro/': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
   '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
   '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
   '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
@@ -203,6 +229,7 @@ export interface FileRoutesById {
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
   '/app/configuracoes/': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
+  '/app/agenda/': typeof AppAgendaIndexRoute
   '/app/instituicao/': typeof AppInstituicaoIndexRoute
   '/app/notificacoes/': typeof AppNotificacoesIndexRoute
   '/app/pacientes/': typeof AppPacientesIndexRoute
@@ -220,6 +247,8 @@ export interface FileRouteTypes {
     | '/psicologo/$id'
     | '/app/'
     | '/cadastro'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
     | '/app/instituicao/editar'
     | '/app/instituicao/novo-paciente'
     | '/app/instituicao/novo-psicologo'
@@ -228,6 +257,7 @@ export interface FileRouteTypes {
     | '/app/pacientes/novo'
     | '/app/configuracoes'
     | '/app/disponibilidade/'
+    | '/app/agenda'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -241,6 +271,8 @@ export interface FileRouteTypes {
     | '/psicologo/$id'
     | '/app'
     | '/cadastro'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
     | '/app/instituicao/editar'
     | '/app/instituicao/novo-paciente'
     | '/app/instituicao/novo-psicologo'
@@ -249,6 +281,7 @@ export interface FileRouteTypes {
     | '/app/pacientes/novo'
     | '/app/configuracoes'
     | '/app/disponibilidade'
+    | '/app/agenda'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -264,6 +297,8 @@ export interface FileRouteTypes {
     | '/psicologo/$id'
     | '/app/'
     | '/cadastro/'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
     | '/app/instituicao/editar'
     | '/app/instituicao/novo-paciente'
     | '/app/instituicao/novo-psicologo'
@@ -272,6 +307,7 @@ export interface FileRouteTypes {
     | '/app/pacientes/novo'
     | '/app/configuracoes/'
     | '/app/disponibilidade/'
+    | '/app/agenda/'
     | '/app/instituicao/'
     | '/app/notificacoes/'
     | '/app/pacientes/'
@@ -395,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppConfiguracoesIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/agenda/': {
+      id: '/app/agenda/'
+      path: '/agenda'
+      fullPath: '/app/agenda'
+      preLoaderRoute: typeof AppAgendaIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/pacientes/novo': {
       id: '/app/pacientes/novo'
       path: '/pacientes/novo'
@@ -437,6 +480,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInstituicaoEditarRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/agenda/novo': {
+      id: '/app/agenda/novo'
+      path: '/agenda/novo'
+      fullPath: '/app/agenda/novo'
+      preLoaderRoute: typeof AppAgendaNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agenda/$id': {
+      id: '/app/agenda/$id'
+      path: '/agenda/$id'
+      fullPath: '/app/agenda/$id'
+      preLoaderRoute: typeof AppAgendaIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -454,6 +511,8 @@ const AppDisponibilidadeRouteWithChildren =
 interface AppRouteChildren {
   AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
+  AppAgendaIdRoute: typeof AppAgendaIdRoute
+  AppAgendaNovoRoute: typeof AppAgendaNovoRoute
   AppInstituicaoEditarRoute: typeof AppInstituicaoEditarRoute
   AppInstituicaoNovoPacienteRoute: typeof AppInstituicaoNovoPacienteRoute
   AppInstituicaoNovoPsicologoRoute: typeof AppInstituicaoNovoPsicologoRoute
@@ -461,6 +520,7 @@ interface AppRouteChildren {
   AppPacientesIdRoute: typeof AppPacientesIdRoute
   AppPacientesNovoRoute: typeof AppPacientesNovoRoute
   AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
+  AppAgendaIndexRoute: typeof AppAgendaIndexRoute
   AppInstituicaoIndexRoute: typeof AppInstituicaoIndexRoute
   AppNotificacoesIndexRoute: typeof AppNotificacoesIndexRoute
   AppPacientesIndexRoute: typeof AppPacientesIndexRoute
@@ -469,6 +529,8 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
+  AppAgendaIdRoute: AppAgendaIdRoute,
+  AppAgendaNovoRoute: AppAgendaNovoRoute,
   AppInstituicaoEditarRoute: AppInstituicaoEditarRoute,
   AppInstituicaoNovoPacienteRoute: AppInstituicaoNovoPacienteRoute,
   AppInstituicaoNovoPsicologoRoute: AppInstituicaoNovoPsicologoRoute,
@@ -476,6 +538,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPacientesIdRoute: AppPacientesIdRoute,
   AppPacientesNovoRoute: AppPacientesNovoRoute,
   AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
+  AppAgendaIndexRoute: AppAgendaIndexRoute,
   AppInstituicaoIndexRoute: AppInstituicaoIndexRoute,
   AppNotificacoesIndexRoute: AppNotificacoesIndexRoute,
   AppPacientesIndexRoute: AppPacientesIndexRoute,
