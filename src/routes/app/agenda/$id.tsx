@@ -1,11 +1,21 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 
 import { PageLayout } from '../../../components/layout'
-import { Card, Stack, Text, Divider, rem, Grid, Title } from '@mantine/core'
-import { IconEdit } from '@tabler/icons-react'
+import {
+  Card,
+  Stack,
+  Text,
+  Divider,
+  rem,
+  Grid,
+  Title,
+  LoadingOverlay,
+  Center,
+  Alert,
+} from '@mantine/core'
+import { IconAlertCircle, IconEdit } from '@tabler/icons-react'
 
-import { AgendamentoTipoEnum, EstadoEnum } from '../../../api/models'
-import type { Agendamento } from '../../../api/models'
+import { EstadoEnum } from '../../../api/models'
 
 import {
   getEstadoBadge,
@@ -14,27 +24,59 @@ import {
   formatarData,
   formatarHora,
 } from '../../../utils/agenda'
+import { useAgendamentoDetail } from '../../../api/endpoints/agendamentos/agendamentos'
 export const Route = createFileRoute('/app/agenda/$id')({
   component: AgendamentoDetalhePage,
 })
 
-const mockAgendamento: Agendamento = {
-  id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-  data: '2025-11-13',
-  tipo: AgendamentoTipoEnum.online,
-  horario_inicio: '01:41:04.550Z',
-  horario_fim: '02:41:04.550Z',
-  paciente_nome: 'Marina Oliveira',
-  paciente_email: 'marina.oliveira@example.com',
-  paciente_numero_telefone: '(81) 98877-6655',
-  estado: EstadoEnum.cancelado,
-  motivo_cancelamento: 'Está gripada',
-}
-
 function AgendamentoDetalhePage() {
   const router = useRouter()
   const { id } = Route.useParams()
-  const agendamento = mockAgendamento
+  const { data: agendamento, isLoading, isError } = useAgendamentoDetail(id)
+
+  if (isLoading) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Agenda', href: '/app/agenda' },
+          {
+            label: 'Agendamento com Paciente',
+            isCurrentPage: true,
+          },
+        ]}
+        title="Agendamento"
+      >
+        <LoadingOverlay visible overlayProps={{ blur: 2 }} />
+      </PageLayout>
+    )
+  }
+
+  if (isError || agendamento === undefined) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/app' },
+          {
+            label: 'Agendamento com Paciente',
+            isCurrentPage: true,
+          },
+        ]}
+        title="Agendamento"
+        description="Gerencie seus agendamentos e consultas"
+      >
+        <Center mt="xl">
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="Erro ao carregar dados"
+            color="red"
+            variant="filled"
+          >
+            Não foi possível carregar o agendamento. Tente novamente mais tarde.
+          </Alert>
+        </Center>
+      </PageLayout>
+    )
+  }
 
   const tituloLayout = `Agendamento com ${agendamento.paciente_nome} (${formatarDataHora(
     agendamento.data,

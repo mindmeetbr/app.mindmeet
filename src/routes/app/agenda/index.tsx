@@ -1,9 +1,12 @@
 import {
   ActionIcon,
+  Alert,
   Badge,
   Card,
+  Center,
   Flex,
   Group,
+  LoadingOverlay,
   rem,
   SegmentedControl,
   Stack,
@@ -14,6 +17,7 @@ import {
   Timeline,
 } from '@mantine/core'
 import {
+  IconAlertCircle,
   IconCalendarPlus,
   IconCalendarWeek,
   IconEdit,
@@ -24,7 +28,11 @@ import {
 } from '@tabler/icons-react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
-import { AgendamentoTipoEnum, EstadoEnum } from '../../../api/models'
+import {
+  AgendamentoTipoEnum,
+  EstadoEnum,
+  type Agendamento,
+} from '../../../api/models'
 import { useState } from 'react'
 import {
   getEstadoBadge,
@@ -32,101 +40,23 @@ import {
   formatarDataHora,
   paraMaiuscula,
 } from '../../../utils/agenda'
+import {
+  useAgendamentoDelete,
+  useAgendamentoList,
+} from '../../../api/endpoints/agendamentos/agendamentos'
 
 export const Route = createFileRoute('/app/agenda/')({
   component: PaginaAgendamentos,
 })
 
-const mockAgendamentos = [
-  {
-    id: crypto.randomUUID(),
-    data: '2025-11-08',
-    tipo: 'online',
-    horario_inicio: '10:00:00.000Z',
-    horario_fim: '11:00:00.000Z',
-    paciente_nome: 'Ana Silva',
-    paciente_email: 'ana.silva@exemplo.com',
-    paciente_numero_telefone: '(84) 91234-5678',
-    estado: 'agendado',
-    motivo_cancelamento: '',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-11-07',
-    tipo: 'presencial',
-    horario_inicio: '14:30:00.000Z',
-    horario_fim: '15:30:00.000Z',
-    paciente_nome: 'Carlos Oliveira',
-    paciente_email: 'carlos.oliver@exemplo.com',
-    paciente_numero_telefone: '(84) 98765-4321',
-    estado: 'realizado',
-    motivo_cancelamento: '',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-11-10',
-    tipo: 'online',
-    horario_inicio: '09:00:00.000Z',
-    horario_fim: '09:45:00.000Z',
-    paciente_nome: 'Beatriz Souza',
-    paciente_email: 'beatriz.souza@exemplo.com',
-    paciente_numero_telefone: '(85) 93456-7890',
-    estado: 'cancelado',
-    motivo_cancelamento: 'Emergência pessoal',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-11-06',
-    tipo: 'presencial',
-    horario_inicio: '16:00:00.000Z',
-    horario_fim: '17:00:00.000Z',
-    paciente_nome: 'Daniel Costa',
-    paciente_email: 'daniel.costa@exemplo.com',
-    paciente_numero_telefone: '(11) 98765-1234',
-    estado: 'agendado',
-    motivo_cancelamento: '',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-12-05',
-    tipo: 'online',
-    horario_inicio: '11:30:00.000Z',
-    horario_fim: '12:00:00.000Z',
-    paciente_nome: 'Eliane Ferreira',
-    paciente_email: 'eliane.ferreira@exemplo.com',
-    paciente_numero_telefone: '(21) 99876-5432',
-    estado: 'agendado',
-    motivo_cancelamento: '',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-11-18',
-    tipo: 'online',
-    horario_inicio: '09:00:00.000Z',
-    horario_fim: '09:45:00.000Z',
-    paciente_nome: 'Beatriz Souza',
-    paciente_email: 'beatriz.souza@exemplo.com',
-    paciente_numero_telefone: '(85) 93456-7890',
-    estado: 'agendado',
-    motivo_cancelamento: '',
-  },
-  {
-    id: crypto.randomUUID(),
-    data: '2025-12-07',
-    tipo: 'presencial',
-    horario_inicio: '14:30:00.000Z',
-    horario_fim: '15:30:00.000Z',
-    paciente_nome: 'Carlos Oliveira',
-    paciente_email: 'carlos.oliver@exemplo.com',
-    paciente_numero_telefone: '(84) 98765-4321',
-    estado: 'agendado',
-    motivo_cancelamento: '',
-  },
-]
+interface AgendaProps {
+  agendamentos: Agendamento[]
+}
 
-function TabelaAgendamentos() {
+function TabelaAgendamentos({ agendamentos }: AgendaProps) {
   const [nomeBusca, setNomeBusca] = useState('')
   const [estadoBusca, setEstadoBusca] = useState('')
+  const { mutate: apagarAgendamento } = useAgendamentoDelete()
 
   const estados = [
     { label: 'Todos', value: '' },
@@ -135,11 +65,18 @@ function TabelaAgendamentos() {
     { label: paraMaiuscula(EstadoEnum.realizado), value: EstadoEnum.realizado },
   ]
 
-  const agendamentosFiltrados = mockAgendamentos.filter(
+  const agendamentosFiltrados = agendamentos.filter(
     ag =>
       ag.paciente_nome.toLowerCase().includes(nomeBusca.toLowerCase()) &&
-      ag.estado.includes(estadoBusca.toLowerCase())
+      ag.estado?.includes(estadoBusca.toLowerCase())
   )
+
+  const handleDeleteClick = (idAgendamento: Agendamento['id']) => {
+    const resposta = window.confirm(
+      'Tem certeza que deseja apagar esse agendamento?'
+    )
+    if (resposta) apagarAgendamento({ idAgendamento })
+  }
 
   return (
     <Card withBorder radius="md" p="md">
@@ -213,18 +150,19 @@ function TabelaAgendamentos() {
                         <IconEye style={{ width: rem(14), height: rem(14) }} />
                       </ActionIcon>
                     </Link>
-                    <Link to="/" disabled>
+                    <Link to="/app/agenda/novo" search={{ id: agendamento.id }}>
                       <ActionIcon variant="light" color="orange" size="sm">
                         <IconEdit style={{ width: rem(14), height: rem(14) }} />
                       </ActionIcon>
                     </Link>
-                    <Link to="/" disabled>
-                      <ActionIcon variant="light" color="red" size="sm">
-                        <IconTrash
-                          style={{ width: rem(14), height: rem(14) }}
-                        />
-                      </ActionIcon>
-                    </Link>
+                    <ActionIcon
+                      onClick={() => handleDeleteClick(agendamento.id)}
+                      variant="light"
+                      color="red"
+                      size="sm"
+                    >
+                      <IconTrash style={{ width: rem(14), height: rem(14) }} />
+                    </ActionIcon>
                   </Flex>
                 </Table.Td>
               </Table.Tr>
@@ -235,12 +173,13 @@ function TabelaAgendamentos() {
     </Card>
   )
 }
-function AgendaFutura() {
-  const [horizonteBusca, setHorizonteBusca] = useState('7') // Padrão: 7 dias
+
+function AgendaFutura({ agendamentos }: AgendaProps) {
+  const [horizonteBusca, setHorizonteBusca] = useState('7')
 
   const agora = new Date()
 
-  const agendamentosFuturos = mockAgendamentos
+  const agendamentosFuturos = agendamentos
     .filter(ag => {
       const horaInicio = new Date(`${ag.data}T${ag.horario_inicio}`)
       return horaInicio >= agora && ag.estado === 'agendado'
@@ -336,7 +275,48 @@ function AgendaFutura() {
 }
 
 function PaginaAgendamentos() {
+  const { data: agendamentos, isLoading, isError } = useAgendamentoList()
   const router = useRouter()
+
+  if (isLoading) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/app' },
+          { label: 'Agenda', isCurrentPage: true },
+        ]}
+        title="Sua Agenda"
+        description="Gerencie seus agendamentos e consultas"
+      >
+        <LoadingOverlay visible overlayProps={{ blur: 2 }} />
+      </PageLayout>
+    )
+  }
+
+  if (isError || agendamentos === undefined) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/app' },
+          { label: 'Agenda', isCurrentPage: true },
+        ]}
+        title="Sua Agenda"
+        description="Gerencie seus agendamentos e consultas"
+      >
+        <Center mt="xl">
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="Erro ao carregar dados"
+            color="red"
+            variant="filled"
+          >
+            Não foi possível carregar os agendamentos. Tente novamente mais
+            tarde.
+          </Alert>
+        </Center>
+      </PageLayout>
+    )
+  }
 
   return (
     <PageLayout
@@ -350,7 +330,11 @@ function PaginaAgendamentos() {
         label: 'Adicionar',
         icon: <IconCalendarPlus style={{ width: rem(16), height: rem(16) }} />,
         variant: 'light',
-        onClick: () => router.navigate({ to: '/app/agenda/novo' }),
+        onClick: () =>
+          router.navigate({
+            to: '/app/agenda/novo',
+            search: { id: undefined },
+          }),
       }}
     >
       <Tabs defaultValue="agendamentos">
@@ -367,11 +351,11 @@ function PaginaAgendamentos() {
         </Tabs.List>
 
         <Tabs.Panel value="agendamentos" pt="md">
-          <TabelaAgendamentos />
+          <TabelaAgendamentos agendamentos={agendamentos} />
         </Tabs.Panel>
 
         <Tabs.Panel value="agenda" pt="md">
-          <AgendaFutura />
+          <AgendaFutura agendamentos={agendamentos} />
         </Tabs.Panel>
       </Tabs>
     </PageLayout>
