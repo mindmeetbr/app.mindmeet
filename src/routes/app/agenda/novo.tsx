@@ -1,6 +1,5 @@
 import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
 
-import type { Agendamento } from '../../../api/models'
 import { AgendamentoTipoEnum, EstadoEnum } from '../../../api/models'
 import { useForm } from '@mantine/form'
 import { PageLayout } from '../../../components/layout'
@@ -20,6 +19,11 @@ import {
 import { TimeInput } from '@mantine/dates'
 import { paraMaiuscula } from '../../../utils/agenda'
 import { useState } from 'react'
+import {
+  useAgendamentoCreate,
+  useAgendamentoDetail,
+  useAgendamentoUpdate,
+} from '../../../api/endpoints/agendamentos/agendamentos'
 
 export const Route = createFileRoute('/app/agenda/novo')({
   component: AgendamentoCreatePage,
@@ -28,18 +32,18 @@ export const Route = createFileRoute('/app/agenda/novo')({
   }),
 })
 
-const mockAgendamento: Agendamento = {
-  id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-  data: '2025-11-13',
-  tipo: AgendamentoTipoEnum.online,
-  horario_inicio: '01:41:04.550Z',
-  horario_fim: '02:41:04.550Z',
-  paciente_nome: 'Marina Oliveira',
-  paciente_email: 'marina.oliveira@example.com',
-  paciente_numero_telefone: '(81) 98877-6655',
-  estado: EstadoEnum.cancelado,
-  motivo_cancelamento: 'Está gripada',
-}
+// const mockAgendamento: Agendamento = {
+//   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+//   data: '2025-11-13',
+//   tipo: AgendamentoTipoEnum.online,
+//   horario_inicio: '01:41:04.550Z',
+//   horario_fim: '02:41:04.550Z',
+//   paciente_nome: 'Marina Oliveira',
+//   paciente_email: 'marina.oliveira@example.com',
+//   paciente_numero_telefone: '(81) 98877-6655',
+//   estado: EstadoEnum.cancelado,
+//   motivo_cancelamento: 'Está gripada',
+// }
 
 interface Breadcrumb {
   label: string
@@ -66,15 +70,17 @@ const tipos = [
 ]
 
 function AgendamentoCreatePage() {
-  const agendamento = mockAgendamento
-
   const router = useRouter()
   const busca = useSearch({ from: '/app/agenda/novo' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const isEditing = !!busca.id
   const idAgendamento = busca.id
 
-  const isSuccess = Math.random() > 0.5
+  const { mutate: criarAgendamento } = useAgendamentoCreate()
+  const { mutate: editarAgendamento } = useAgendamentoUpdate()
+  const { data: agendamento, isSuccess } = useAgendamentoDetail(
+    idAgendamento as string
+  )
 
   const getInitialValues = () => {
     const defaultValues = {
@@ -124,13 +130,52 @@ function AgendamentoCreatePage() {
     },
   })
 
+  const setError = (error: any) => {
+    const errosBackend = error?.response.data
+    if (errosBackend) {
+      form.setErrors(errosBackend)
+    }
+  }
+
   const handleSubmit = (values: typeof form.values) => {
+    const dados = {
+      ...values,
+      tipo: AgendamentoTipoEnum[
+        values.tipo as keyof typeof AgendamentoTipoEnum
+      ],
+      estado: EstadoEnum[values.estado as keyof typeof EstadoEnum],
+    }
+
     try {
       setIsSubmitting(true)
-      if (isEditing) console.log('editando')
-      else console.log('criando')
-
-      console.log(JSON.stringify(values, null, 2))
+      if (isEditing) {
+        editarAgendamento(
+          { idAgendamento: idAgendamento!, data: dados },
+          {
+            onSuccess: () => {
+              router.navigate({
+                to: '/app/agenda/$id',
+                params: { id: idAgendamento! },
+              })
+            },
+            onError: (error: any) => {
+              setError(error)
+            },
+          }
+        )
+      } else {
+        criarAgendamento(
+          { data: dados },
+          {
+            onSuccess: () => {
+              router.navigate({ to: '/app/agenda' })
+            },
+            onError: (error: any) => {
+              setError(error)
+            },
+          }
+        )
+      }
     } catch (error) {
       console.log(error)
     } finally {
@@ -209,14 +254,14 @@ function AgendamentoCreatePage() {
                     placeholder="Digite o email do paciente"
                     required
                     withAsterisk
-                    {...form.getInputProps('paciente_nome')}
+                    {...form.getInputProps('paciente_email')}
                   />
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <TextInput
                     label="Telefone do Paciente"
                     placeholder="Digite o número de telefone do paciente"
-                    {...form.getInputProps('paciente_nome')}
+                    {...form.getInputProps('paciente_numero_telefone')}
                   />
                 </Grid.Col>
               </Grid>
@@ -260,28 +305,24 @@ function AgendamentoCreatePage() {
                 <Grid.Col span={4}>
                   <Select
                     label="Tipo de Agendamento"
-                    placeholder='Escolha um tipo'
+                    placeholder="Escolha um tipo"
                     description="Como será realizado o agendamento"
                     data={tipos}
                     required
                     withAsterisk
-                  allowDeselect={false}
+                    allowDeselect={false}
                     {...form.getInputProps('tipo')}
                   />
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Select
                     label="Estado do Agendamento"
-                    placeholder='Escolha um estado'
-                    description={
-                      form.values.estado !== EstadoEnum.agendado
-                        ? 'Como foi realizada a consulta'
-                        : 'Como será realizada a consulta'
-                    }
+                    placeholder="Escolha um estado"
+                    description="Qual é a situação do agendamento"
                     data={estados}
                     required
                     withAsterisk
-                  allowDeselect={false}
+                    allowDeselect={false}
                     {...form.getInputProps('estado')}
                   />
                 </Grid.Col>
@@ -309,7 +350,7 @@ function AgendamentoCreatePage() {
                       to: '/app/agenda/$id',
                       params: { id: idAgendamento! },
                     })
-                  : router.navigate({ to: 'app/agenda' })
+                  : router.navigate({ to: '/app/agenda' })
               }
               disabled={isSubmitting}
             >
