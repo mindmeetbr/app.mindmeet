@@ -1,6 +1,6 @@
 import { Text, Title } from '@mantine/core'
 import { createFileRoute } from '@tanstack/react-router'
-import { useAprovarEstagiario } from '../../api/endpoints/api/api'
+import { useAprovarEstagiario } from '../../api/endpoints/users/users'
 
 type ArgsAprovar = {
   id: string

@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-import { usePsicologoCreate } from '../../api/endpoints/api/api'
+import { usePsicologoCreate } from '../../api/endpoints/users/users'
 import { notifications } from '@mantine/notifications'
 import {
   IconX,

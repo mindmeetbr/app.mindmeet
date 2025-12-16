@@ -28,9 +28,9 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
-import { usePsicologoCreate } from '../../api/endpoints/api/api'
 import { PapelEnum } from '../../api/models'
 import { notifications } from '@mantine/notifications'
+import { usePsicologoCreate } from '../../api/endpoints/users/users'
 
 export const Route = createFileRoute('/cadastro/gestor')({
   beforeLoad: () => {
