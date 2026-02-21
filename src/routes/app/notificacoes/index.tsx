@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
-import { Table, ActionIcon, rem, Flex, Text } from '@mantine/core'
+import { Table, ActionIcon, rem, Flex } from '@mantine/core'
 import dayjs from 'dayjs'
 import { IconEye, IconTrash } from '@tabler/icons-react'
 import { useNotificacaoList } from '../../../api/endpoints/api/api'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { TableEmptyState } from '../../../components/ui/TableEmptyState'
 
 export const Route = createFileRoute('/app/notificacoes/')({
   component: PaginaNotificacoes,
@@ -12,27 +13,18 @@ export const Route = createFileRoute('/app/notificacoes/')({
 
 function TabelaNotificacoes() {
   useAlterarTitle('Notificações')
-  // adicionar filtros: texto, lida;
+  // TODO: adicionar filtros: buscar, marcar como lidas (todas)
+  //  filtrar por status, implementar função para apagar
 
-  const { data: notificacoes, isLoading, isError } = useNotificacaoList()
+  const {
+    data: notificacoes,
+    isLoading,
+    isError,
+    refetch,
+  } = useNotificacaoList()
+  const listaNotif = notificacoes ?? []
 
-  if (isLoading) {
-    return <Text fs="xl">Carregando notificações...</Text>
-  }
-
-  if (isError) {
-    return (
-      <Text fs="xl">
-        Não foi possível carregar suas notificações, tente novamente.
-      </Text>
-    )
-  }
-
-  if (!notificacoes) {
-    return <p>Nenhuma notificação encontrada.</p>
-  }
-
-  const linhas = notificacoes.map(notificacao => (
+  const linhas = listaNotif.map(notificacao => (
     <Table.Tr key={notificacao.id}>
       <Table.Td>{notificacao.titulo}</Table.Td>
       <Table.Td>
@@ -70,7 +62,18 @@ function TabelaNotificacoes() {
             <Table.Th>Opções</Table.Th>
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody>{linhas}</Table.Tbody>
+        <Table.Tbody>
+          <TableEmptyState
+            isLoading={isLoading}
+            isError={isError}
+            isEmpty={!isLoading && !isError && listaNotif.length === 0}
+            onRetry={refetch}
+            colSpan={4}
+            errorMessage="Não foi possível carregar suas notificações. Tente novamente."
+            emptyMessage="Nenhuma notificação."
+          />
+          {!isLoading && !isError && linhas}
+        </Table.Tbody>
       </Table>
     </Table.ScrollContainer>
   )

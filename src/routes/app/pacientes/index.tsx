@@ -29,6 +29,7 @@ import {
 } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { TableEmptyState } from '../../../components/ui/TableEmptyState'
 
 export const Route = createFileRoute('/app/pacientes/')({
   component: PacientesPage,
@@ -36,8 +37,10 @@ export const Route = createFileRoute('/app/pacientes/')({
 
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
-  const { data: pacientes, isLoading, isError } = usePacienteList()
+  const { data: pacientes, isLoading, isError, refetch } = usePacienteList()
   const { mutate: apagarPaciente } = usePacienteDelete()
+
+  const listaPacientes = pacientes ?? []
 
   const calcularIdade = (dataNascimento: string) => {
     return dayjs().diff(dayjs(dataNascimento), 'year')
@@ -71,19 +74,7 @@ function TabelaPacientes() {
     }
   }
 
-  if (isLoading) {
-    return <p>Carregando pacientes...</p>
-  }
-
-  if (isError || !pacientes) {
-    return <p>Não foi possível carregar seus pacientes, tente novamente.</p>
-  }
-
-  if (pacientes.length === 0) {
-    return <p>Nenhum paciente cadastrado.</p>
-  }
-
-  const pacientesFiltrados = pacientes.filter(
+  const pacientesFiltrados = listaPacientes.filter(
     paciente =>
       paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -195,14 +186,21 @@ function TabelaPacientes() {
               <Table.Th>Ações</Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody>{linhasTabela}</Table.Tbody>
+          <Table.Tbody>
+            <TableEmptyState
+              isError={isError}
+              isLoading={isLoading}
+              isEmpty={
+                !isLoading && !isError && pacientesFiltrados.length === 0
+              }
+              onRetry={refetch}
+              errorMessage="Não foi possível carregar seus pacientes. Tente novamente."
+              emptyMessage="Nenhum paciente encontrado."
+              colSpan={5}
+            />
+            {!isLoading && !isError && linhasTabela}
+          </Table.Tbody>
         </Table>
-
-        {pacientesFiltrados.length === 0 && (
-          <Text ta="center" py="xl" c="dimmed">
-            Nenhum paciente encontrado
-          </Text>
-        )}
       </Table.ScrollContainer>
     </Card>
   )

@@ -30,6 +30,7 @@ import dayjs from 'dayjs'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useInstituicaoDetail } from '../../../api/endpoints/users/users'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { TableEmptyState } from '../../../components/ui/TableEmptyState'
 
 export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,
@@ -115,6 +116,49 @@ function TabelaPsicologos() {
       psic.usuario.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const linhasTabelaPsicologo = psicologosFiltrados.map(psic => (
+    <Table.Tr key={psic.id}>
+      <Table.Td>
+        <Group gap="sm">
+          <Avatar>
+            {psic.usuario.nome_completo
+              .split(' ')
+              .map(n => n[0])
+              .join('')
+              .slice(0, 2)}
+          </Avatar>
+          <Text fw={500} size="sm">
+            {psic.usuario.nome_completo}
+          </Text>
+        </Group>
+      </Table.Td>
+      <Table.Td>{psic.usuario.email}</Table.Td>
+      <Table.Td>{psic.crp}</Table.Td>
+      <Table.Td>{psic.is_estagiario ? 'Sim' : 'Não'}</Table.Td>
+      <Table.Td>{psic.supervisor ?? 'Nenhum'}</Table.Td>
+      <Table.Td>
+        <Flex gap="xs">
+          <Link to="/psicologo/$id" params={{ id: psic.id }}>
+            <ActionIcon variant="light" color="blue" size="sm" disabled={true}>
+              <IconEye style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+          {/* TODO: Criar página para editar psicólogos quando se é gestor */}
+          <Link to="#">
+            <ActionIcon
+              variant="light"
+              color="orange"
+              size="sm"
+              disabled={true}
+            >
+              <IconEdit style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+        </Flex>
+      </Table.Td>
+    </Table.Tr>
+  ))
+
   return (
     <Card withBorder radius="md" p="md">
       <Group mb="md">
@@ -149,62 +193,16 @@ function TabelaPsicologos() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {psicologosFiltrados.map(psic => (
-              <Table.Tr key={psic.id}>
-                <Table.Td>
-                  <Group gap="sm">
-                    <Avatar>
-                      {psic.usuario.nome_completo
-                        .split(' ')
-                        .map(n => n[0])
-                        .join('')
-                        .slice(0, 2)}
-                    </Avatar>
-                    <Text fw={500} size="sm">
-                      {psic.usuario.nome_completo}
-                    </Text>
-                  </Group>
-                </Table.Td>
-                <Table.Td>{psic.usuario.email}</Table.Td>
-                <Table.Td>{psic.crp}</Table.Td>
-                <Table.Td>{psic.is_estagiario ? 'Sim' : 'Não'}</Table.Td>
-                <Table.Td>{psic.supervisor ?? 'Nenhum'}</Table.Td>
-                <Table.Td>
-                  <Flex gap="xs">
-                    <Link to="/psicologo/$id" params={{ id: psic.id }}>
-                      <ActionIcon
-                        variant="light"
-                        color="blue"
-                        size="sm"
-                        disabled={true}
-                      >
-                        <IconEye style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                    {/* TODO: Criar página para editar psicólogos quando se é gestor */}
-                    <Link to="#">
-                      <ActionIcon
-                        variant="light"
-                        color="orange"
-                        size="sm"
-                        disabled={true}
-                      >
-                        <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                  </Flex>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-            {psicologosFiltrados.length === 0 && (
-              <Table.Tr>
-                <Table.Td colSpan={6}>
-                  <Text ta="center" py="xl" c="dimmed">
-                    Nenhum psicólogo encontrado
-                  </Text>
-                </Table.Td>
-              </Table.Tr>
-            )}
+            <TableEmptyState
+              isError={false}
+              isLoading={false}
+              isEmpty={psicologosFiltrados.length === 0}
+              onRetry={() => console.log('me implementa por favor')}
+              emptyMessage="Nenhum psicólogo encontrado."
+              errorMessage="Não foi possível carregar seus psicólogos. Tente novamente"
+              colSpan={6}
+            />
+            {linhasTabelaPsicologo}
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
@@ -216,36 +214,66 @@ function TabelaPsicologos() {
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const { data: pacientes, isLoading, isError } = usePacienteList()
+  const { data: pacientes, isLoading, isError, refetch } = usePacienteList()
+  const listaPacientes = pacientes ?? []
 
   const calcularIdade = (dataNascimento?: string) =>
     dataNascimento ? dayjs().diff(dayjs(dataNascimento), 'year') : '-'
 
-  if (isLoading) {
-    return (
-      <Card withBorder radius="md" p="md">
-        <Text size="xl" ta="center" fs="italic" fw={500}>
-          Carregando Pacientes...
-        </Text>
-      </Card>
-    )
-  }
-
-  if (isError || !pacientes) {
-    return (
-      <Card withBorder radius="md" p="md">
-        <Text size="xl" ta="center" fw={600}>
-          Não foi possível carregar seus pacientes, tente novamente.
-        </Text>
-      </Card>
-    )
-  }
-
-  const pacientesFiltrados = pacientes.filter(
+  const pacientesFiltrados = listaPacientes.filter(
     pac =>
       pac.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pac.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const linhasTabelaPacientes = pacientesFiltrados.map(paciente => (
+    <Table.Tr key={paciente.id}>
+      <Table.Td>
+        <Group gap="sm">
+          <Avatar>
+            {paciente.nome_completo
+              ?.split(' ')
+              .map(n => n[0])
+              .join('')
+              .slice(0, 2)}
+          </Avatar>
+          <Text fw={500} size="sm">
+            {paciente.nome_completo}
+          </Text>
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <div>
+          <Group gap="xs">
+            <IconPhone style={{ width: rem(12), height: rem(12) }} />
+            <Text size="xs">{paciente.numero_telefone}</Text>
+          </Group>
+          <Group gap="xs">
+            <IconMail style={{ width: rem(12), height: rem(12) }} />
+            <Text size="xs">{paciente.email}</Text>
+          </Group>
+        </div>
+      </Table.Td>
+      <Table.Td>{calcularIdade(paciente.data_nascimento)} anos</Table.Td>
+      <Table.Td>
+        {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
+      </Table.Td>
+      <Table.Td>
+        <Flex gap="xs">
+          <Link to="/app/pacientes/$id" params={{ id: paciente.id }}>
+            <ActionIcon variant="light" color="blue" size="sm">
+              <IconEye style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+          <Link to="/app/pacientes/novo" search={{ id: paciente.id }}>
+            <ActionIcon variant="light" color="orange" size="sm">
+              <IconEdit style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+        </Flex>
+      </Table.Td>
+    </Table.Tr>
+  ))
 
   return (
     <Card withBorder radius="md" p="md">
@@ -280,65 +308,18 @@ function TabelaPacientes() {
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {pacientesFiltrados.map(paciente => (
-              <Table.Tr key={paciente.id}>
-                <Table.Td>
-                  <Group gap="sm">
-                    <Avatar>
-                      {paciente.nome_completo
-                        ?.split(' ')
-                        .map(n => n[0])
-                        .join('')
-                        .slice(0, 2)}
-                    </Avatar>
-                    <Text fw={500} size="sm">
-                      {paciente.nome_completo}
-                    </Text>
-                  </Group>
-                </Table.Td>
-                <Table.Td>
-                  <div>
-                    <Group gap="xs">
-                      <IconPhone style={{ width: rem(12), height: rem(12) }} />
-                      <Text size="xs">{paciente.numero_telefone}</Text>
-                    </Group>
-                    <Group gap="xs">
-                      <IconMail style={{ width: rem(12), height: rem(12) }} />
-                      <Text size="xs">{paciente.email}</Text>
-                    </Group>
-                  </div>
-                </Table.Td>
-                <Table.Td>
-                  {calcularIdade(paciente.data_nascimento)} anos
-                </Table.Td>
-                <Table.Td>
-                  {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
-                </Table.Td>
-                <Table.Td>
-                  <Flex gap="xs">
-                    <Link to="/app/pacientes/$id" params={{ id: paciente.id }}>
-                      <ActionIcon variant="light" color="blue" size="sm">
-                        <IconEye style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                    <Link to="/app/pacientes/novo" search={{ id: paciente.id }}>
-                      <ActionIcon variant="light" color="orange" size="sm">
-                        <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                  </Flex>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-            {pacientesFiltrados.length === 0 && (
-              <Table.Tr>
-                <Table.Td colSpan={5}>
-                  <Text ta="center" py="xl" c="dimmed">
-                    Nenhum paciente encontrado
-                  </Text>
-                </Table.Td>
-              </Table.Tr>
-            )}
+            <TableEmptyState
+              isError={isError}
+              isLoading={isLoading}
+              isEmpty={
+                !isError && !isLoading && pacientesFiltrados.length === 0
+              }
+              onRetry={refetch}
+              colSpan={5}
+              errorMessage="Não foi possível carregar seus pacientes. Tente novamente."
+              emptyMessage="Nenhum paciente encontrado."
+            />
+            {!isLoading && isError && linhasTabelaPacientes}
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
