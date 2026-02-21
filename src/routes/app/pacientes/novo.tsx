@@ -22,6 +22,7 @@ import {
   usePacienteUpdate,
   usePacienteDetail,
 } from '../../../api/endpoints/pacientes/pacientes'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/pacientes/novo')({
   component: NovoPacientePage,
@@ -37,6 +38,7 @@ function NovoPacientePage() {
 
   const isEditing = !!search.id
   const pacienteId = search.id
+  useAlterarTitle(isEditing ? 'Editar Paciente' : 'Novo Paciente')
 
   const { mutate: criarPaciente } = usePacienteCreate()
   const { mutate: editarPaciente } = usePacienteUpdate()

@@ -16,11 +16,13 @@ import { useForm } from '@mantine/form'
 import { PageLayout } from '../../../components/layout'
 import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import dayjs from 'dayjs'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 export const Route = createFileRoute('/app/instituicao/novo-psicologo')({
   component: NovoPsicologo,
 })
 
 function NovoPsicologo() {
+  useAlterarTitle('Cadastrar Psicólogo')
   const router = useRouter()
 
   const form = useForm({

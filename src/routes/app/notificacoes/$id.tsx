@@ -3,9 +3,10 @@ import { PageLayout } from '../../../components/layout'
 import { Card, Text, Title } from '@mantine/core'
 import { useNotificacaoDetail } from '../../../api/endpoints/api/api'
 import type { Notificacao } from '../../../api/models'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/notificacoes/$id')({
-  component: RouteComponent,
+  component: NotificacaoIndividual,
 })
 
 interface CardNotificacaoProps {
@@ -50,10 +51,11 @@ function CardNotificacao(props: CardNotificacaoProps) {
   )
 }
 
-function RouteComponent() {
+function NotificacaoIndividual() {
   const { id } = Route.useParams()
   const { data: notificacao, isLoading, isError } = useNotificacaoDetail(id)
 
+  useAlterarTitle(notificacao?.titulo ?? 'Notificação')
   return (
     <PageLayout
       breadcrumbs={[

@@ -15,12 +15,14 @@ import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import { PageLayout } from '../../../components/layout'
 import { usePacienteCreate } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/instituicao/novo-paciente')({
   component: NovoPaciente,
 })
 
 function NovoPaciente() {
+  useAlterarTitle('Cadastrar Paciente')
   const { mutate: criarPaciente } = usePacienteCreate()
   const router = useRouter()
 

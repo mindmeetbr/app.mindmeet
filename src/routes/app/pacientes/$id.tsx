@@ -46,6 +46,7 @@ import {
 } from '../../../api/endpoints/api/api'
 import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
 import type { Anotacao } from '../../../api/models'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/pacientes/$id')({
   component: PacienteDetalhePage,
@@ -382,6 +383,11 @@ function PacienteDetalhePage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('perfil')
   const { data: paciente, isLoading, isError } = usePacienteDetail(id)
+
+  const titulo = paciente?.nome_completo
+    ? `Paciente: ${paciente.nome_completo}`
+    : 'Paciente'
+  useAlterarTitle(titulo)
 
   if (isLoading) {
     return <Text>Carregando paciente...</Text>

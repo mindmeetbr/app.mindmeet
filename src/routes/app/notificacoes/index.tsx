@@ -4,12 +4,14 @@ import { Table, ActionIcon, rem, Flex, Text } from '@mantine/core'
 import dayjs from 'dayjs'
 import { IconEye, IconTrash } from '@tabler/icons-react'
 import { useNotificacaoList } from '../../../api/endpoints/api/api'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/notificacoes/')({
   component: PaginaNotificacoes,
 })
 
 function TabelaNotificacoes() {
+  useAlterarTitle('Notificações')
   // adicionar filtros: texto, lida;
 
   const { data: notificacoes, isLoading, isError } = useNotificacaoList()

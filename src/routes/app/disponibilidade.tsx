@@ -29,6 +29,7 @@ import {
   type Disponibilidade,
 } from '../../api/models'
 import { notifications } from '@mantine/notifications'
+import { useAlterarTitle } from '../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/disponibilidade')({
   component: CardDisponibilidades,
@@ -163,6 +164,7 @@ function BotaoAdicionarHorarios() {
 }
 
 function CardDisponibilidades() {
+  useAlterarTitle('Disponibilidade')
   const [carregando, setCarregando] = useState(false)
   const [disponibilidades, setDisponibilidades] = useState<Disponibilidade[]>(
     []

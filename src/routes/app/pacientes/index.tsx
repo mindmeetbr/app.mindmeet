@@ -28,6 +28,7 @@ import {
   usePacienteDelete,
 } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/pacientes/')({
   component: PacientesPage,
@@ -208,6 +209,7 @@ function TabelaPacientes() {
 }
 
 function PacientesPage() {
+  useAlterarTitle('Seus Pacientes')
   const router = useRouter()
 
   return (

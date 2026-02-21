@@ -25,6 +25,7 @@ import {
 } from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
+import { useAlterarTitle } from '../../hooks/useAlterarTitle'
 // import { useProfileView } from '../../api/endpoints/api/api'
 
 dayjs.locale('pt-br')
@@ -128,6 +129,7 @@ function StatCard({ icon, title, value, description, color }: any) {
 }
 
 function Dashboard() {
+  useAlterarTitle('Dashboard')
   // const { data: user, isError } = useProfileView()
   const { stats, proximosAgendamentos, agendamentosRecentes } = mockData
   // const router = useRouter()

@@ -18,12 +18,14 @@ import {
   useInstituicaoUpdate,
 } from '../../../api/endpoints/users/users'
 import { notifications } from '@mantine/notifications'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/instituicao/editar')({
   component: EditarInstituicaoPage,
 })
 
 function EditarInstituicaoPage() {
+  useAlterarTitle('Editar Instituição')
   const router = useRouter()
   const { data: instituicao, isSuccess } = useInstituicaoDetail()
   const { mutate: editarInstituicao } = useInstituicaoUpdate()

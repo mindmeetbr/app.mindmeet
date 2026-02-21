@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { 
+import {
   Container,
   Title,
   Card,
@@ -17,10 +17,16 @@ import {
   rem,
   Flex,
   NavLink,
-  Divider
+  Divider,
 } from '@mantine/core'
-import { IconUser, IconSettings, IconCamera, IconPencil } from '@tabler/icons-react'
+import {
+  IconUser,
+  IconSettings,
+  IconCamera,
+  IconPencil,
+} from '@tabler/icons-react'
 import { useState } from 'react'
+import { useAlterarTitle } from '../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/configuracoes')({
   component: Configuracoes,
@@ -42,16 +48,17 @@ const mockUserData = {
     bairro: 'Centro',
     cidade: 'São Paulo',
     estado: 'SP',
-    complemento: 'Sala 45'
+    complemento: 'Sala 45',
   },
   configuracoes: {
     notificacoes: true,
     agendamentoOnline: true,
-    lembretesPacientes: true
-  }
+    lembretesPacientes: true,
+  },
 }
 
 function Configuracoes() {
+  useAlterarTitle('Configurações')
   const [userData, setUserData] = useState(mockUserData)
   const [isEditing, setIsEditing] = useState(false)
   const [activeSection, setActiveSection] = useState('perfil')
@@ -65,7 +72,7 @@ function Configuracoes() {
   const handleAvatarChange = (file: File | null) => {
     if (file) {
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onload = e => {
         setUserData(prev => ({ ...prev, avatar: e.target?.result as string }))
       }
       reader.readAsDataURL(file)
@@ -74,20 +81,26 @@ function Configuracoes() {
 
   return (
     <Container size="xl">
-      <Title order={2} mb="lg">Configurações</Title>
-      
+      <Title order={2} mb="lg">
+        Configurações
+      </Title>
+
       <Flex gap="xl">
         {/* Sidebar Menu */}
         <Stack w={200} gap="xs">
           <NavLink
             label="Meu Perfil"
-            leftSection={<IconUser style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconUser style={{ width: rem(16), height: rem(16) }} />
+            }
             active={activeSection === 'perfil'}
             onClick={() => setActiveSection('perfil')}
           />
           <NavLink
             label="Configurações Gerais"
-            leftSection={<IconSettings style={{ width: rem(16), height: rem(16) }} />}
+            leftSection={
+              <IconSettings style={{ width: rem(16), height: rem(16) }} />
+            }
             active={activeSection === 'geral'}
             onClick={() => setActiveSection('geral')}
           />
@@ -95,7 +108,6 @@ function Configuracoes() {
 
         {/* Content Area */}
         <Stack flex={1}>
-
           {activeSection === 'perfil' && (
             <Card withBorder radius="md" p="xl">
               <Stack gap="lg">
@@ -103,8 +115,12 @@ function Configuracoes() {
                   <Title order={3}>Informações Pessoais</Title>
                   <Button
                     variant={isEditing ? 'filled' : 'light'}
-                    leftSection={<IconPencil style={{ width: rem(16), height: rem(16) }} />}
-                    onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+                    leftSection={
+                      <IconPencil style={{ width: rem(16), height: rem(16) }} />
+                    }
+                    onClick={() =>
+                      isEditing ? handleSave() : setIsEditing(true)
+                    }
                   >
                     {isEditing ? 'Salvar' : 'Editar'}
                   </Button>
@@ -114,7 +130,8 @@ function Configuracoes() {
                 <Group>
                   <div style={{ position: 'relative' }}>
                     <Avatar size={120} src={userData.avatar} radius="md">
-                      {userData.firstName[0]}{userData.lastName[0]}
+                      {userData.firstName[0]}
+                      {userData.lastName[0]}
                     </Avatar>
                     {isEditing && (
                       <ActionIcon
@@ -127,8 +144,13 @@ function Configuracoes() {
                           right: -5,
                         }}
                       >
-                        <label htmlFor="avatar-upload" style={{ cursor: 'pointer' }}>
-                          <IconCamera style={{ width: rem(20), height: rem(20) }} />
+                        <label
+                          htmlFor="avatar-upload"
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <IconCamera
+                            style={{ width: rem(20), height: rem(20) }}
+                          />
                           <FileInput
                             id="avatar-upload"
                             accept="image/*"
@@ -144,7 +166,9 @@ function Configuracoes() {
                       {userData.firstName} {userData.lastName}
                     </Text>
                     <Text c="dimmed">{userData.abordagem}</Text>
-                    <Text c="dimmed" size="sm">{userData.crp}</Text>
+                    <Text c="dimmed" size="sm">
+                      {userData.crp}
+                    </Text>
                   </Stack>
                 </Group>
 
@@ -154,7 +178,12 @@ function Configuracoes() {
                     <TextInput
                       label="Nome"
                       value={userData.firstName}
-                      onChange={(e) => setUserData(prev => ({ ...prev, firstName: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({
+                          ...prev,
+                          firstName: e.target.value,
+                        }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -162,7 +191,12 @@ function Configuracoes() {
                     <TextInput
                       label="Sobrenome"
                       value={userData.lastName}
-                      onChange={(e) => setUserData(prev => ({ ...prev, lastName: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({
+                          ...prev,
+                          lastName: e.target.value,
+                        }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -171,7 +205,12 @@ function Configuracoes() {
                       label="Email"
                       type="email"
                       value={userData.email}
-                      onChange={(e) => setUserData(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -179,7 +218,12 @@ function Configuracoes() {
                     <TextInput
                       label="Telefone"
                       value={userData.phone}
-                      onChange={(e) => setUserData(prev => ({ ...prev, phone: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({
+                          ...prev,
+                          phone: e.target.value,
+                        }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -187,7 +231,9 @@ function Configuracoes() {
                     <TextInput
                       label="CRP"
                       value={userData.crp}
-                      onChange={(e) => setUserData(prev => ({ ...prev, crp: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({ ...prev, crp: e.target.value }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -195,14 +241,19 @@ function Configuracoes() {
                     <Select
                       label="Abordagem"
                       value={userData.abordagem}
-                      onChange={(value) => setUserData(prev => ({ ...prev, abordagem: value || '' }))}
+                      onChange={value =>
+                        setUserData(prev => ({
+                          ...prev,
+                          abordagem: value || '',
+                        }))
+                      }
                       disabled={!isEditing}
                       data={[
                         'Psicanálise',
                         'Terapia Cognitivo-Comportamental (TCC)',
                         'Gestalt-terapia',
                         'Humanista',
-                        'Psicologia Analítica'
+                        'Psicologia Analítica',
                       ]}
                     />
                   </Grid.Col>
@@ -212,7 +263,9 @@ function Configuracoes() {
                       description="Esta informação será exibida em seu perfil público"
                       rows={4}
                       value={userData.bio}
-                      onChange={(e) => setUserData(prev => ({ ...prev, bio: e.target.value }))}
+                      onChange={e =>
+                        setUserData(prev => ({ ...prev, bio: e.target.value }))
+                      }
                       disabled={!isEditing}
                     />
                   </Grid.Col>
@@ -222,16 +275,20 @@ function Configuracoes() {
 
                 {/* Address Section */}
                 <div>
-                  <Title order={4} mb="md">Endereço</Title>
+                  <Title order={4} mb="md">
+                    Endereço
+                  </Title>
                   <Grid>
                     <Grid.Col span={{ base: 12, sm: 4 }}>
                       <TextInput
                         label="CEP"
                         value={userData.endereco.cep}
-                        onChange={(e) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, cep: e.target.value }
-                        }))}
+                        onChange={e =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: { ...prev.endereco, cep: e.target.value },
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </Grid.Col>
@@ -239,10 +296,12 @@ function Configuracoes() {
                       <TextInput
                         label="Rua e Número"
                         value={userData.endereco.rua}
-                        onChange={(e) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, rua: e.target.value }
-                        }))}
+                        onChange={e =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: { ...prev.endereco, rua: e.target.value },
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </Grid.Col>
@@ -250,10 +309,15 @@ function Configuracoes() {
                       <TextInput
                         label="Bairro"
                         value={userData.endereco.bairro}
-                        onChange={(e) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, bairro: e.target.value }
-                        }))}
+                        onChange={e =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: {
+                              ...prev.endereco,
+                              bairro: e.target.value,
+                            },
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </Grid.Col>
@@ -261,10 +325,15 @@ function Configuracoes() {
                       <TextInput
                         label="Cidade"
                         value={userData.endereco.cidade}
-                        onChange={(e) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, cidade: e.target.value }
-                        }))}
+                        onChange={e =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: {
+                              ...prev.endereco,
+                              cidade: e.target.value,
+                            },
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </Grid.Col>
@@ -272,10 +341,12 @@ function Configuracoes() {
                       <Select
                         label="Estado"
                         value={userData.endereco.estado}
-                        onChange={(value) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, estado: value || '' }
-                        }))}
+                        onChange={value =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: { ...prev.endereco, estado: value || '' },
+                          }))
+                        }
                         disabled={!isEditing}
                         data={['SP', 'RJ', 'MG', 'RS', 'PR', 'SC']}
                       />
@@ -285,10 +356,15 @@ function Configuracoes() {
                         label="Complemento"
                         placeholder="Sala, andar, bloco..."
                         value={userData.endereco.complemento}
-                        onChange={(e) => setUserData(prev => ({ 
-                          ...prev, 
-                          endereco: { ...prev.endereco, complemento: e.target.value }
-                        }))}
+                        onChange={e =>
+                          setUserData(prev => ({
+                            ...prev,
+                            endereco: {
+                              ...prev.endereco,
+                              complemento: e.target.value,
+                            },
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </Grid.Col>
@@ -302,10 +378,11 @@ function Configuracoes() {
             <Card withBorder radius="md" p="xl">
               <Stack gap="lg">
                 <Title order={3}>Configurações Gerais</Title>
-                
+
                 <Text size="sm" c="dimmed">
-                  Em desenvolvimento... Aqui ficarão as configurações de notificações, 
-                  preferências de agendamento e outras configurações do sistema.
+                  Em desenvolvimento... Aqui ficarão as configurações de
+                  notificações, preferências de agendamento e outras
+                  configurações do sistema.
                 </Text>
               </Stack>
             </Card>

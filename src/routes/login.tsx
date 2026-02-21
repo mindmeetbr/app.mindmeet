@@ -25,6 +25,7 @@ import { Link } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
 import { showNotification } from '@mantine/notifications'
 import { IconCheck } from '@tabler/icons-react'
+import { useAlterarTitle } from '../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
@@ -37,6 +38,7 @@ export const Route = createFileRoute('/login')({
 })
 
 function RouteComponent() {
+  useAlterarTitle('Login')
   const authStore = useAuthStore()
   const router = useRouter()
   const { isAuthenticated } = authStore
@@ -77,17 +79,16 @@ function RouteComponent() {
           form.setErrors(errosBackend)
 
           if (errosBackend.non_field_errors) {
-          showNotification({
-            title: "Erro de login",
-            message: errosBackend.non_field_errors[0],
-            color: "red",
-          })
-        }
+            showNotification({
+              title: 'Erro de login',
+              message: errosBackend.non_field_errors[0],
+              color: 'red',
+            })
+          }
         }
       },
-    }
-  }
-)
+    },
+  })
 
   const schema = z.object({
     email: z.email('Endereço de email inválido'),

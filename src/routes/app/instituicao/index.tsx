@@ -29,6 +29,7 @@ import { PageLayout } from '../../../components/layout'
 import dayjs from 'dayjs'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useInstituicaoDetail } from '../../../api/endpoints/users/users'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,
@@ -354,6 +355,7 @@ function PaginaInstituicao() {
   const { data: instituicao } = useInstituicaoDetail()
   const router = useRouter()
 
+  useAlterarTitle(instituicao?.nome ?? 'Instituição')
   return (
     <PageLayout
       breadcrumbs={[

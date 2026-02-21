@@ -13,12 +13,15 @@ import {
   ThemeIcon,
 } from '@mantine/core'
 import { IconCheck } from '@tabler/icons-react'
+import { useAlterarTitle } from '../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/cadastro/')({
   component: TipoCadastro,
 })
 
 function TipoCadastro() {
+  useAlterarTitle('Cadastro')
+
   const planos = [
     {
       tipo: 'Psicólogo',
