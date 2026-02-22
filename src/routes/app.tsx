@@ -14,28 +14,20 @@ import {
   UnstyledButton,
   Menu,
   rem,
-  ActionIcon,
-  Tooltip,
 } from '@mantine/core'
 import {
   IconDashboard,
   IconSettings,
-  // IconCalendar,
   IconUsers,
   IconLogout,
   IconChevronDown,
   IconClock,
-  IconEye,
-  IconEyeOff,
   IconBell,
   IconBellExclamation,
   IconBuildingCommunity,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
-import usePreferencesStore from '../stores/preferences-store'
-import {
-  useNotificacaoPendenteList
-} from '../api/endpoints/api/api'
+import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
 import { useEffect, useState } from 'react'
 import { PapelEnum } from '../api/models'
 import { useProfileView } from '../api/endpoints/users/users'
@@ -52,7 +44,6 @@ export const Route = createFileRoute('/app')({
 
 function AppLayout() {
   const { isAuthenticated, logout } = useAuthStore()
-  const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
   const router = useRouterState()
   const redirector = useRouter()
   const [temNaoLidas, setTemNaoLidas] = useState(false)
@@ -94,27 +85,6 @@ function AppLayout() {
           </Text>
 
           <Group gap="sm">
-            <Tooltip
-              label={
-                hideFinancialDetails
-                  ? 'Mostrar valores financeiros'
-                  : 'Ocultar valores financeiros'
-              }
-              position="bottom"
-            >
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                onClick={toggleFinancialDetails}
-              >
-                {hideFinancialDetails ? (
-                  <IconEye style={{ width: rem(18), height: rem(18) }} />
-                ) : (
-                  <IconEyeOff style={{ width: rem(18), height: rem(18) }} />
-                )}
-              </ActionIcon>
-            </Tooltip>
-
             <Menu shadow="md" width={200}>
               <Menu.Target>
                 <UnstyledButton>

@@ -3,7 +3,6 @@ import {
   Grid,
   Card,
   Text,
-  // Title,
   Group,
   Stack,
   Badge,
@@ -11,15 +10,12 @@ import {
   Progress,
   SimpleGrid,
   rem,
-  // Button
 } from '@mantine/core'
-import { FinancialValue } from '../../components/ui/FinancialValue'
 import { PageLayout } from '../../components/layout'
 import {
   IconCalendar,
   IconUsers,
   IconClock,
-  IconTrendingUp,
   IconCalendarCheck,
   IconCalendarX,
 } from '@tabler/icons-react'
@@ -143,7 +139,7 @@ function Dashboard() {
       title="Dashboard"
       description="Visão geral das suas atividades e métricas"
     >
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
         <StatCard
           icon={<IconCalendar style={{ width: rem(24), height: rem(24) }} />}
           title="Total de Agendamentos"
@@ -164,19 +160,6 @@ function Dashboard() {
           value={stats.pacientesAtivos}
           description="Em acompanhamento"
           color="var(--mantine-color-orange-6)"
-        />
-        <StatCard
-          icon={<IconTrendingUp style={{ width: rem(24), height: rem(24) }} />}
-          title="Faturamento"
-          value={
-            <FinancialValue
-              value={stats.faturamentoMes.toLocaleString('pt-BR')}
-              prefix="R$ "
-              showToggleButton={true}
-            />
-          }
-          description="Este mês"
-          color="var(--mantine-color-violet-6)"
         />
       </SimpleGrid>
 
