@@ -4,6 +4,8 @@ import { Card, Text, Title } from '@mantine/core'
 import { useNotificacaoDetail } from '../../../api/endpoints/api/api'
 import type { Notificacao } from '../../../api/models'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/notificacoes/$id')({
   component: NotificacaoIndividual,
@@ -53,9 +55,22 @@ function CardNotificacao(props: CardNotificacaoProps) {
 
 function NotificacaoIndividual() {
   const { id } = Route.useParams()
-  const { data: notificacao, isLoading, isError } = useNotificacaoDetail(id)
+  const {
+    data: notificacao,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useNotificacaoDetail(id)
+  const queryClient = useQueryClient()
 
   useAlterarTitle(notificacao?.titulo ?? 'Notificação')
+
+  useEffect(() => {
+    if (isSuccess) {
+      queryClient.invalidateQueries({ queryKey: ['notificacoes-pendentes'] })
+    }
+  }, [isSuccess, queryClient])
+
   return (
     <PageLayout
       breadcrumbs={[

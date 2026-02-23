@@ -1,9 +1,9 @@
 import {
   createFileRoute,
+  Link,
   Outlet,
   redirect,
   useRouter,
-  useRouterState,
 } from '@tanstack/react-router'
 import {
   AppShell,
@@ -14,6 +14,7 @@ import {
   UnstyledButton,
   Menu,
   rem,
+  Indicator,
 } from '@mantine/core'
 import {
   IconDashboard,
@@ -23,14 +24,12 @@ import {
   IconChevronDown,
   IconClock,
   IconBell,
-  IconBellExclamation,
   IconBuildingCommunity,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
-import { useProfileView } from '../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -43,28 +42,23 @@ export const Route = createFileRoute('/app')({
 })
 
 function AppLayout() {
-  const { isAuthenticated, logout } = useAuthStore()
-  const router = useRouterState()
+  const { isAuthenticated, logout, user } = useAuthStore()
   const redirector = useRouter()
-  const [temNaoLidas, setTemNaoLidas] = useState(false)
-  const { data: pendentes, isError, isLoading } = useNotificacaoPendenteList()
-  const { data: user } = useProfileView()
-
-  const isActive = (path: string) => {
-    return (
-      router.location.pathname === path ||
-      router.location.pathname.startsWith(`${path}/`)
-    )
-  }
+  const { data: pendentes } = useNotificacaoPendenteList({
+    query: {
+      staleTime: 10 * 60 * 1000, // 10 minutos
+      refetchInterval: 10 * 60 * 1000, // 10 minutos
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      queryKey: ['notificacoes-pendentes'],
+    },
+  })
 
   const handleLogoutClick = () => {
     logout()
   }
 
-  useEffect(() => {
-    if (!pendentes || isError || isLoading) setTemNaoLidas(false)
-    else if (pendentes.nao_lidas > 0) setTemNaoLidas(true)
-  }, [pendentes, isError, isLoading])
+  const temNaoLidas = !!pendentes?.nao_lidas && pendentes.nao_lidas > 0
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -91,7 +85,7 @@ function AppLayout() {
                   <Group gap={7}>
                     <Avatar size={32} radius="xl" />
                     <Text fw={500} size="sm" lh={1} mr={3}>
-                      {user?.email || user?.nome_completo || 'Usuário'}
+                      {user?.email || 'Usuário'}
                     </Text>
                     <IconChevronDown
                       style={{ width: rem(12), height: rem(12) }}
@@ -127,70 +121,70 @@ function AppLayout() {
 
       <AppShell.Navbar p="md">
         <NavLink
-          href="/app"
+          component={Link}
+          to="/app"
           label="Dashboard"
           leftSection={
             <IconDashboard style={{ width: rem(16), height: rem(16) }} />
           }
-          active={router.location.pathname === '/app'}
+          activeOptions={{ exact: true }}
         />
-        {/* <NavLink
-          href="/app/agendamentos"
-          label="Agendamentos"
-          leftSection={
-            <IconCalendar style={{ width: rem(16), height: rem(16) }} />
-          }
-          active={isActive('/app/agendamentos')}
-        /> */}
         <NavLink
-          href="/app/disponibilidade"
+          component={Link}
+          to="/app/disponibilidade"
           label="Disponibilidade"
           leftSection={
             <IconClock style={{ width: rem(16), height: rem(16) }} />
           }
-          active={isActive('/app/disponibilidade')}
+          activeOptions={{ exact: true }}
         />
         <NavLink
-          href="/app/pacientes"
+          component={Link}
+          to="/app/pacientes"
           label="Pacientes"
           leftSection={
             <IconUsers style={{ width: rem(16), height: rem(16) }} />
           }
-          active={isActive('/app/pacientes')}
+          activeOptions={{ exact: true }}
         />
         <NavLink
-          href="/app/configuracoes"
+          component={Link}
+          to="/app/configuracoes"
           label="Configurações"
           leftSection={
             <IconSettings style={{ width: rem(16), height: rem(16) }} />
           }
-          active={isActive('/app/configuracoes')}
+          activeOptions={{ exact: true }}
         />
         <NavLink
-          href="/app/notificacoes"
+          component={Link}
+          to="/app/notificacoes"
           label="Notificações"
           leftSection={
-            temNaoLidas ? (
-              <IconBellExclamation
-                style={{ width: rem(16), height: rem(16), color: 'red' }}
-              />
-            ) : (
+            <Indicator
+              disabled={!temNaoLidas}
+              position="top-start"
+              color="red"
+              size={8}
+              offset={2}
+            >
               <IconBell style={{ width: rem(16), height: rem(16) }} />
-            )
+            </Indicator>
           }
-          active={isActive('/app/notificacoes')}
+          activeOptions={{ exact: true }}
         />
 
         {user?.papel === PapelEnum.GESTOR && (
           <NavLink
-            href="/app/instituicao"
+            component={Link}
+            to="/app/instituicao"
             label="Instituição"
             leftSection={
               <IconBuildingCommunity
                 style={{ width: rem(16), height: rem(16) }}
               />
             }
-            active={isActive('/app/instituicao')}
+            activeOptions={{ exact: true }}
           />
         )}
       </AppShell.Navbar>
