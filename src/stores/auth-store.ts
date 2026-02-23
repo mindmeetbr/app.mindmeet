@@ -1,14 +1,13 @@
 import { create } from 'zustand'
 import { persist, type PersistOptions } from 'zustand/middleware'
-import { jwtDecode } from 'jwt-decode'
 import type { Jwt } from '../api/models'
 
 export type UserData = Jwt['user']
 
-type AccessToken = {
-  role?: string[]
-  [key: string]: any
-}
+// type AccessToken = {
+//   role?: string[]
+//   [key: string]: any
+// }
 
 interface AuthState {
   isAuthenticated: boolean
@@ -31,13 +30,10 @@ const useAuthStore = create<AuthState>()(
       accessToken: null,
       setUser: userData => set({ user: userData }),
       setAccessToken: accessToken => set({ accessToken }),
-      login: (accessToken) => {
-        const decodedToken: AccessToken = jwtDecode(accessToken)
-        const userData = decodedToken.user
+      login: accessToken => {
         set({
-          user: userData,
           isAuthenticated: true,
-          accessToken
+          accessToken,
         })
       },
       logout: () => {
@@ -51,7 +47,7 @@ const useAuthStore = create<AuthState>()(
         set({
           user: null,
           isAuthenticated: false,
-          accessToken: null
+          accessToken: null,
         })
       },
     }),
