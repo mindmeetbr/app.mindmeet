@@ -16,10 +16,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { z } from 'zod'
-import {
-  useApiAuthLoginCreate,
-  useApiAuthUserRetrieve,
-} from '../api/endpoints/api/api'
+import { useApiAuthLoginCreate } from '../api/endpoints/api/api'
 import useAuthStore from '../stores/auth-store'
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
@@ -41,16 +38,8 @@ function RouteComponent() {
   useAlterarTitle('Login')
   const authStore = useAuthStore()
   const router = useRouter()
-  const { isAuthenticated } = authStore
   const state = useLocation().state as { mensagem?: string }
   const notifMostrada = useRef(false)
-
-  const { data: _user } = useApiAuthUserRetrieve({
-    query: {
-      enabled: isAuthenticated,
-      queryKey: ['user'],
-    },
-  })
 
   useEffect(() => {
     const mensagem = state?.mensagem
@@ -65,11 +54,11 @@ function RouteComponent() {
       notifMostrada.current = true
     }
   }, [state?.mensagem])
-
-  const { mutate: login } = useApiAuthLoginCreate({
+  const { mutate: login, isPending } = useApiAuthLoginCreate({
     mutation: {
       onSuccess: data => {
         authStore.login(data.access)
+        authStore.setUser(data.user)
         router.navigate({ to: '/app' })
       },
       onError: (error: any) => {
@@ -92,14 +81,12 @@ function RouteComponent() {
 
   const schema = z.object({
     email: z.email('Endereço de email inválido'),
-    // username: z.string('Invalid username'),
     password: z.string().min(8, 'A senha deve possuir no mínimo 8 caracteres'),
   })
 
   const form = useForm({
     initialValues: {
       email: '',
-      // username: '',
       password: '',
     },
     validate: values => {
@@ -113,15 +100,10 @@ function RouteComponent() {
     },
   })
 
-  const handleSubmit = (values: {
-    email: string
-    // username: string
-    password: string
-  }) => {
+  const handleSubmit = (values: { email: string; password: string }) => {
     login({
       data: {
         email: values.email,
-        // username: values.username,
         password: values.password,
       },
     })
@@ -144,11 +126,6 @@ function RouteComponent() {
         withBorder
         style={{ width: '100%', maxWidth: '400px' }}
       >
-        {/* {user && (
-          <Stack gap="lg">
-            <Text>Bem-vindo, {user.username}</Text>
-          </Stack>
-        )} */}
         <Stack gap="lg">
           <div style={{ textAlign: 'center' }}>
             <Title order={2} mb="xs">
@@ -172,22 +149,23 @@ function RouteComponent() {
                 {...form.getInputProps('email')}
               />
 
-              {/* <TextInput
-                label="Nome de usuário"
-                placeholder="ciro.moura"
-                required
-                {...form.getInputProps('username')}
-              /> */}
-
               <PasswordInput
                 label="Senha"
                 placeholder="Digite sua senha"
                 required
                 error={form.errors.password}
+                styles={{ input: { caretColor: 'var(--mantine-color-indigo-9)' } }}
                 {...form.getInputProps('password')}
               />
 
-              <Button type="submit" fullWidth size="md" mt="md">
+              <Button
+                type="submit"
+                fullWidth
+                size="md"
+                mt="md"
+                loading={isPending}
+                loaderProps={{ type: 'dots', color: '#fff' }}
+              >
                 Entrar
               </Button>
             </Stack>
