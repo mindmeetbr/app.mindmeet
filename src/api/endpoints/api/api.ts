@@ -26,17 +26,17 @@ import type {
 import type {
   Anotacao,
   CriarAnotacao,
+  CustomJWT,
   CustomLogin,
   CustomRegister,
-  Jwt,
-  MUser,
+  MUserParcial,
   Notificacao,
   NotificacoesPendentes,
   PasswordChange,
   PasswordReset,
   PasswordResetConfirm,
   PatchedAnotacao,
-  PatchedMUser,
+  PatchedMUserParcial,
   ResendEmailVerification,
   RestAuthDetail,
   TokenRefresh,
@@ -634,7 +634,7 @@ export const apiAuthLoginCreate = (
 ) => {
       
       
-      return customInstance<Jwt>(
+      return customInstance<CustomJWT>(
       {url: `/api/auth/login/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: customLogin, signal
@@ -953,7 +953,7 @@ export const apiAuthRegistrationCreate = (
 ) => {
       
       
-      return customInstance<Jwt>(
+      return customInstance<CustomJWT>(
       {url: `/api/auth/registration/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: customRegister, signal
@@ -1271,7 +1271,7 @@ export const apiAuthUserRetrieve = (
 ) => {
       
       
-      return customInstance<MUser>(
+      return customInstance<MUserParcial>(
       {url: `/api/auth/user/`, method: 'GET', signal
     },
       options);
@@ -1357,14 +1357,14 @@ Read-only fields: pk, email
 Returns UserModel fields.
  */
 export const apiAuthUserUpdate = (
-    mUser: BodyType<NonReadonly<MUser>>,
+    mUserParcial: BodyType<NonReadonly<MUserParcial>>,
  options?: SecondParameter<typeof customInstance>,) => {
       
       
-      return customInstance<MUser>(
+      return customInstance<MUserParcial>(
       {url: `/api/auth/user/`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
-      data: mUser
+      data: mUserParcial
     },
       options);
     }
@@ -1372,8 +1372,8 @@ export const apiAuthUserUpdate = (
 
 
 export const getApiAuthUserUpdateMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUserParcial>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUserParcial>>}, TContext> => {
 
 const mutationKey = ['apiAuthUserUpdate'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1385,7 +1385,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserUpdate>>, {data: BodyType<NonReadonly<MUser>>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserUpdate>>, {data: BodyType<NonReadonly<MUserParcial>>}> = (props) => {
           const {data} = props ?? {};
 
           return  apiAuthUserUpdate(data,requestOptions)
@@ -1397,15 +1397,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiAuthUserUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof apiAuthUserUpdate>>>
-    export type ApiAuthUserUpdateMutationBody = BodyType<NonReadonly<MUser>>
+    export type ApiAuthUserUpdateMutationBody = BodyType<NonReadonly<MUserParcial>>
     export type ApiAuthUserUpdateMutationError = ErrorType<unknown>
 
     export const useApiAuthUserUpdate = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserUpdate>>, TError,{data: BodyType<NonReadonly<MUserParcial>>}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof apiAuthUserUpdate>>,
         TError,
-        {data: BodyType<NonReadonly<MUser>>},
+        {data: BodyType<NonReadonly<MUserParcial>>},
         TContext
       > => {
 
@@ -1424,14 +1424,14 @@ Read-only fields: pk, email
 Returns UserModel fields.
  */
 export const apiAuthUserPartialUpdate = (
-    patchedMUser: BodyType<NonReadonly<PatchedMUser>>,
+    patchedMUserParcial: BodyType<NonReadonly<PatchedMUserParcial>>,
  options?: SecondParameter<typeof customInstance>,) => {
       
       
-      return customInstance<MUser>(
+      return customInstance<MUserParcial>(
       {url: `/api/auth/user/`, method: 'PATCH',
       headers: {'Content-Type': 'application/json', },
-      data: patchedMUser
+      data: patchedMUserParcial
     },
       options);
     }
@@ -1439,8 +1439,8 @@ export const apiAuthUserPartialUpdate = (
 
 
 export const getApiAuthUserPartialUpdateMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUser>>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUserParcial>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUserParcial>>}, TContext> => {
 
 const mutationKey = ['apiAuthUserPartialUpdate'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -1452,7 +1452,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, {data: BodyType<NonReadonly<PatchedMUser>>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, {data: BodyType<NonReadonly<PatchedMUserParcial>>}> = (props) => {
           const {data} = props ?? {};
 
           return  apiAuthUserPartialUpdate(data,requestOptions)
@@ -1464,15 +1464,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type ApiAuthUserPartialUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>>
-    export type ApiAuthUserPartialUpdateMutationBody = BodyType<NonReadonly<PatchedMUser>>
+    export type ApiAuthUserPartialUpdateMutationBody = BodyType<NonReadonly<PatchedMUserParcial>>
     export type ApiAuthUserPartialUpdateMutationError = ErrorType<unknown>
 
     export const useApiAuthUserPartialUpdate = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUser>>}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>, TError,{data: BodyType<NonReadonly<PatchedMUserParcial>>}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof apiAuthUserPartialUpdate>>,
         TError,
-        {data: BodyType<NonReadonly<PatchedMUser>>},
+        {data: BodyType<NonReadonly<PatchedMUserParcial>>},
         TContext
       > => {
 

@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { persist, type PersistOptions } from 'zustand/middleware'
-import type { Jwt } from '../api/models'
+import type { CustomJWT } from '../api/models'
 
-export type UserData = Jwt['user']
+export type UserData = CustomJWT['user']
 
 // type AccessToken = {
 //   role?: string[]
@@ -13,9 +13,11 @@ interface AuthState {
   isAuthenticated: boolean
   user: UserData | null
   accessToken: string | null
+  refreshToken: string | null
   setUser: (userData: UserData) => void
   setAccessToken: (accessToken: string) => void
-  login: (accessToken: string) => void
+  setRefreshToken: (refreshToken: string) => void
+  login: (accessToken: string, refreshToken: string) => void
   logout: () => void
   limparStorage: () => void
 }
@@ -28,12 +30,15 @@ const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       user: null,
       accessToken: null,
+      refreshToken: null,
       setUser: userData => set({ user: userData }),
       setAccessToken: accessToken => set({ accessToken }),
-      login: accessToken => {
+      setRefreshToken: refreshToken => set({ refreshToken }),
+      login: (accessToken, refreshToken) => {
         set({
           isAuthenticated: true,
           accessToken,
+          refreshToken,
         })
       },
       logout: () => {

@@ -57,7 +57,7 @@ function RouteComponent() {
   const { mutate: login, isPending } = useApiAuthLoginCreate({
     mutation: {
       onSuccess: data => {
-        authStore.login(data.access)
+        authStore.login(data.access, data.refresh)
         authStore.setUser(data.user)
         router.navigate({ to: '/app' })
       },
@@ -154,7 +154,9 @@ function RouteComponent() {
                 placeholder="Digite sua senha"
                 required
                 error={form.errors.password}
-                styles={{ input: { caretColor: 'var(--mantine-color-indigo-9)' } }}
+                styles={{
+                  input: { caretColor: 'var(--mantine-color-indigo-9)' },
+                }}
                 {...form.getInputProps('password')}
               />
 
