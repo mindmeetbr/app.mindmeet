@@ -15,6 +15,9 @@ import {
   Menu,
   rem,
   Indicator,
+  ActionIcon,
+  useMantineColorScheme,
+  useComputedColorScheme,
 } from '@mantine/core'
 import {
   IconDashboard,
@@ -25,6 +28,8 @@ import {
   IconClock,
   IconBell,
   IconBuildingCommunity,
+  IconSun,
+  IconMoonStars,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
 import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
@@ -53,6 +58,8 @@ function AppLayout() {
       queryKey: ['notificacoes-pendentes'],
     },
   })
+  const { setColorScheme } = useMantineColorScheme()
+  const computedColorScheme = useComputedColorScheme('light')
 
   const handleLogoutClick = () => {
     logout()
@@ -79,6 +86,23 @@ function AppLayout() {
           </Text>
 
           <Group gap="sm">
+            <ActionIcon
+              size="lg"
+              variant="subtle"
+              aria-label="Alterar esquema de cor"
+              onClick={() =>
+                setColorScheme(
+                  computedColorScheme === 'light' ? 'dark' : 'light'
+                )
+              }
+            >
+              {computedColorScheme === 'light' ? (
+                <IconSun stroke={1.5} />
+              ) : (
+                <IconMoonStars stroke={1.5} />
+              )}
+            </ActionIcon>
+
             <Menu shadow="md" width={200}>
               <Menu.Target>
                 <UnstyledButton>
