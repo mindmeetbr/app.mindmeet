@@ -18,6 +18,7 @@ import {
   ActionIcon,
   useMantineColorScheme,
   useComputedColorScheme,
+  Burger,
 } from '@mantine/core'
 import {
   IconDashboard,
@@ -35,6 +36,7 @@ import useAuthStore from '../stores/auth-store'
 import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
 import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
+import { useDisclosure } from '@mantine/hooks'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -48,7 +50,7 @@ export const Route = createFileRoute('/app')({
 
 function AppLayout() {
   const { isAuthenticated, logout, user } = useAuthStore()
-  const redirector = useRouter()
+  const { setColorScheme } = useMantineColorScheme()
   const { data: pendentes } = useNotificacaoPendenteList({
     query: {
       staleTime: 10 * 60 * 1000, // 10 minutos
@@ -58,8 +60,10 @@ function AppLayout() {
       queryKey: ['notificacoes-pendentes'],
     },
   })
-  const { setColorScheme } = useMantineColorScheme()
+  const redirector = useRouter()
   const computedColorScheme = useComputedColorScheme('light')
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
 
   const handleLogoutClick = () => {
     logout()
@@ -76,14 +80,34 @@ function AppLayout() {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 250, breakpoint: 'sm' }}
-      padding="md"
+      navbar={{
+        width: 250,
+        breakpoint: 'sm',
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
+      py="md"
+      px="sm"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Text size="xl" fw={700} c="blue">
-            MindMeet
-          </Text>
+          <Group h="100%" justify="flex-start" gap="xs">
+            <Burger
+              opened={mobileOpened}
+              onClick={toggleMobile}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Burger
+              opened={desktopOpened}
+              onClick={toggleDesktop}
+              visibleFrom="sm"
+              size="sm"
+            />
+
+            <Text size="xl" fw={700} c="blue">
+              MindMeet
+            </Text>
+          </Group>
 
           <Group gap="sm">
             <ActionIcon
