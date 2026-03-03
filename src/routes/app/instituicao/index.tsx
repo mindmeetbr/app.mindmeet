@@ -319,7 +319,7 @@ function TabelaPacientes() {
               errorMessage="Não foi possível carregar seus pacientes. Tente novamente."
               emptyMessage="Nenhum paciente encontrado."
             />
-            {!isLoading && isError && linhasTabelaPacientes}
+            {!isLoading && !isError && linhasTabelaPacientes}
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>

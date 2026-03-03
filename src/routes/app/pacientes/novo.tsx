@@ -23,6 +23,7 @@ import {
   usePacienteDetail,
 } from '../../../api/endpoints/pacientes/pacientes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { type BreadcrumbItem } from '../../../components/layout'
 
 export const Route = createFileRoute('/app/pacientes/novo')({
   component: NovoPacientePage,
@@ -129,7 +130,7 @@ function NovoPacientePage() {
       },
     }
 
-    if (isEditing && pacienteId && isSuccess && paciente) {
+    if (isEditing && pacienteId && paciente) {
       return paciente
     }
 
@@ -171,7 +172,7 @@ function NovoPacientePage() {
     try {
       if (isEditing) {
         editarPaciente(
-          { idPaciente: pacienteId!, data: values },
+          { id: pacienteId!, data: values },
           {
             onSuccess: () => {
               router.navigate({
@@ -224,7 +225,7 @@ function NovoPacientePage() {
   }
 
   const getBreadcrumbs = () => {
-    const breadcrumbs = [{ label: 'Pacientes', href: '/app/pacientes' }]
+    const breadcrumbs: BreadcrumbItem[] = [{ label: 'Pacientes', href: '/app/pacientes' }]
 
     if (isEditing) {
       breadcrumbs.push({

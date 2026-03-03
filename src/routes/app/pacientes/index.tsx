@@ -46,14 +46,14 @@ function TabelaPacientes() {
     return dayjs().diff(dayjs(dataNascimento), 'year')
   }
 
-  const handleClick = (idPaciente: string) => {
+  const handleClick = (id: string) => {
     const apagar = window.confirm(
       'Tem certeza que deseja apagar este paciente?'
     )
 
     if (apagar) {
       apagarPaciente(
-        { idPaciente },
+        { id },
         {
           onSuccess: () => {
             notifications.show({
