@@ -8,4 +8,4 @@
 /**
  * @nullable
  */
-export type NotificacaoDadosExtras = unknown | null;
+export type NotificacaoDadosExtras = unknown | null

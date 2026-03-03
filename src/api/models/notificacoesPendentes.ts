@@ -4,9 +4,9 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { Notificacao } from './notificacao';
+import type { Notificacao } from './notificacao'
 
 export interface NotificacoesPendentes {
-  nao_lidas: number;
-  notificacoes: Notificacao[];
+  nao_lidas: number
+  notificacoes: Notificacao[]
 }

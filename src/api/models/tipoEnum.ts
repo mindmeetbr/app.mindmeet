@@ -7,13 +7,12 @@
 
 /**
  * * `CONFIRMACAO` - confirmação
-* `OUTRO` - outro
+ * `OUTRO` - outro
  */
-export type TipoEnum = typeof TipoEnum[keyof typeof TipoEnum];
-
+export type TipoEnum = (typeof TipoEnum)[keyof typeof TipoEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TipoEnum = {
   CONFIRMACAO: 'CONFIRMACAO',
   OUTRO: 'OUTRO',
-} as const;
+} as const

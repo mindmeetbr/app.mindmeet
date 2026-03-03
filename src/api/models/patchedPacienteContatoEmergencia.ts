@@ -4,9 +4,9 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { ContatoDeEmergencia } from './contatoDeEmergencia';
+import type { ContatoDeEmergencia } from './contatoDeEmergencia'
 
 /**
  * @nullable
  */
-export type PatchedPacienteContatoEmergencia = ContatoDeEmergencia | null;
+export type PatchedPacienteContatoEmergencia = ContatoDeEmergencia | null

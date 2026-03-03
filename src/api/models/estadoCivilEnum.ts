@@ -7,13 +7,13 @@
 
 /**
  * * `S` - Solteiro(a)
-* `C` - Casado(a)
-* `D` - Divorciado(a)
-* `V` - Viúvo(a)
-* `UE` - União Estável
+ * `C` - Casado(a)
+ * `D` - Divorciado(a)
+ * `V` - Viúvo(a)
+ * `UE` - União Estável
  */
-export type EstadoCivilEnum = typeof EstadoCivilEnum[keyof typeof EstadoCivilEnum];
-
+export type EstadoCivilEnum =
+  (typeof EstadoCivilEnum)[keyof typeof EstadoCivilEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const EstadoCivilEnum = {
@@ -22,4 +22,4 @@ export const EstadoCivilEnum = {
   D: 'D',
   V: 'V',
   UE: 'UE',
-} as const;
+} as const

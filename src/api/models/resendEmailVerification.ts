@@ -6,5 +6,5 @@
  */
 
 export interface ResendEmailVerification {
-  email: string;
+  email: string
 }

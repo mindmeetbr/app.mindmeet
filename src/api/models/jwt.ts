@@ -4,13 +4,13 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { MUser } from './mUser';
+import type { MUser } from './mUser'
 
 /**
  * Serializer for JWT authentication.
  */
 export interface Jwt {
-  access: string;
-  refresh: string;
-  user: MUser;
+  access: string
+  refresh: string
+  user: MUser
 }

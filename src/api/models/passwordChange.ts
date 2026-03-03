@@ -7,7 +7,7 @@
 
 export interface PasswordChange {
   /** @maxLength 128 */
-  new_password1: string;
+  new_password1: string
   /** @maxLength 128 */
-  new_password2: string;
+  new_password2: string
 }

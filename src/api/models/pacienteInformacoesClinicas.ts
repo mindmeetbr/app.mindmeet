@@ -4,9 +4,9 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { Informacoes } from './informacoes';
+import type { Informacoes } from './informacoes'
 
 /**
  * @nullable
  */
-export type PacienteInformacoesClinicas = Informacoes | null;
+export type PacienteInformacoesClinicas = Informacoes | null

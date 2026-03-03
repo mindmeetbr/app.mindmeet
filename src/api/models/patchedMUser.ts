@@ -4,24 +4,24 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { PatchedMUserSexo } from './patchedMUserSexo';
-import type { Endereco } from './endereco';
-import type { PapelEnum } from './papelEnum';
+import type { PatchedMUserSexo } from './patchedMUserSexo'
+import type { Endereco } from './endereco'
+import type { PapelEnum } from './papelEnum'
 
 export interface PatchedMUser {
-  readonly id?: string;
+  readonly id?: string
   /** @maxLength 255 */
-  nome_completo?: string;
+  nome_completo?: string
   /** @maxLength 254 */
-  email?: string;
+  email?: string
   /** @maxLength 14 */
-  cpf?: string;
+  cpf?: string
   /** @nullable */
-  data_nascimento?: string | null;
+  data_nascimento?: string | null
   /** @maxLength 15 */
-  numero_telefone?: string;
-  sexo?: typeof PatchedMUserSexo[keyof typeof PatchedMUserSexo] ;
-  readonly verificado?: boolean;
-  endereco?: Endereco;
-  papel?: PapelEnum;
+  numero_telefone?: string
+  sexo?: (typeof PatchedMUserSexo)[keyof typeof PatchedMUserSexo]
+  readonly verificado?: boolean
+  endereco?: Endereco
+  papel?: PapelEnum
 }

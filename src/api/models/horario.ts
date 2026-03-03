@@ -6,9 +6,9 @@
  */
 
 export interface Horario {
-  id?: string;
-  inicio: string;
-  fim: string;
+  id?: string
+  inicio: string
+  fim: string
   /** @nullable */
-  readonly ocupado: boolean | null;
+  readonly ocupado: boolean | null
 }

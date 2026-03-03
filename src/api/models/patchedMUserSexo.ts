@@ -4,8 +4,8 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import { SexoEnum } from './sexoEnum';
-import { BlankEnum } from './blankEnum';
+import { SexoEnum } from './sexoEnum'
+import { BlankEnum } from './blankEnum'
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PatchedMUserSexo = {...SexoEnum,...BlankEnum,} as const
+export const PatchedMUserSexo = { ...SexoEnum, ...BlankEnum } as const

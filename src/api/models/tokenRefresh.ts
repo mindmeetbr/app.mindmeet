@@ -6,6 +6,6 @@
  */
 
 export interface TokenRefresh {
-  readonly access: string;
-  refresh: string;
+  readonly access: string
+  refresh: string
 }

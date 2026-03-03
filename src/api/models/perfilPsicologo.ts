@@ -4,17 +4,17 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { MUser } from './mUser';
+import type { MUser } from './mUser'
 
 export interface PerfilPsicologo {
-  usuario?: MUser;
-  readonly id: string;
+  usuario?: MUser
+  readonly id: string
   /**
    * @maxLength 10
    * @nullable
    */
-  crp?: string | null;
-  is_estagiario?: boolean;
-  supervisor?: string;
-  readonly supervisor_confirmado: boolean;
+  crp?: string | null
+  is_estagiario?: boolean
+  supervisor?: string
+  readonly supervisor_confirmado: boolean
 }

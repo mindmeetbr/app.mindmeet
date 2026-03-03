@@ -6,7 +6,7 @@
  */
 
 export interface HorarioDisponivel {
-  inicio: string;
-  fim: string;
-  ocupado: boolean;
+  inicio: string
+  fim: string
+  ocupado: boolean
 }

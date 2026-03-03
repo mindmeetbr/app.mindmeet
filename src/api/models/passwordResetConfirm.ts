@@ -10,9 +10,9 @@
  */
 export interface PasswordResetConfirm {
   /** @maxLength 128 */
-  new_password1: string;
+  new_password1: string
   /** @maxLength 128 */
-  new_password2: string;
-  uid: string;
-  token: string;
+  new_password2: string
+  uid: string
+  token: string
 }

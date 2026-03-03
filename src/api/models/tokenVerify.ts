@@ -6,5 +6,5 @@
  */
 
 export interface TokenVerify {
-  token: string;
+  token: string
 }

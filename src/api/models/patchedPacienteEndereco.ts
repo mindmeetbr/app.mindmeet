@@ -4,9 +4,9 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { Endereco } from './endereco';
+import type { Endereco } from './endereco'
 
 /**
  * @nullable
  */
-export type PatchedPacienteEndereco = Endereco | null;
+export type PatchedPacienteEndereco = Endereco | null

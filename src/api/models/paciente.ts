@@ -4,38 +4,38 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { PacienteAnamnese } from './pacienteAnamnese';
-import type { PacienteContatoEmergencia } from './pacienteContatoEmergencia';
-import type { PacienteEndereco } from './pacienteEndereco';
-import type { PacienteInformacoesClinicas } from './pacienteInformacoesClinicas';
+import type { PacienteAnamnese } from './pacienteAnamnese'
+import type { PacienteContatoEmergencia } from './pacienteContatoEmergencia'
+import type { PacienteEndereco } from './pacienteEndereco'
+import type { PacienteInformacoesClinicas } from './pacienteInformacoesClinicas'
 
 export interface Paciente {
-  readonly id: string;
+  readonly id: string
   /** @nullable */
-  anamnese?: PacienteAnamnese;
+  anamnese?: PacienteAnamnese
   /** @nullable */
-  contato_emergencia?: PacienteContatoEmergencia;
+  contato_emergencia?: PacienteContatoEmergencia
   /** @nullable */
-  endereco?: PacienteEndereco;
+  endereco?: PacienteEndereco
   /** @nullable */
-  informacoes_clinicas?: PacienteInformacoesClinicas;
+  informacoes_clinicas?: PacienteInformacoesClinicas
   /** @nullable */
-  readonly acompanhado_por: string | null;
+  readonly acompanhado_por: string | null
   /** @maxLength 255 */
-  nome_completo: string;
-  data_nascimento: string;
+  nome_completo: string
+  data_nascimento: string
   /** @maxLength 255 */
-  email: string;
+  email: string
   /** @maxLength 15 */
-  numero_telefone: string;
+  numero_telefone: string
   /** @maxLength 15 */
-  numero_celular?: string;
+  numero_celular?: string
   /** @maxLength 14 */
-  cpf: string;
+  cpf: string
   /** @maxLength 12 */
-  rg?: string;
+  rg?: string
   /** @maxLength 20 */
-  estado_civil?: string;
+  estado_civil?: string
   /** @maxLength 255 */
-  profissao?: string;
+  profissao?: string
 }

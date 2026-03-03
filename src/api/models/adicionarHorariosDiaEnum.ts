@@ -7,15 +7,15 @@
 
 /**
  * * `0` - 0
-* `1` - 1
-* `2` - 2
-* `3` - 3
-* `4` - 4
-* `5` - 5
-* `6` - 6
+ * `1` - 1
+ * `2` - 2
+ * `3` - 3
+ * `4` - 4
+ * `5` - 5
+ * `6` - 6
  */
-export type AdicionarHorariosDiaEnum = typeof AdicionarHorariosDiaEnum[keyof typeof AdicionarHorariosDiaEnum];
-
+export type AdicionarHorariosDiaEnum =
+  (typeof AdicionarHorariosDiaEnum)[keyof typeof AdicionarHorariosDiaEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdicionarHorariosDiaEnum = {
@@ -26,4 +26,4 @@ export const AdicionarHorariosDiaEnum = {
   NUMBER_4: 4,
   NUMBER_5: 5,
   NUMBER_6: 6,
-} as const;
+} as const

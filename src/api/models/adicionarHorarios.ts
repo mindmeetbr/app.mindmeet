@@ -4,12 +4,12 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { AdicionarHorariosDiaEnum } from './adicionarHorariosDiaEnum';
+import type { AdicionarHorariosDiaEnum } from './adicionarHorariosDiaEnum'
 
 export interface AdicionarHorarios {
-  dia: AdicionarHorariosDiaEnum;
-  inicio: string;
-  fim: string;
-  duracao: string;
-  intervalo: string;
+  dia: AdicionarHorariosDiaEnum
+  inicio: string
+  fim: string
+  duracao: string
+  intervalo: string
 }

@@ -6,9 +6,9 @@
  */
 
 export interface Informacoes {
-  readonly id: string;
-  queixa_principal?: string;
-  historico_psiquiatrico?: string;
-  medicamentos_atuais?: string;
-  alergias?: string;
+  readonly id: string
+  queixa_principal?: string
+  historico_psiquiatrico?: string
+  medicamentos_atuais?: string
+  alergias?: string
 }

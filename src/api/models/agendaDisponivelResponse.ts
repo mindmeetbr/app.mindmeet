@@ -4,13 +4,13 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { HorarioDisponivel } from './horarioDisponivel';
+import type { HorarioDisponivel } from './horarioDisponivel'
 
 export interface AgendaDisponivelResponse {
   /** Índice do dia da semana (0 = Segunda, 6 = Domingo) */
-  dia: number;
+  dia: number
   /** Nome legível do dia da semana */
-  dia_semana: string;
+  dia_semana: string
   /** Lista de horários disponíveis ou ocupados para o dia */
-  horarios: HorarioDisponivel[];
+  horarios: HorarioDisponivel[]
 }

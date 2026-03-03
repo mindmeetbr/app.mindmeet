@@ -4,23 +4,23 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { PerfilPsicologo } from './perfilPsicologo';
-import type { Instituicao } from './instituicao';
+import type { PerfilPsicologo } from './perfilPsicologo'
+import type { Instituicao } from './instituicao'
 
 export interface CustomRegister {
   /**
    * @minLength 1
    * @maxLength 150
    */
-  username?: string;
-  email: string;
-  password1: string;
-  password2: string;
-  papel: string;
-  perfil_psicologo?: PerfilPsicologo;
-  instituicao?: Instituicao;
-  nome_completo: string;
-  cpf?: string;
-  data_nascimento?: string;
-  sexo?: string;
+  username?: string
+  email: string
+  password1: string
+  password2: string
+  papel: string
+  perfil_psicologo?: PerfilPsicologo
+  instituicao?: Instituicao
+  nome_completo: string
+  cpf?: string
+  data_nascimento?: string
+  sexo?: string
 }

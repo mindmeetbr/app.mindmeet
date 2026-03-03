@@ -6,12 +6,12 @@
  */
 
 export interface Anamnese {
-  readonly id: string;
-  motivo_consulta?: string;
-  expectativas?: string;
-  historia_doenca_atual?: string;
-  historico_familiar?: string;
-  aspectos_observados?: string;
-  uso_substancias?: string;
-  observacoes?: string;
+  readonly id: string
+  motivo_consulta?: string
+  expectativas?: string
+  historia_doenca_atual?: string
+  historico_familiar?: string
+  aspectos_observados?: string
+  uso_substancias?: string
+  observacoes?: string
 }

@@ -4,18 +4,18 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { Endereco } from './endereco';
-import type { MUser } from './mUser';
+import type { Endereco } from './endereco'
+import type { MUser } from './mUser'
 
 export interface PatchedInstituicao {
-  readonly id?: string;
+  readonly id?: string
   /** @maxLength 255 */
-  nome?: string;
+  nome?: string
   /**
    * @minLength 14
    * @maxLength 18
    */
-  cnpj?: string;
-  endereco?: Endereco;
-  gestor?: MUser;
+  cnpj?: string
+  endereco?: Endereco
+  gestor?: MUser
 }

@@ -6,15 +6,15 @@
  */
 
 export interface CriarAnotacao {
-  readonly id: number;
-  readonly psicologo: string;
-  readonly paciente: string;
-  data?: string;
+  readonly id: number
+  readonly psicologo: string
+  readonly paciente: string
+  data?: string
   /** @maxLength 255 */
-  titulo: string;
-  registros?: string;
+  titulo: string
+  registros?: string
   /** @maxLength 255 */
-  queixa_apresentada?: string;
+  queixa_apresentada?: string
   /** @maxLength 255 */
-  queixa_identificada?: string;
+  queixa_identificada?: string
 }

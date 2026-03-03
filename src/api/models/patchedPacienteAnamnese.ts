@@ -4,9 +4,9 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { Anamnese } from './anamnese';
+import type { Anamnese } from './anamnese'
 
 /**
  * @nullable
  */
-export type PatchedPacienteAnamnese = Anamnese | null;
+export type PatchedPacienteAnamnese = Anamnese | null

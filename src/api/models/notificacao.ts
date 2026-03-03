@@ -4,17 +4,17 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { TipoEnum } from './tipoEnum';
-import type { NotificacaoDadosExtras } from './notificacaoDadosExtras';
+import type { TipoEnum } from './tipoEnum'
+import type { NotificacaoDadosExtras } from './notificacaoDadosExtras'
 
 export interface Notificacao {
-  readonly id: string;
+  readonly id: string
   /** @maxLength 255 */
-  titulo: string;
-  mensagem: string;
-  lida?: boolean;
-  data_criacao?: string;
-  tipo?: TipoEnum;
+  titulo: string
+  mensagem: string
+  lida?: boolean
+  data_criacao?: string
+  tipo?: TipoEnum
   /** @nullable */
-  dados_extras?: NotificacaoDadosExtras;
+  dados_extras?: NotificacaoDadosExtras
 }

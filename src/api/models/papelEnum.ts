@@ -7,12 +7,11 @@
 
 /**
  * * `ADMIN` - admin
-* `PSICOLOGO` - psicologo
-* `PACIENTE` - paciente
-* `GESTOR` - gestor
+ * `PSICOLOGO` - psicologo
+ * `PACIENTE` - paciente
+ * `GESTOR` - gestor
  */
-export type PapelEnum = typeof PapelEnum[keyof typeof PapelEnum];
-
+export type PapelEnum = (typeof PapelEnum)[keyof typeof PapelEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const PapelEnum = {
@@ -20,4 +19,4 @@ export const PapelEnum = {
   PSICOLOGO: 'PSICOLOGO',
   PACIENTE: 'PACIENTE',
   GESTOR: 'GESTOR',
-} as const;
+} as const

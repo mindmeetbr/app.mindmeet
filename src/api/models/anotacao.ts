@@ -6,16 +6,16 @@
  */
 
 export interface Anotacao {
-  readonly id: number;
+  readonly id: number
   /** @nullable */
-  readonly escrita_por: string | null;
-  data?: string;
+  readonly escrita_por: string | null
+  data?: string
   /** @maxLength 255 */
-  titulo: string;
-  registros?: string;
+  titulo: string
+  registros?: string
   /** @maxLength 255 */
-  queixa_apresentada?: string;
+  queixa_apresentada?: string
   /** @maxLength 255 */
-  queixa_identificada?: string;
-  paciente: string;
+  queixa_identificada?: string
+  paciente: string
 }

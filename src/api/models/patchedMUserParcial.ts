@@ -4,11 +4,11 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { PapelEnum } from './papelEnum';
+import type { PapelEnum } from './papelEnum'
 
 export interface PatchedMUserParcial {
-  readonly id?: string;
-  readonly nome_completo?: string;
-  readonly email?: string;
-  readonly papel?: PapelEnum;
+  readonly id?: string
+  readonly nome_completo?: string
+  readonly email?: string
+  readonly papel?: PapelEnum
 }

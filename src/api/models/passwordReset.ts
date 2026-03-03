@@ -9,5 +9,5 @@
  * Serializer for requesting a password reset e-mail.
  */
 export interface PasswordReset {
-  email: string;
+  email: string
 }

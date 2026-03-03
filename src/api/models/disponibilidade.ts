@@ -4,17 +4,17 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { DisponibilidadeDiaEnum } from './disponibilidadeDiaEnum';
-import type { Horario } from './horario';
+import type { DisponibilidadeDiaEnum } from './disponibilidadeDiaEnum'
+import type { Horario } from './horario'
 
 export interface Disponibilidade {
-  readonly id: string;
+  readonly id: string
   /**
    * @minimum 0
    * @maximum 9223372036854776000
    */
-  dia: DisponibilidadeDiaEnum;
-  readonly dia_semana: string;
-  ativo?: boolean;
-  horarios?: Horario[];
+  dia: DisponibilidadeDiaEnum
+  readonly dia_semana: string
+  ativo?: boolean
+  horarios?: Horario[]
 }

@@ -9,8 +9,8 @@
  * User model w/o password
  */
 export interface UserDetails {
-  readonly pk: string;
-  readonly email: string;
-  readonly first_name: string;
-  readonly last_name: string;
+  readonly pk: string
+  readonly email: string
+  readonly first_name: string
+  readonly last_name: string
 }

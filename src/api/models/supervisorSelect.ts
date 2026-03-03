@@ -6,6 +6,6 @@
  */
 
 export interface SupervisorSelect {
-  readonly label: string;
-  value: string;
+  readonly label: string
+  value: string
 }

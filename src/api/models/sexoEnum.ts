@@ -7,15 +7,14 @@
 
 /**
  * * `M` - Masculino
-* `F` - Feminino
-* `O` - Outro
+ * `F` - Feminino
+ * `O` - Outro
  */
-export type SexoEnum = typeof SexoEnum[keyof typeof SexoEnum];
-
+export type SexoEnum = (typeof SexoEnum)[keyof typeof SexoEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SexoEnum = {
   M: 'M',
   F: 'F',
   O: 'O',
-} as const;
+} as const

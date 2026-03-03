@@ -7,15 +7,15 @@
 
 /**
  * * `0` - Segunda-feira
-* `1` - Terça-feira
-* `2` - Quarta-feira
-* `3` - Quinta-feira
-* `4` - Sexta-feira
-* `5` - Sábado
-* `6` - Domingo
+ * `1` - Terça-feira
+ * `2` - Quarta-feira
+ * `3` - Quinta-feira
+ * `4` - Sexta-feira
+ * `5` - Sábado
+ * `6` - Domingo
  */
-export type DisponibilidadeDiaEnum = typeof DisponibilidadeDiaEnum[keyof typeof DisponibilidadeDiaEnum];
-
+export type DisponibilidadeDiaEnum =
+  (typeof DisponibilidadeDiaEnum)[keyof typeof DisponibilidadeDiaEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DisponibilidadeDiaEnum = {
@@ -26,4 +26,4 @@ export const DisponibilidadeDiaEnum = {
   NUMBER_4: 4,
   NUMBER_5: 5,
   NUMBER_6: 6,
-} as const;
+} as const

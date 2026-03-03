@@ -7,15 +7,15 @@
 
 /**
  * * `P` - Pai
-* `M` - Mãe
-* `C` - Cônjuge
-* `F` - Filho(a)
-* `I` - Irmão(ã)
-* `A` - Amigo(a)
-* `O` - Outro
+ * `M` - Mãe
+ * `C` - Cônjuge
+ * `F` - Filho(a)
+ * `I` - Irmão(ã)
+ * `A` - Amigo(a)
+ * `O` - Outro
  */
-export type ParentescoEnum = typeof ParentescoEnum[keyof typeof ParentescoEnum];
-
+export type ParentescoEnum =
+  (typeof ParentescoEnum)[keyof typeof ParentescoEnum]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ParentescoEnum = {
@@ -26,4 +26,4 @@ export const ParentescoEnum = {
   I: 'I',
   A: 'A',
   O: 'O',
-} as const;
+} as const

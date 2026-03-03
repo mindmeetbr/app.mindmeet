@@ -6,5 +6,5 @@
  */
 
 export interface RestAuthDetail {
-  readonly detail: string;
+  readonly detail: string
 }

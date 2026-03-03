@@ -6,5 +6,5 @@
  */
 
 export interface VerifyEmail {
-  key: string;
+  key: string
 }

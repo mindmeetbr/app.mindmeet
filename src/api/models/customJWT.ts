@@ -4,13 +4,13 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import type { MUserParcial } from './mUserParcial';
+import type { MUserParcial } from './mUserParcial'
 
 /**
  * Serializer for JWT authentication.
  */
 export interface CustomJWT {
-  readonly access: string;
-  refresh: string;
-  readonly user: MUserParcial;
+  readonly access: string
+  refresh: string
+  readonly user: MUserParcial
 }

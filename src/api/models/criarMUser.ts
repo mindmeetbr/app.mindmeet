@@ -7,20 +7,20 @@
 
 export interface CriarMUser {
   /** @maxLength 255 */
-  nome_completo: string;
+  nome_completo: string
   /**
    * Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.
    * @maxLength 150
    * @pattern ^[\w.@+-]+$
    */
-  username: string;
+  username: string
   /** @maxLength 254 */
-  email?: string;
-  password: string;
+  email?: string
+  password: string
   /** @nullable */
-  data_nascimento?: string | null;
+  data_nascimento?: string | null
   /** @maxLength 10 */
-  crp?: string;
-  is_estagiario?: boolean;
-  supervisor?: string;
+  crp?: string
+  is_estagiario?: boolean
+  supervisor?: string
 }
