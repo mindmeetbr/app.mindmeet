@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
 import { Card, Text, Title } from '@mantine/core'
-import { useNotificacaoDetail } from '../../../api/endpoints/api/api'
+import { useNotificacaoDetail } from '../../../api/endpoints/notificacoes/notificacoes'
 import type { Notificacao } from '../../../api/models'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { useEffect } from 'react'

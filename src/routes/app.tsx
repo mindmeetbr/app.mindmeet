@@ -33,7 +33,7 @@ import {
   IconMoonStars,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
-import { useNotificacaoPendenteList } from '../api/endpoints/api/api'
+import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notificacoes'
 import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'

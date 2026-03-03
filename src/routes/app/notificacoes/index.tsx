@@ -3,7 +3,7 @@ import { PageLayout } from '../../../components/layout'
 import { Table, ActionIcon, rem, Flex } from '@mantine/core'
 import dayjs from 'dayjs'
 import { IconEye, IconTrash } from '@tabler/icons-react'
-import { useNotificacaoList } from '../../../api/endpoints/api/api'
+import { useNotificacaoList } from '../../../api/endpoints/notificacoes/notificacoes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { TableEmptyState } from '../../../components/ui/TableEmptyState'
 
