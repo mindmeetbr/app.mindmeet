@@ -43,7 +43,7 @@ import {
   useAnotacaoList,
   useAnotacaoUpdate,
   useAnotacaoCreate,
-} from '../../../api/endpoints/api/api'
+} from '../../../api/endpoints/anotacoes/anotacoes'
 import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
 import type { Anotacao } from '../../../api/models'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
@@ -75,7 +75,7 @@ function BotaoNovaConsulta({ desativado }: { desativado?: boolean }) {
   function handleSubmit(values) {
     const dataFormatada = new Date(values.data).toISOString()
     const dados = {
-      paciente: id,
+      pacientePk: id,
       data: {
         titulo: values.titulo,
         registros: values.registros,
@@ -221,8 +221,8 @@ function LinhaDoTempo({ podeEditar }: { podeEditar?: boolean }) {
 
   const handleSaveConsulta = (consultaId: number) => {
     editarAnotacao({
-      paciente: id,
-      pkAnotacao: consultaId,
+      pacientePk: id,
+      id: consultaId,
       data: {
         registros: registrosTemp,
         queixa_apresentada: apresentadaTemp,
