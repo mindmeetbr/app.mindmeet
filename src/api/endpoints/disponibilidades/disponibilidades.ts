@@ -64,267 +64,6 @@ type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
- * Gera automaticamente horários em um dia específico da disponibilidade do psicólogo autenticado, com base nos campos informados (início, fim, duração e intervalo).
- * @summary Adiciona horários automaticamente
- */
-export const adicionarHorariosView = (
-  adicionarHorarios: BodyType<AdicionarHorarios>,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
-) => {
-  return customInstance<null>(
-    {
-      url: `/api/adicionar-horarios/`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: adicionarHorarios,
-      signal,
-    },
-    options
-  )
-}
-
-export const getAdicionarHorariosViewMutationOptions = <
-  TError = ErrorType<null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof adicionarHorariosView>>,
-    TError,
-    { data: BodyType<AdicionarHorarios> },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof adicionarHorariosView>>,
-  TError,
-  { data: BodyType<AdicionarHorarios> },
-  TContext
-> => {
-  const mutationKey = ['adicionarHorariosView']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof adicionarHorariosView>>,
-    { data: BodyType<AdicionarHorarios> }
-  > = props => {
-    const { data } = props ?? {}
-
-    return adicionarHorariosView(data, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type AdicionarHorariosViewMutationResult = NonNullable<
-  Awaited<ReturnType<typeof adicionarHorariosView>>
->
-export type AdicionarHorariosViewMutationBody = BodyType<AdicionarHorarios>
-export type AdicionarHorariosViewMutationError = ErrorType<null | null>
-
-/**
- * @summary Adiciona horários automaticamente
- */
-export const useAdicionarHorariosView = <
-  TError = ErrorType<null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof adicionarHorariosView>>,
-      TError,
-      { data: BodyType<AdicionarHorarios> },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof adicionarHorariosView>>,
-  TError,
-  { data: BodyType<AdicionarHorarios> },
-  TContext
-> => {
-  const mutationOptions = getAdicionarHorariosViewMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
- * Retorna a agenda completa de um psicólogo, mostrando os horários livres e ocupados a partir da data atual. Inclui informações de cada dia ativo e seus respectivos horários.
- * @summary Lista os horários disponíveis de um psicólogo
- */
-export const agendaDisponivelView = (
-  idPsicologo: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
-) => {
-  return customInstance<AgendaDisponivelResponse[]>(
-    { url: `/api/agenda/${idPsicologo}/`, method: 'GET', signal },
-    options
-  )
-}
-
-export const getAgendaDisponivelViewQueryKey = (idPsicologo?: string) => {
-  return [`/api/agenda/${idPsicologo}/`] as const
-}
-
-export const getAgendaDisponivelViewQueryOptions = <
-  TData = Awaited<ReturnType<typeof agendaDisponivelView>>,
-  TError = ErrorType<null>,
->(
-  idPsicologo: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof agendaDisponivelView>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
-
-  const queryKey =
-    queryOptions?.queryKey ?? getAgendaDisponivelViewQueryKey(idPsicologo)
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof agendaDisponivelView>>
-  > = ({ signal }) => agendaDisponivelView(idPsicologo, requestOptions, signal)
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!idPsicologo,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof agendaDisponivelView>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type AgendaDisponivelViewQueryResult = NonNullable<
-  Awaited<ReturnType<typeof agendaDisponivelView>>
->
-export type AgendaDisponivelViewQueryError = ErrorType<null>
-
-export function useAgendaDisponivelView<
-  TData = Awaited<ReturnType<typeof agendaDisponivelView>>,
-  TError = ErrorType<null>,
->(
-  idPsicologo: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof agendaDisponivelView>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof agendaDisponivelView>>,
-          TError,
-          Awaited<ReturnType<typeof agendaDisponivelView>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAgendaDisponivelView<
-  TData = Awaited<ReturnType<typeof agendaDisponivelView>>,
-  TError = ErrorType<null>,
->(
-  idPsicologo: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof agendaDisponivelView>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof agendaDisponivelView>>,
-          TError,
-          Awaited<ReturnType<typeof agendaDisponivelView>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAgendaDisponivelView<
-  TData = Awaited<ReturnType<typeof agendaDisponivelView>>,
-  TError = ErrorType<null>,
->(
-  idPsicologo: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof agendaDisponivelView>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Lista os horários disponíveis de um psicólogo
- */
-
-export function useAgendaDisponivelView<
-  TData = Awaited<ReturnType<typeof agendaDisponivelView>>,
-  TError = ErrorType<null>,
->(
-  idPsicologo: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof agendaDisponivelView>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getAgendaDisponivelViewQueryOptions(idPsicologo, options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
  * Retorna todas as disponibilidades cadastradas pelo psicólogo autenticado, incluindo os horários associados a cada dia disponível.
  * @summary Lista todas as disponibilidades do psicólogo
  */
@@ -480,353 +219,6 @@ export function useDisponibilidadeList<
 }
 
 /**
- * Retorna as informações completas de uma disponibilidade, incluindo todos os horários associados. Somente o psicólogo dono da disponibilidade pode visualizar.
- * @summary Obtém detalhes de uma disponibilidade específica
- */
-export const disponibilidadeDetail = (
-  idDisp: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
-) => {
-  return customInstance<Disponibilidade>(
-    { url: `/api/disponibilidades/${idDisp}/`, method: 'GET', signal },
-    options
-  )
-}
-
-export const getDisponibilidadeDetailQueryKey = (idDisp?: string) => {
-  return [`/api/disponibilidades/${idDisp}/`] as const
-}
-
-export const getDisponibilidadeDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
-  TError = ErrorType<null | null>,
->(
-  idDisp: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof disponibilidadeDetail>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
-
-  const queryKey =
-    queryOptions?.queryKey ?? getDisponibilidadeDetailQueryKey(idDisp)
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof disponibilidadeDetail>>
-  > = ({ signal }) => disponibilidadeDetail(idDisp, requestOptions, signal)
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!idDisp,
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof disponibilidadeDetail>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type DisponibilidadeDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof disponibilidadeDetail>>
->
-export type DisponibilidadeDetailQueryError = ErrorType<null | null>
-
-export function useDisponibilidadeDetail<
-  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
-  TError = ErrorType<null | null>,
->(
-  idDisp: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof disponibilidadeDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof disponibilidadeDetail>>,
-          TError,
-          Awaited<ReturnType<typeof disponibilidadeDetail>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useDisponibilidadeDetail<
-  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
-  TError = ErrorType<null | null>,
->(
-  idDisp: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof disponibilidadeDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof disponibilidadeDetail>>,
-          TError,
-          Awaited<ReturnType<typeof disponibilidadeDetail>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useDisponibilidadeDetail<
-  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
-  TError = ErrorType<null | null>,
->(
-  idDisp: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof disponibilidadeDetail>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Obtém detalhes de uma disponibilidade específica
- */
-
-export function useDisponibilidadeDetail<
-  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
-  TError = ErrorType<null | null>,
->(
-  idDisp: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof disponibilidadeDetail>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getDisponibilidadeDetailQueryOptions(idDisp, options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Remove uma disponibilidade do psicólogo autenticado, incluindo todos os horários associados a ela. Essa ação é irreversível.
- * @summary Apaga uma disponibilidade
- */
-export const disponibilidadeDelete = (
-  idDisp: string,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<null>(
-    { url: `/api/disponibilidades/${idDisp}/apagar/`, method: 'DELETE' },
-    options
-  )
-}
-
-export const getDisponibilidadeDeleteMutationOptions = <
-  TError = ErrorType<null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof disponibilidadeDelete>>,
-    TError,
-    { idDisp: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof disponibilidadeDelete>>,
-  TError,
-  { idDisp: string },
-  TContext
-> => {
-  const mutationKey = ['disponibilidadeDelete']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof disponibilidadeDelete>>,
-    { idDisp: string }
-  > = props => {
-    const { idDisp } = props ?? {}
-
-    return disponibilidadeDelete(idDisp, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type DisponibilidadeDeleteMutationResult = NonNullable<
-  Awaited<ReturnType<typeof disponibilidadeDelete>>
->
-
-export type DisponibilidadeDeleteMutationError = ErrorType<null | null>
-
-/**
- * @summary Apaga uma disponibilidade
- */
-export const useDisponibilidadeDelete = <
-  TError = ErrorType<null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof disponibilidadeDelete>>,
-      TError,
-      { idDisp: string },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof disponibilidadeDelete>>,
-  TError,
-  { idDisp: string },
-  TContext
-> => {
-  const mutationOptions = getDisponibilidadeDeleteMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
- * Permite atualizar parcialmente os campos de uma disponibilidade já criada pelo psicólogo autenticado. É possível alterar o dia, ativar/desativar ou modificar horários.
- * @summary Atualiza uma disponibilidade existente
- */
-export const disponibilidadeUpdate = (
-  idDisp: string,
-  patchedDisponibilidade: BodyType<NonReadonly<PatchedDisponibilidade>>,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<Disponibilidade>(
-    {
-      url: `/api/disponibilidades/${idDisp}/editar/`,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      data: patchedDisponibilidade,
-    },
-    options
-  )
-}
-
-export const getDisponibilidadeUpdateMutationOptions = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof disponibilidadeUpdate>>,
-    TError,
-    { idDisp: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof disponibilidadeUpdate>>,
-  TError,
-  { idDisp: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
-  TContext
-> => {
-  const mutationKey = ['disponibilidadeUpdate']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof disponibilidadeUpdate>>,
-    { idDisp: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> }
-  > = props => {
-    const { idDisp, data } = props ?? {}
-
-    return disponibilidadeUpdate(idDisp, data, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type DisponibilidadeUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof disponibilidadeUpdate>>
->
-export type DisponibilidadeUpdateMutationBody = BodyType<
-  NonReadonly<PatchedDisponibilidade>
->
-export type DisponibilidadeUpdateMutationError = ErrorType<null | null | null>
-
-/**
- * @summary Atualiza uma disponibilidade existente
- */
-export const useDisponibilidadeUpdate = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof disponibilidadeUpdate>>,
-      TError,
-      { idDisp: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof disponibilidadeUpdate>>,
-  TError,
-  { idDisp: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
-  TContext
-> => {
-  const mutationOptions = getDisponibilidadeUpdateMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
  * Cria uma disponibilidade vinculada ao psicólogo autenticado. O corpo da requisição deve conter as informações do dia e horários.
  * @summary Cria uma nova disponibilidade
  */
@@ -837,7 +229,7 @@ export const disponibilidadeCreate = (
 ) => {
   return customInstance<Disponibilidade>(
     {
-      url: `/api/disponibilidades/criar/`,
+      url: `/api/disponibilidades/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: disponibilidade,
@@ -919,4 +311,615 @@ export const useDisponibilidadeCreate = <
   const mutationOptions = getDisponibilidadeCreateMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Retorna as informações completas de uma disponibilidade, incluindo todos os horários associados. Somente o psicólogo dono da disponibilidade pode visualizar.
+ * @summary Obtém detalhes de uma disponibilidade específica
+ */
+export const disponibilidadeDetail = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<Disponibilidade>(
+    { url: `/api/disponibilidades/${id}/`, method: 'GET', signal },
+    options
+  )
+}
+
+export const getDisponibilidadeDetailQueryKey = (id?: string) => {
+  return [`/api/disponibilidades/${id}/`] as const
+}
+
+export const getDisponibilidadeDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
+  TError = ErrorType<null | null>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof disponibilidadeDetail>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ?? getDisponibilidadeDetailQueryKey(id)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof disponibilidadeDetail>>
+  > = ({ signal }) => disponibilidadeDetail(id, requestOptions, signal)
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof disponibilidadeDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type DisponibilidadeDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof disponibilidadeDetail>>
+>
+export type DisponibilidadeDetailQueryError = ErrorType<null | null>
+
+export function useDisponibilidadeDetail<
+  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
+  TError = ErrorType<null | null>,
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof disponibilidadeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof disponibilidadeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof disponibilidadeDetail>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useDisponibilidadeDetail<
+  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
+  TError = ErrorType<null | null>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof disponibilidadeDetail>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof disponibilidadeDetail>>,
+          TError,
+          Awaited<ReturnType<typeof disponibilidadeDetail>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useDisponibilidadeDetail<
+  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
+  TError = ErrorType<null | null>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof disponibilidadeDetail>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary Obtém detalhes de uma disponibilidade específica
+ */
+
+export function useDisponibilidadeDetail<
+  TData = Awaited<ReturnType<typeof disponibilidadeDetail>>,
+  TError = ErrorType<null | null>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof disponibilidadeDetail>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getDisponibilidadeDetailQueryOptions(id, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+/**
+ * Permite atualizar parcialmente os campos de uma disponibilidade já criada pelo psicólogo autenticado. É possível alterar o dia, ativar/desativar ou modificar horários.
+ * @summary Atualiza uma disponibilidade existente
+ */
+export const disponibilidadeUpdate = (
+  id: string,
+  patchedDisponibilidade: BodyType<NonReadonly<PatchedDisponibilidade>>,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<Disponibilidade>(
+    {
+      url: `/api/disponibilidades/${id}/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedDisponibilidade,
+    },
+    options
+  )
+}
+
+export const getDisponibilidadeUpdateMutationOptions = <
+  TError = ErrorType<null | null | null>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof disponibilidadeUpdate>>,
+    TError,
+    { id: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof disponibilidadeUpdate>>,
+  TError,
+  { id: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
+  TContext
+> => {
+  const mutationKey = ['disponibilidadeUpdate']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof disponibilidadeUpdate>>,
+    { id: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> }
+  > = props => {
+    const { id, data } = props ?? {}
+
+    return disponibilidadeUpdate(id, data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DisponibilidadeUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof disponibilidadeUpdate>>
+>
+export type DisponibilidadeUpdateMutationBody = BodyType<
+  NonReadonly<PatchedDisponibilidade>
+>
+export type DisponibilidadeUpdateMutationError = ErrorType<null | null | null>
+
+/**
+ * @summary Atualiza uma disponibilidade existente
+ */
+export const useDisponibilidadeUpdate = <
+  TError = ErrorType<null | null | null>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof disponibilidadeUpdate>>,
+      TError,
+      { id: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof disponibilidadeUpdate>>,
+  TError,
+  { id: string; data: BodyType<NonReadonly<PatchedDisponibilidade>> },
+  TContext
+> => {
+  const mutationOptions = getDisponibilidadeUpdateMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Remove uma disponibilidade do psicólogo autenticado, incluindo todos os horários associados a ela. Essa ação é irreversível.
+ * @summary Apaga uma disponibilidade
+ */
+export const disponibilidadeDelete = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<null>(
+    { url: `/api/disponibilidades/${id}/`, method: 'DELETE' },
+    options
+  )
+}
+
+export const getDisponibilidadeDeleteMutationOptions = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof disponibilidadeDelete>>,
+    TError,
+    { id: string },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof disponibilidadeDelete>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ['disponibilidadeDelete']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof disponibilidadeDelete>>,
+    { id: string }
+  > = props => {
+    const { id } = props ?? {}
+
+    return disponibilidadeDelete(id, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type DisponibilidadeDeleteMutationResult = NonNullable<
+  Awaited<ReturnType<typeof disponibilidadeDelete>>
+>
+
+export type DisponibilidadeDeleteMutationError = ErrorType<null | null>
+
+/**
+ * @summary Apaga uma disponibilidade
+ */
+export const useDisponibilidadeDelete = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof disponibilidadeDelete>>,
+      TError,
+      { id: string },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof disponibilidadeDelete>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationOptions = getDisponibilidadeDeleteMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Gera automaticamente horários em um dia específico da disponibilidade do psicólogo autenticado, com base nos campos informados (início, fim, duração e intervalo).
+ * @summary Adiciona horários automaticamente
+ */
+export const adicionarHorarios = (
+  adicionarHorarios: BodyType<AdicionarHorarios>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<null>(
+    {
+      url: `/api/disponibilidades/adicionar-horarios/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: adicionarHorarios,
+      signal,
+    },
+    options
+  )
+}
+
+export const getAdicionarHorariosMutationOptions = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adicionarHorarios>>,
+    TError,
+    { data: BodyType<AdicionarHorarios> },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adicionarHorarios>>,
+  TError,
+  { data: BodyType<AdicionarHorarios> },
+  TContext
+> => {
+  const mutationKey = ['adicionarHorarios']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adicionarHorarios>>,
+    { data: BodyType<AdicionarHorarios> }
+  > = props => {
+    const { data } = props ?? {}
+
+    return adicionarHorarios(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type AdicionarHorariosMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adicionarHorarios>>
+>
+export type AdicionarHorariosMutationBody = BodyType<AdicionarHorarios>
+export type AdicionarHorariosMutationError = ErrorType<null | null>
+
+/**
+ * @summary Adiciona horários automaticamente
+ */
+export const useAdicionarHorarios = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof adicionarHorarios>>,
+      TError,
+      { data: BodyType<AdicionarHorarios> },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof adicionarHorarios>>,
+  TError,
+  { data: BodyType<AdicionarHorarios> },
+  TContext
+> => {
+  const mutationOptions = getAdicionarHorariosMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Retorna a agenda completa de um psicólogo, mostrando os horários livres e ocupados a partir da data atual. Inclui informações de cada dia ativo e seus respectivos horários.
+ * @summary Lista os horários disponíveis de um psicólogo
+ */
+export const agendaDisponivel = (
+  idPsicologo: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<AgendaDisponivelResponse[]>(
+    {
+      url: `/api/disponibilidades/agenda/${idPsicologo}/`,
+      method: 'GET',
+      signal,
+    },
+    options
+  )
+}
+
+export const getAgendaDisponivelQueryKey = (idPsicologo?: string) => {
+  return [`/api/disponibilidades/agenda/${idPsicologo}/`] as const
+}
+
+export const getAgendaDisponivelQueryOptions = <
+  TData = Awaited<ReturnType<typeof agendaDisponivel>>,
+  TError = ErrorType<null>,
+>(
+  idPsicologo: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendaDisponivel>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAgendaDisponivelQueryKey(idPsicologo)
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof agendaDisponivel>>
+  > = ({ signal }) => agendaDisponivel(idPsicologo, requestOptions, signal)
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!idPsicologo,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof agendaDisponivel>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AgendaDisponivelQueryResult = NonNullable<
+  Awaited<ReturnType<typeof agendaDisponivel>>
+>
+export type AgendaDisponivelQueryError = ErrorType<null>
+
+export function useAgendaDisponivel<
+  TData = Awaited<ReturnType<typeof agendaDisponivel>>,
+  TError = ErrorType<null>,
+>(
+  idPsicologo: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendaDisponivel>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaDisponivel>>,
+          TError,
+          Awaited<ReturnType<typeof agendaDisponivel>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useAgendaDisponivel<
+  TData = Awaited<ReturnType<typeof agendaDisponivel>>,
+  TError = ErrorType<null>,
+>(
+  idPsicologo: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendaDisponivel>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaDisponivel>>,
+          TError,
+          Awaited<ReturnType<typeof agendaDisponivel>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useAgendaDisponivel<
+  TData = Awaited<ReturnType<typeof agendaDisponivel>>,
+  TError = ErrorType<null>,
+>(
+  idPsicologo: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendaDisponivel>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary Lista os horários disponíveis de um psicólogo
+ */
+
+export function useAgendaDisponivel<
+  TData = Awaited<ReturnType<typeof agendaDisponivel>>,
+  TError = ErrorType<null>,
+>(
+  idPsicologo: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendaDisponivel>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getAgendaDisponivelQueryOptions(idPsicologo, options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
 }
