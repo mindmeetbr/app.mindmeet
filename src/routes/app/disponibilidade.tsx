@@ -18,7 +18,7 @@ import { IconClockPlus, IconPlus, IconX } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
 import { PageLayout } from '../../components/layout/PageLayout'
 import {
-  useAdicionarHorariosView,
+  useAdicionarHorarios,
   useDisponibilidadeCreate,
   useDisponibilidadeList,
   useDisponibilidadeUpdate,
@@ -27,6 +27,7 @@ import {
   AdicionarHorariosDiaEnum,
   DisponibilidadeDiaEnum,
   type Disponibilidade,
+  type Horario
 } from '../../api/models'
 import { notifications } from '@mantine/notifications'
 import { useAlterarTitle } from '../../hooks/useAlterarTitle'
@@ -34,6 +35,14 @@ import { useAlterarTitle } from '../../hooks/useAlterarTitle'
 export const Route = createFileRoute('/app/disponibilidade')({
   component: CardDisponibilidades,
 })
+
+interface HorarioLocal extends Horario {
+  id: string;
+}
+
+interface DisponibilidadeLocal extends Disponibilidade {
+  id: string
+}
 
 const diasSemana = [
   { value: '0', label: 'Segunda-feira' },
@@ -46,7 +55,7 @@ const diasSemana = [
 ]
 
 function BotaoAdicionarHorarios() {
-  const { mutate: adicionarHorarios } = useAdicionarHorariosView()
+  const { mutate: adicionarHorarios } = useAdicionarHorarios()
   const [opened, setOpened] = useState(false)
   const [formData, setFormData] = useState({
     dia: '',
@@ -63,7 +72,7 @@ function BotaoAdicionarHorarios() {
   const handleSubmit = () => {
     const diaFormatado =
       AdicionarHorariosDiaEnum[
-        `NUMBER_${formData.dia}` as keyof typeof AdicionarHorariosDiaEnum
+      `NUMBER_${formData.dia}` as keyof typeof AdicionarHorariosDiaEnum
       ]
     const dados = { ...formData, dia: diaFormatado }
     adicionarHorarios(
@@ -278,7 +287,7 @@ function CardDisponibilidades() {
   const atualizarHorario = (
     diaIndex: number,
     horarioIndex: number,
-    campo: string,
+    campo: keyof HorarioLocal,
     valor: string
   ) => {
     setDisponibilidades(prev => {
@@ -313,12 +322,12 @@ function CardDisponibilidades() {
         if (dados.horarios)
           dados.horarios = dados.horarios.map(horario => {
             if (idsHorarios?.includes(horario.id)) return horario
-            const { id, ...novoHorario } = horario
+            const {id, ...novoHorario } = horario
             return novoHorario
           })
 
         if (idsDisponibilidades.includes(disp.id)) {
-          atualizarDisponibilidade({ idDisp: id, data: dados })
+          atualizarDisponibilidade({ id: id, data: dados })
         } else {
           salvarDisponibilidade({ data: dados })
         }
@@ -363,7 +372,7 @@ function CardDisponibilidades() {
                       <Switch
                         checked={dia.ativo}
                         onChange={e =>
-                          alternarAtivo(dia.dia, e.currentTarget.checked)
+                          alternarAtivo(diaIndex, e.currentTarget.checked)
                         }
                         size="md"
                         onClick={e => e.stopPropagation()}
@@ -402,7 +411,7 @@ function CardDisponibilidades() {
                             value={horario.inicio}
                             onChange={e =>
                               atualizarHorario(
-                                dia.dia,
+                                diaIndex,
                                 horarioIndex,
                                 'inicio',
                                 e.currentTarget.value

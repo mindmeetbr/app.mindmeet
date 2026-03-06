@@ -24,6 +24,7 @@ import { Route as AppAprovarRouteImport } from './routes/app/aprovar'
 import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
 import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificacoes/index'
 import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
+import { Route as AppDisponibilidadeIndexRouteImport } from './routes/app/disponibilidade/index'
 import { Route as AppPacientesNovoRouteImport } from './routes/app/pacientes/novo'
 import { Route as AppPacientesIdRouteImport } from './routes/app/pacientes/$id'
 import { Route as AppNotificacoesIdRouteImport } from './routes/app/notificacoes/$id'
@@ -106,6 +107,11 @@ const AppInstituicaoIndexRoute = AppInstituicaoIndexRouteImport.update({
   path: '/instituicao/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDisponibilidadeIndexRoute = AppDisponibilidadeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppDisponibilidadeRoute,
+} as any)
 const AppPacientesNovoRoute = AppPacientesNovoRouteImport.update({
   id: '/pacientes/novo',
   path: '/pacientes/novo',
@@ -146,7 +152,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -168,7 +175,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByTo {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -192,7 +199,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -204,6 +211,7 @@ export interface FileRoutesById {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao/': typeof AppInstituicaoIndexRoute
   '/app/notificacoes/': typeof AppNotificacoesIndexRoute
   '/app/pacientes/': typeof AppPacientesIndexRoute
@@ -229,6 +237,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/disponibilidade/'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -239,7 +248,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/aprovar'
     | '/app/configuracoes'
-    | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
     | '/psicologo/$id'
@@ -251,6 +259,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/disponibilidade'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/disponibilidade/'
     | '/app/instituicao/'
     | '/app/notificacoes/'
     | '/app/pacientes/'
@@ -397,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInstituicaoIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/disponibilidade/': {
+      id: '/app/disponibilidade/'
+      path: '/'
+      fullPath: '/app/disponibilidade/'
+      preLoaderRoute: typeof AppDisponibilidadeIndexRouteImport
+      parentRoute: typeof AppDisponibilidadeRoute
+    }
     '/app/pacientes/novo': {
       id: '/app/pacientes/novo'
       path: '/pacientes/novo'
@@ -442,10 +459,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppDisponibilidadeRouteChildren {
+  AppDisponibilidadeIndexRoute: typeof AppDisponibilidadeIndexRoute
+}
+
+const AppDisponibilidadeRouteChildren: AppDisponibilidadeRouteChildren = {
+  AppDisponibilidadeIndexRoute: AppDisponibilidadeIndexRoute,
+}
+
+const AppDisponibilidadeRouteWithChildren =
+  AppDisponibilidadeRoute._addFileChildren(AppDisponibilidadeRouteChildren)
+
 interface AppRouteChildren {
   AppAprovarRoute: typeof AppAprovarRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
-  AppDisponibilidadeRoute: typeof AppDisponibilidadeRoute
+  AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppInstituicaoEditarRoute: typeof AppInstituicaoEditarRoute
   AppInstituicaoNovoPacienteRoute: typeof AppInstituicaoNovoPacienteRoute
@@ -461,7 +489,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAprovarRoute: AppAprovarRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
-  AppDisponibilidadeRoute: AppDisponibilidadeRoute,
+  AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppInstituicaoEditarRoute: AppInstituicaoEditarRoute,
   AppInstituicaoNovoPacienteRoute: AppInstituicaoNovoPacienteRoute,
