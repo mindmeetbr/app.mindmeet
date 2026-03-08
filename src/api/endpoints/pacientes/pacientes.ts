@@ -20,7 +20,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { Paciente, PatchedPaciente } from '../../models'
+import type {
+  Paciente,
+  PacienteListParams,
+  PaginatedPacienteList,
+  PatchedPaciente,
+} from '../../models'
 
 import { customInstance } from '../../mutator/custom-instance'
 import type { ErrorType, BodyType } from '../../mutator/custom-instance'
@@ -63,35 +68,39 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
  * @summary Lista todos os pacientes
  */
 export const pacienteList = (
+  params?: PacienteListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Paciente[]>(
-    { url: `/api/pacientes/`, method: 'GET', signal },
+  return customInstance<PaginatedPacienteList>(
+    { url: `/api/pacientes/`, method: 'GET', params, signal },
     options
   )
 }
 
-export const getPacienteListQueryKey = () => {
-  return [`/api/pacientes/`] as const
+export const getPacienteListQueryKey = (params?: PacienteListParams) => {
+  return [`/api/pacientes/`, ...(params ? [params] : [])] as const
 }
 
 export const getPacienteListQueryOptions = <
   TData = Awaited<ReturnType<typeof pacienteList>>,
   TError = ErrorType<null | null>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
+>(
+  params?: PacienteListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getPacienteListQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getPacienteListQueryKey(params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteList>>> = ({
     signal,
-  }) => pacienteList(requestOptions, signal)
+  }) => pacienteList(params, requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof pacienteList>>,
@@ -109,6 +118,7 @@ export function usePacienteList<
   TData = Awaited<ReturnType<typeof pacienteList>>,
   TError = ErrorType<null | null>,
 >(
+  params: undefined | PacienteListParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
@@ -131,6 +141,7 @@ export function usePacienteList<
   TData = Awaited<ReturnType<typeof pacienteList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: PacienteListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
@@ -153,6 +164,7 @@ export function usePacienteList<
   TData = Awaited<ReturnType<typeof pacienteList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: PacienteListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
@@ -171,6 +183,7 @@ export function usePacienteList<
   TData = Awaited<ReturnType<typeof pacienteList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: PacienteListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof pacienteList>>, TError, TData>
@@ -181,7 +194,7 @@ export function usePacienteList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getPacienteListQueryOptions(options)
+  const queryOptions = getPacienteListQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

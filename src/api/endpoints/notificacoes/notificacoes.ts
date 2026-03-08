@@ -17,7 +17,12 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { Notificacao, NotificacoesPendentes } from '../../models'
+import type {
+  Notificacao,
+  NotificacaoListParams,
+  NotificacoesPendentes,
+  PaginatedNotificacaoList,
+} from '../../models'
 
 import { customInstance } from '../../mutator/custom-instance'
 import type { ErrorType } from '../../mutator/custom-instance'
@@ -29,35 +34,43 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
  * @summary Lista todas as notificações de um usuário
  */
 export const notificacaoList = (
+  params?: NotificacaoListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Notificacao[]>(
-    { url: `/api/notificacoes/`, method: 'GET', signal },
+  return customInstance<PaginatedNotificacaoList>(
+    { url: `/api/notificacoes/`, method: 'GET', params, signal },
     options
   )
 }
 
-export const getNotificacaoListQueryKey = () => {
-  return [`/api/notificacoes/`] as const
+export const getNotificacaoListQueryKey = (params?: NotificacaoListParams) => {
+  return [`/api/notificacoes/`, ...(params ? [params] : [])] as const
 }
 
 export const getNotificacaoListQueryOptions = <
   TData = Awaited<ReturnType<typeof notificacaoList>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof notificacaoList>>, TError, TData>
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
+>(
+  params?: NotificacaoListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof notificacaoList>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getNotificacaoListQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getNotificacaoListQueryKey(params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof notificacaoList>>> = ({
     signal,
-  }) => notificacaoList(requestOptions, signal)
+  }) => notificacaoList(params, requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof notificacaoList>>,
@@ -75,6 +88,7 @@ export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
   TError = ErrorType<unknown>,
 >(
+  params: undefined | NotificacaoListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -101,6 +115,7 @@ export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: NotificacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -127,6 +142,7 @@ export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: NotificacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -149,6 +165,7 @@ export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
   TError = ErrorType<unknown>,
 >(
+  params?: NotificacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -163,7 +180,7 @@ export function useNotificacaoList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getNotificacaoListQueryOptions(options)
+  const queryOptions = getNotificacaoListQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -344,8 +361,8 @@ export function useNotificacaoDetail<
 }
 
 /**
- * Retorna todas as notificações não lidas do usuário logado, além do número total dessas
- * @summary Lista as notificações não lidas de um usuário
+ * Retorna o número total de notificações não-lidas do usuário.
+ * @summary Conta as notificações não lidas de um usuário
  */
 export const notificacaoPendenteList = (
   options?: SecondParameter<typeof customInstance>,
@@ -466,7 +483,7 @@ export function useNotificacaoPendenteList<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 /**
- * @summary Lista as notificações não lidas de um usuário
+ * @summary Conta as notificações não lidas de um usuário
  */
 
 export function useNotificacaoPendenteList<

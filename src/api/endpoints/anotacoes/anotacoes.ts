@@ -20,7 +20,13 @@ import type {
   UseQueryResult,
 } from '@tanstack/react-query'
 
-import type { Anotacao, CriarAnotacao, PatchedAnotacao } from '../../models'
+import type {
+  Anotacao,
+  AnotacaoListParams,
+  CriarAnotacao,
+  PaginatedAnotacaoList,
+  PatchedAnotacao,
+} from '../../models'
 
 import { customInstance } from '../../mutator/custom-instance'
 import type { ErrorType, BodyType } from '../../mutator/custom-instance'
@@ -64,17 +70,29 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
  */
 export const anotacaoList = (
   pacientePk: string,
+  params?: AnotacaoListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Anotacao[]>(
-    { url: `/api/pacientes/${pacientePk}/anotacoes/`, method: 'GET', signal },
+  return customInstance<PaginatedAnotacaoList>(
+    {
+      url: `/api/pacientes/${pacientePk}/anotacoes/`,
+      method: 'GET',
+      params,
+      signal,
+    },
     options
   )
 }
 
-export const getAnotacaoListQueryKey = (pacientePk?: string) => {
-  return [`/api/pacientes/${pacientePk}/anotacoes/`] as const
+export const getAnotacaoListQueryKey = (
+  pacientePk?: string,
+  params?: AnotacaoListParams
+) => {
+  return [
+    `/api/pacientes/${pacientePk}/anotacoes/`,
+    ...(params ? [params] : []),
+  ] as const
 }
 
 export const getAnotacaoListQueryOptions = <
@@ -82,6 +100,7 @@ export const getAnotacaoListQueryOptions = <
   TError = ErrorType<null | null>,
 >(
   pacientePk: string,
+  params?: AnotacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>
@@ -91,11 +110,12 @@ export const getAnotacaoListQueryOptions = <
 ) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getAnotacaoListQueryKey(pacientePk)
+  const queryKey =
+    queryOptions?.queryKey ?? getAnotacaoListQueryKey(pacientePk, params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof anotacaoList>>> = ({
     signal,
-  }) => anotacaoList(pacientePk, requestOptions, signal)
+  }) => anotacaoList(pacientePk, params, requestOptions, signal)
 
   return {
     queryKey,
@@ -119,6 +139,7 @@ export function useAnotacaoList<
   TError = ErrorType<null | null>,
 >(
   pacientePk: string,
+  params: undefined | AnotacaoListParams,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>
@@ -142,6 +163,7 @@ export function useAnotacaoList<
   TError = ErrorType<null | null>,
 >(
   pacientePk: string,
+  params?: AnotacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>
@@ -165,6 +187,7 @@ export function useAnotacaoList<
   TError = ErrorType<null | null>,
 >(
   pacientePk: string,
+  params?: AnotacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>
@@ -184,6 +207,7 @@ export function useAnotacaoList<
   TError = ErrorType<null | null>,
 >(
   pacientePk: string,
+  params?: AnotacaoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoList>>, TError, TData>
@@ -194,7 +218,7 @@ export function useAnotacaoList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getAnotacaoListQueryOptions(pacientePk, options)
+  const queryOptions = getAnotacaoListQueryOptions(pacientePk, params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
