@@ -5,15 +5,12 @@ import {
   Text,
   Group,
   ActionIcon,
-  TextInput,
-  Card,
   rem,
   Flex,
   Badge,
 } from '@mantine/core'
 import {
   IconPlus,
-  IconSearch,
   IconEye,
   IconEdit,
   IconTrash,
@@ -29,22 +26,39 @@ import {
 } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { TableEmptyState } from '../../../components/ui/TableEmptyState'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import type { Paciente } from '../../../api/models'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 
 export const Route = createFileRoute('/app/pacientes/')({
   component: PacientesPage,
 })
 
+const COLUNAS_PACIENTES = [
+  { chave: 'paciente', label: 'Paciente' },
+  { chave: 'contato', label: 'Contato' },
+  { chave: 'idade', label: 'Idade' },
+  { chave: 'queixa', label: 'Queixa Principal' },
+  { chave: 'acoes', label: 'Ações', largura: 100 },
+]
+
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
-  const { data: pacientes, isLoading, isError, refetch } = usePacienteList()
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
+
+  const { data, isLoading, isError, refetch } = usePacienteList(
+    { pagina, tamanho },
+    { query: { queryKey: ['pacientes', pagina, tamanho] } }
+  )
+
   const { mutate: apagarPaciente } = usePacienteDelete()
 
-  const listaPacientes = pacientes ?? []
-
-  const calcularIdade = (dataNascimento: string) => {
-    return dayjs().diff(dayjs(dataNascimento), 'year')
-  }
+  const listaPacientes = data?.results ?? []
+  const pacientesFiltrados = listaPacientes.filter(
+    paciente =>
+      paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const handleClick = (id: string) => {
     const apagar = window.confirm(
@@ -74,13 +88,7 @@ function TabelaPacientes() {
     }
   }
 
-  const pacientesFiltrados = listaPacientes.filter(
-    paciente =>
-      paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const linhasTabela = pacientesFiltrados.map(paciente => (
+  const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
         <Group gap="sm">
@@ -121,13 +129,13 @@ function TabelaPacientes() {
         </div>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{calcularIdade(paciente.data_nascimento)} anos</Text>
+        <Text size="sm">
+          {dayjs().diff(dayjs(paciente.data_nascimento), 'year')} anos
+        </Text>
       </Table.Td>
       <Table.Td>
         <Text lineClamp={2}>
-          {paciente.informacoes_clinicas?.queixa_principal
-            ? paciente.informacoes_clinicas.queixa_principal
-            : 'Nenhuma'}
+          {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
         </Text>
       </Table.Td>
       <Table.Td>
@@ -159,50 +167,27 @@ function TabelaPacientes() {
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ))
+  )
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Group mb="md">
-        <TextInput
-          placeholder="Buscar por nome ou email..."
-          leftSection={
-            <IconSearch style={{ width: rem(16), height: rem(16) }} />
-          }
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ flex: 1 }}
-        />
-      </Group>
-
-      <Table.ScrollContainer minWidth={800}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Paciente</Table.Th>
-              <Table.Th>Contato</Table.Th>
-              <Table.Th>Idade</Table.Th>
-              <Table.Th>Queixa Principal</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            <TableEmptyState
-              isError={isError}
-              isLoading={isLoading}
-              isEmpty={
-                !isLoading && !isError && pacientesFiltrados.length === 0
-              }
-              onRetry={refetch}
-              errorMessage="Não foi possível carregar seus pacientes. Tente novamente."
-              emptyMessage="Nenhum paciente encontrado."
-              colSpan={5}
-            />
-            {!isLoading && !isError && linhasTabela}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-    </Card>
+    <TabelaPaginada
+      dados={pacientesFiltrados}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      colunas={COLUNAS_PACIENTES}
+      renderLinha={renderLinhaPaciente}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      termoBusca={searchTerm}
+      onBuscaChange={setSearchTerm}
+      placeholderBusca="Buscar por nome ou email..."
+      mensagemVazia="Nenhum paciente encontrado."
+      mensagemErro="Não foi possível carregar seus pacientes. Tente novamente."
+    />
   )
 }
 

@@ -5,16 +5,12 @@ import {
   Text,
   Group,
   ActionIcon,
-  TextInput,
-  Card,
   rem,
   Flex,
-  Badge,
   Tabs,
   Button,
 } from '@mantine/core'
 import {
-  IconSearch,
   IconPlus,
   IconUserCheck,
   IconUser,
@@ -30,7 +26,9 @@ import dayjs from 'dayjs'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useInstituicaoDetail } from '../../../api/endpoints/users/users'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { TableEmptyState } from '../../../components/ui/TableEmptyState'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import type { Paciente, PerfilPsicologo } from '../../../api/models'
 
 export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,
@@ -48,7 +46,7 @@ const enderecoPadrao = {
   uf: 'SP',
 }
 
-const psicologosMock = [
+const psicologosMock: PerfilPsicologo[] = [
   {
     id: generateId(),
     usuario: {
@@ -64,8 +62,8 @@ const psicologosMock = [
     },
     crp: '00/12345',
     is_estagiario: false,
-    supervisor: null,
-    supervisor_verificado: true,
+    supervisor: undefined,
+    supervisor_confirmado: true,
   },
   {
     id: generateId(),
@@ -82,8 +80,8 @@ const psicologosMock = [
     },
     crp: '00/67890',
     is_estagiario: false,
-    supervisor: null,
-    supervisor_verificado: true,
+    supervisor: undefined,
+    supervisor_confirmado: true,
   },
   {
     id: generateId(),
@@ -101,50 +99,51 @@ const psicologosMock = [
     crp: '00/11223',
     is_estagiario: true,
     supervisor: 'carlos.lima@mindmeet.com',
-    supervisor_verificado: true,
+    supervisor_confirmado: true,
   },
 ]
 
 function TabelaPsicologos() {
   const [searchTerm, setSearchTerm] = useState('')
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
 
   const psicologosFiltrados = psicologosMock.filter(
     psic =>
-      psic.usuario.nome_completo
+      psic.usuario?.nome_completo
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      psic.usuario.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      psic.usuario?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const linhasTabelaPsicologo = psicologosFiltrados.map(psic => (
-    <Table.Tr key={psic.id}>
+  const renderLinhaPsicologo = (psicologo: PerfilPsicologo) => (
+    <Table.Tr key={psicologo.id}>
       <Table.Td>
         <Group gap="sm">
           <Avatar>
-            {psic.usuario.nome_completo
+            {psicologo.usuario?.nome_completo
               .split(' ')
               .map(n => n[0])
               .join('')
               .slice(0, 2)}
           </Avatar>
           <Text fw={500} size="sm">
-            {psic.usuario.nome_completo}
+            {psicologo.usuario?.nome_completo}
           </Text>
         </Group>
       </Table.Td>
-      <Table.Td>{psic.usuario.email}</Table.Td>
-      <Table.Td>{psic.crp}</Table.Td>
-      <Table.Td>{psic.is_estagiario ? 'Sim' : 'Não'}</Table.Td>
-      <Table.Td>{psic.supervisor ?? 'Nenhum'}</Table.Td>
+      <Table.Td>{psicologo.usuario?.email}</Table.Td>
+      <Table.Td>{psicologo.crp}</Table.Td>
+      <Table.Td>{psicologo.is_estagiario ? 'Sim' : 'Não'}</Table.Td>
+      <Table.Td>{psicologo.supervisor ?? 'Nenhum'}</Table.Td>
       <Table.Td>
         <Flex gap="xs">
-          <Link to="/psicologo/$id" params={{ id: psic.id }}>
+          <Link to="/psicologo/$id" params={{ id: psicologo.id }}>
             <ActionIcon variant="light" color="blue" size="sm" disabled={true}>
               <IconEye style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
           {/* TODO: Criar página para editar psicólogos quando se é gestor */}
-          <Link to="#">
+          <Link to=".">
             <ActionIcon
               variant="light"
               color="orange"
@@ -157,20 +156,33 @@ function TabelaPsicologos() {
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ))
+  )
+
+  const COLUNAS_PSICOLOGOS = [
+    { chave: 'psicologo', label: 'Psicólogo' },
+    { chave: 'email', label: 'Email' },
+    { chave: 'crp', label: 'CRP' },
+    { chave: 'isEstagiario', label: 'Estagiário' },
+    { chave: 'supervisor', label: 'Supervisor' },
+    { chave: 'acoes', label: 'Ações' },
+  ]
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Group mb="md">
-        <TextInput
-          placeholder="Buscar por nome ou email..."
-          leftSection={
-            <IconSearch style={{ width: rem(16), height: rem(16) }} />
-          }
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ flex: 1 }}
-        />
+    <TabelaPaginada
+      dados={psicologosFiltrados}
+      total={psicologosMock.length}
+      isLoading={false}
+      isError={false}
+      onRetry={() => console.log('me implemente por favor')}
+      colunas={COLUNAS_PSICOLOGOS}
+      renderLinha={renderLinhaPsicologo}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      mensagemVazia="Nenhum psicólogo encontrado."
+      mensagemErro="Não foi possível carregar seus psicólogos. Tente novamente"
+      acoes={
         <Button
           component={Link}
           to="/app/instituicao/novo-psicologo"
@@ -178,44 +190,21 @@ function TabelaPsicologos() {
         >
           Adicionar Psicólogo
         </Button>
-      </Group>
-
-      <Table.ScrollContainer minWidth={800}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Psicólogo</Table.Th>
-              <Table.Th>Email</Table.Th>
-              <Table.Th>CRP</Table.Th>
-              <Table.Th>Estagiário</Table.Th>
-              <Table.Th>Supervisor</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            <TableEmptyState
-              isError={false}
-              isLoading={false}
-              isEmpty={psicologosFiltrados.length === 0}
-              onRetry={() => console.log('me implementa por favor')}
-              emptyMessage="Nenhum psicólogo encontrado."
-              errorMessage="Não foi possível carregar seus psicólogos. Tente novamente"
-              colSpan={6}
-            />
-            {linhasTabelaPsicologo}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-      <Badge mt="sm">{`Total: ${psicologosFiltrados.length}`}</Badge>
-    </Card>
+      }
+      termoBusca={searchTerm}
+      onBuscaChange={setSearchTerm}
+    />
   )
 }
 
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
-
-  const { data: pacientes, isLoading, isError, refetch } = usePacienteList()
-  const listaPacientes = pacientes ?? []
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
+  const { data, isLoading, isError, refetch } = usePacienteList(
+    { pagina, tamanho },
+    { query: { queryKey: ['pacientes', pagina, tamanho] } }
+  )
+  const listaPacientes = data?.results ?? []
 
   const calcularIdade = (dataNascimento?: string) =>
     dataNascimento ? dayjs().diff(dayjs(dataNascimento), 'year') : '-'
@@ -226,7 +215,7 @@ function TabelaPacientes() {
       pac.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const linhasTabelaPacientes = pacientesFiltrados.map(paciente => (
+  const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
         <Group gap="sm">
@@ -273,20 +262,35 @@ function TabelaPacientes() {
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ))
+  )
+
+  const COLUNAS_PACIENTES = [
+    { chave: 'paciente', label: 'Paciente' },
+    { chave: 'contato', label: 'Contato' },
+    { chave: 'idade', label: 'Idade' },
+    { chave: 'queixa', label: 'Queixa Principal' },
+    { chave: 'acoes', label: 'Ações', largura: 100 },
+  ]
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Group mb="md">
-        <TextInput
-          placeholder="Buscar por nome ou email..."
-          leftSection={
-            <IconSearch style={{ width: rem(16), height: rem(16) }} />
-          }
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ flex: 1 }}
-        />
+    <TabelaPaginada
+      dados={pacientesFiltrados}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      colunas={COLUNAS_PACIENTES}
+      renderLinha={renderLinhaPaciente}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      termoBusca={searchTerm}
+      onBuscaChange={setSearchTerm}
+      placeholderBusca="Buscar por nome ou email..."
+      mensagemVazia="Nenhum paciente encontrado."
+      mensagemErro="Não foi possível carregar seus pacientes. Tente novamente."
+      acoes={
         <Button
           component={Link}
           to="/app/instituicao/novo-paciente"
@@ -294,37 +298,8 @@ function TabelaPacientes() {
         >
           Adicionar Paciente
         </Button>
-      </Group>
-
-      <Table.ScrollContainer minWidth={800}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Paciente</Table.Th>
-              <Table.Th>Contato</Table.Th>
-              <Table.Th>Idade</Table.Th>
-              <Table.Th>Queixa Principal</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            <TableEmptyState
-              isError={isError}
-              isLoading={isLoading}
-              isEmpty={
-                !isError && !isLoading && pacientesFiltrados.length === 0
-              }
-              onRetry={refetch}
-              colSpan={5}
-              errorMessage="Não foi possível carregar seus pacientes. Tente novamente."
-              emptyMessage="Nenhum paciente encontrado."
-            />
-            {!isLoading && !isError && linhasTabelaPacientes}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-      <Badge mt="sm">{`Total: ${pacientesFiltrados.length}`}</Badge>
-    </Card>
+      }
+    />
   )
 }
 
