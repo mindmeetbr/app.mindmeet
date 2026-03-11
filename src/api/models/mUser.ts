@@ -23,5 +23,5 @@ export interface MUser {
   sexo?: (typeof MUserSexo)[keyof typeof MUserSexo]
   readonly verificado: boolean
   endereco?: Endereco
-  papel?: PapelEnum
+  readonly papel: PapelEnum
 }

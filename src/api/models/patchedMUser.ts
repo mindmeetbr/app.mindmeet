@@ -23,5 +23,5 @@ export interface PatchedMUser {
   sexo?: (typeof PatchedMUserSexo)[keyof typeof PatchedMUserSexo]
   readonly verificado?: boolean
   endereco?: Endereco
-  papel?: PapelEnum
+  readonly papel?: PapelEnum
 }

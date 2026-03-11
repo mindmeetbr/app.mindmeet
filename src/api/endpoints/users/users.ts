@@ -22,9 +22,9 @@ import type {
 
 import type {
   CustomRegister,
-  Instituicao,
   MUser,
-  PatchedInstituicao,
+  PatchedMUser,
+  PatchedPerfilPsicologo,
   PerfilPsicologo,
 } from '../../models'
 
@@ -65,42 +65,175 @@ type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
- * Atualiza os detalhes da instituição em que o usuário da requisição é gestor
- * @summary Atualiza os dados de uma instituição
+ * @summary Retorna os dados do usuário autenticado
  */
-export const instituicaoUpdate = (
-  patchedInstituicao: BodyType<NonReadonly<PatchedInstituicao>>,
+export const usuarioDetail = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<MUser>(
+    { url: `/api/me/`, method: 'GET', signal },
+    options
+  )
+}
+
+export const getUsuarioDetailQueryKey = () => {
+  return [`/api/me/`] as const
+}
+
+export const getUsuarioDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof usuarioDetail>>,
+  TError = ErrorType<null>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof usuarioDetail>>, TError, TData>
+  >
+  request?: SecondParameter<typeof customInstance>
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getUsuarioDetailQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof usuarioDetail>>> = ({
+    signal,
+  }) => usuarioDetail(requestOptions, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof usuarioDetail>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type UsuarioDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof usuarioDetail>>
+>
+export type UsuarioDetailQueryError = ErrorType<null>
+
+export function useUsuarioDetail<
+  TData = Awaited<ReturnType<typeof usuarioDetail>>,
+  TError = ErrorType<null>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof usuarioDetail>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usuarioDetail>>,
+          TError,
+          Awaited<ReturnType<typeof usuarioDetail>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useUsuarioDetail<
+  TData = Awaited<ReturnType<typeof usuarioDetail>>,
+  TError = ErrorType<null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof usuarioDetail>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof usuarioDetail>>,
+          TError,
+          Awaited<ReturnType<typeof usuarioDetail>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function useUsuarioDetail<
+  TData = Awaited<ReturnType<typeof usuarioDetail>>,
+  TError = ErrorType<null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof usuarioDetail>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary Retorna os dados do usuário autenticado
+ */
+
+export function useUsuarioDetail<
+  TData = Awaited<ReturnType<typeof usuarioDetail>>,
+  TError = ErrorType<null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof usuarioDetail>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getUsuarioDetailQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
+}
+
+/**
+ * @summary Atualiza os dados do usuário autenticado
+ */
+export const usuarioUpdate = (
+  patchedMUser: BodyType<NonReadonly<PatchedMUser>>,
   options?: SecondParameter<typeof customInstance>
 ) => {
-  return customInstance<Instituicao>(
+  return customInstance<MUser>(
     {
-      url: `/api/instituicoes/editar/`,
+      url: `/api/me/`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedInstituicao,
+      data: patchedMUser,
     },
     options
   )
 }
 
-export const getInstituicaoUpdateMutationOptions = <
+export const getUsuarioUpdateMutationOptions = <
   TError = ErrorType<null | null>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof instituicaoUpdate>>,
+    Awaited<ReturnType<typeof usuarioUpdate>>,
     TError,
-    { data: BodyType<NonReadonly<PatchedInstituicao>> },
+    { data: BodyType<NonReadonly<PatchedMUser>> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof instituicaoUpdate>>,
+  Awaited<ReturnType<typeof usuarioUpdate>>,
   TError,
-  { data: BodyType<NonReadonly<PatchedInstituicao>> },
+  { data: BodyType<NonReadonly<PatchedMUser>> },
   TContext
 > => {
-  const mutationKey = ['instituicaoUpdate']
+  const mutationKey = ['usuarioUpdate']
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -110,77 +243,74 @@ export const getInstituicaoUpdateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof instituicaoUpdate>>,
-    { data: BodyType<NonReadonly<PatchedInstituicao>> }
+    Awaited<ReturnType<typeof usuarioUpdate>>,
+    { data: BodyType<NonReadonly<PatchedMUser>> }
   > = props => {
     const { data } = props ?? {}
 
-    return instituicaoUpdate(data, requestOptions)
+    return usuarioUpdate(data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type InstituicaoUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof instituicaoUpdate>>
+export type UsuarioUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof usuarioUpdate>>
 >
-export type InstituicaoUpdateMutationBody = BodyType<
-  NonReadonly<PatchedInstituicao>
->
-export type InstituicaoUpdateMutationError = ErrorType<null | null>
+export type UsuarioUpdateMutationBody = BodyType<NonReadonly<PatchedMUser>>
+export type UsuarioUpdateMutationError = ErrorType<null | null>
 
 /**
- * @summary Atualiza os dados de uma instituição
+ * @summary Atualiza os dados do usuário autenticado
  */
-export const useInstituicaoUpdate = <
+export const useUsuarioUpdate = <
   TError = ErrorType<null | null>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof instituicaoUpdate>>,
+      Awaited<ReturnType<typeof usuarioUpdate>>,
       TError,
-      { data: BodyType<NonReadonly<PatchedInstituicao>> },
+      { data: BodyType<NonReadonly<PatchedMUser>> },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
   },
   queryClient?: QueryClient
 ): UseMutationResult<
-  Awaited<ReturnType<typeof instituicaoUpdate>>,
+  Awaited<ReturnType<typeof usuarioUpdate>>,
   TError,
-  { data: BodyType<NonReadonly<PatchedInstituicao>> },
+  { data: BodyType<NonReadonly<PatchedMUser>> },
   TContext
 > => {
-  const mutationOptions = getInstituicaoUpdateMutationOptions(options)
+  const mutationOptions = getUsuarioUpdateMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
 /**
- * Retorna uma lista com todos os psicólogos vinculados à instituição do gestor autenticado. Inclui tanto supervisores quanto estagiários.
- * @summary Listar psicólogos da instituição do gestor
+ * @summary Retorna o perfil profissional do psicólogo autenticado
  */
-export const listarPsicologosInstituicao = (
+export const perfilPsicologoDetail = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<PerfilPsicologo[]>(
-    { url: `/api/instituicoes/psicologos/`, method: 'GET', signal },
+  return customInstance<PerfilPsicologo>(
+    { url: `/api/me/perfil/`, method: 'GET', signal },
     options
   )
 }
 
-export const getListarPsicologosInstituicaoQueryKey = () => {
-  return [`/api/instituicoes/psicologos/`] as const
+export const getPerfilPsicologoDetailQueryKey = () => {
+  return [`/api/me/perfil/`] as const
 }
 
-export const getListarPsicologosInstituicaoQueryOptions = <
-  TData = Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+export const getPerfilPsicologoDetailQueryOptions = <
+  TData = Awaited<ReturnType<typeof perfilPsicologoDetail>>,
   TError = ErrorType<null | null>,
 >(options?: {
   query?: Partial<
     UseQueryOptions<
-      Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+      Awaited<ReturnType<typeof perfilPsicologoDetail>>,
       TError,
       TData
     >
@@ -189,42 +319,41 @@ export const getListarPsicologosInstituicaoQueryOptions = <
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ?? getListarPsicologosInstituicaoQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getPerfilPsicologoDetailQueryKey()
 
   const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof listarPsicologosInstituicao>>
-  > = ({ signal }) => listarPsicologosInstituicao(requestOptions, signal)
+    Awaited<ReturnType<typeof perfilPsicologoDetail>>
+  > = ({ signal }) => perfilPsicologoDetail(requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+    Awaited<ReturnType<typeof perfilPsicologoDetail>>,
     TError,
     TData
   > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
-export type ListarPsicologosInstituicaoQueryResult = NonNullable<
-  Awaited<ReturnType<typeof listarPsicologosInstituicao>>
+export type PerfilPsicologoDetailQueryResult = NonNullable<
+  Awaited<ReturnType<typeof perfilPsicologoDetail>>
 >
-export type ListarPsicologosInstituicaoQueryError = ErrorType<null | null>
+export type PerfilPsicologoDetailQueryError = ErrorType<null | null>
 
-export function useListarPsicologosInstituicao<
-  TData = Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+export function usePerfilPsicologoDetail<
+  TData = Awaited<ReturnType<typeof perfilPsicologoDetail>>,
   TError = ErrorType<null | null>,
 >(
   options: {
     query: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+        Awaited<ReturnType<typeof perfilPsicologoDetail>>,
         TError,
         TData
       >
     > &
       Pick<
         DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+          Awaited<ReturnType<typeof perfilPsicologoDetail>>,
           TError,
-          Awaited<ReturnType<typeof listarPsicologosInstituicao>>
+          Awaited<ReturnType<typeof perfilPsicologoDetail>>
         >,
         'initialData'
       >
@@ -234,23 +363,23 @@ export function useListarPsicologosInstituicao<
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useListarPsicologosInstituicao<
-  TData = Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+export function usePerfilPsicologoDetail<
+  TData = Awaited<ReturnType<typeof perfilPsicologoDetail>>,
   TError = ErrorType<null | null>,
 >(
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+        Awaited<ReturnType<typeof perfilPsicologoDetail>>,
         TError,
         TData
       >
     > &
       Pick<
         UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+          Awaited<ReturnType<typeof perfilPsicologoDetail>>,
           TError,
-          Awaited<ReturnType<typeof listarPsicologosInstituicao>>
+          Awaited<ReturnType<typeof perfilPsicologoDetail>>
         >,
         'initialData'
       >
@@ -260,14 +389,14 @@ export function useListarPsicologosInstituicao<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 }
-export function useListarPsicologosInstituicao<
-  TData = Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+export function usePerfilPsicologoDetail<
+  TData = Awaited<ReturnType<typeof perfilPsicologoDetail>>,
   TError = ErrorType<null | null>,
 >(
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+        Awaited<ReturnType<typeof perfilPsicologoDetail>>,
         TError,
         TData
       >
@@ -279,17 +408,17 @@ export function useListarPsicologosInstituicao<
   queryKey: DataTag<QueryKey, TData, TError>
 }
 /**
- * @summary Listar psicólogos da instituição do gestor
+ * @summary Retorna o perfil profissional do psicólogo autenticado
  */
 
-export function useListarPsicologosInstituicao<
-  TData = Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+export function usePerfilPsicologoDetail<
+  TData = Awaited<ReturnType<typeof perfilPsicologoDetail>>,
   TError = ErrorType<null | null>,
 >(
   options?: {
     query?: Partial<
       UseQueryOptions<
-        Awaited<ReturnType<typeof listarPsicologosInstituicao>>,
+        Awaited<ReturnType<typeof perfilPsicologoDetail>>,
         TError,
         TData
       >
@@ -300,7 +429,7 @@ export function useListarPsicologosInstituicao<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getListarPsicologosInstituicaoQueryOptions(options)
+  const queryOptions = getPerfilPsicologoDetailQueryOptions(options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
@@ -313,482 +442,108 @@ export function useListarPsicologosInstituicao<
 }
 
 /**
- * Lista todos os detalhes da instituição em que o usuário da requisição é gestor
- * @summary Lista os detalhes de uma instituição
+ * @summary Atualiza o perfil profissional do psicólogo autenticado
  */
-export const instituicaoDetail = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
+export const perfilPsicologoUpdate = (
+  patchedPerfilPsicologo: BodyType<NonReadonly<PatchedPerfilPsicologo>>,
+  options?: SecondParameter<typeof customInstance>
 ) => {
-  return customInstance<Instituicao>(
-    { url: `/api/instituicoes/ver/`, method: 'GET', signal },
+  return customInstance<PerfilPsicologo>(
+    {
+      url: `/api/me/perfil/editar/`,
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      data: patchedPerfilPsicologo,
+    },
     options
   )
 }
 
-export const getInstituicaoDetailQueryKey = () => {
-  return [`/api/instituicoes/ver/`] as const
-}
-
-export const getInstituicaoDetailQueryOptions = <
-  TData = Awaited<ReturnType<typeof instituicaoDetail>>,
-  TError = ErrorType<null | null>,
+export const getPerfilPsicologoUpdateMutationOptions = <
+  TError = ErrorType<null | null | null>,
+  TContext = unknown,
 >(options?: {
-  query?: Partial<
-    UseQueryOptions<
-      Awaited<ReturnType<typeof instituicaoDetail>>,
-      TError,
-      TData
-    >
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof perfilPsicologoUpdate>>,
+    TError,
+    { data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
+    TContext
   >
   request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof perfilPsicologoUpdate>>,
+  TError,
+  { data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
+  TContext
+> => {
+  const mutationKey = ['perfilPsicologoUpdate']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
 
-  const queryKey = queryOptions?.queryKey ?? getInstituicaoDetailQueryKey()
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof perfilPsicologoUpdate>>,
+    { data: BodyType<NonReadonly<PatchedPerfilPsicologo>> }
+  > = props => {
+    const { data } = props ?? {}
 
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof instituicaoDetail>>
-  > = ({ signal }) => instituicaoDetail(requestOptions, signal)
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof instituicaoDetail>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type InstituicaoDetailQueryResult = NonNullable<
-  Awaited<ReturnType<typeof instituicaoDetail>>
->
-export type InstituicaoDetailQueryError = ErrorType<null | null>
-
-export function useInstituicaoDetail<
-  TData = Awaited<ReturnType<typeof instituicaoDetail>>,
-  TError = ErrorType<null | null>,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof instituicaoDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof instituicaoDetail>>,
-          TError,
-          Awaited<ReturnType<typeof instituicaoDetail>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useInstituicaoDetail<
-  TData = Awaited<ReturnType<typeof instituicaoDetail>>,
-  TError = ErrorType<null | null>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof instituicaoDetail>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof instituicaoDetail>>,
-          TError,
-          Awaited<ReturnType<typeof instituicaoDetail>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useInstituicaoDetail<
-  TData = Awaited<ReturnType<typeof instituicaoDetail>>,
-  TError = ErrorType<null | null>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof instituicaoDetail>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Lista os detalhes de uma instituição
- */
-
-export function useInstituicaoDetail<
-  TData = Awaited<ReturnType<typeof instituicaoDetail>>,
-  TError = ErrorType<null | null>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof instituicaoDetail>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getInstituicaoDetailQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Retorna todas as informações referentes ao usuário que fez a requisição
- * @summary Retorna os dados do usuário da requisição
- */
-export const profileView = (
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
-) => {
-  return customInstance<MUser>(
-    { url: `/api/me/profile/`, method: 'GET', signal },
-    options
-  )
-}
-
-export const getProfileViewQueryKey = () => {
-  return [`/api/me/profile/`] as const
-}
-
-export const getProfileViewQueryOptions = <
-  TData = Awaited<ReturnType<typeof profileView>>,
-  TError = ErrorType<unknown>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
-
-  const queryKey = queryOptions?.queryKey ?? getProfileViewQueryKey()
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof profileView>>> = ({
-    signal,
-  }) => profileView(requestOptions, signal)
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof profileView>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type ProfileViewQueryResult = NonNullable<
-  Awaited<ReturnType<typeof profileView>>
->
-export type ProfileViewQueryError = ErrorType<unknown>
-
-export function useProfileView<
-  TData = Awaited<ReturnType<typeof profileView>>,
-  TError = ErrorType<unknown>,
->(
-  options: {
-    query: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof profileView>>,
-          TError,
-          Awaited<ReturnType<typeof profileView>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useProfileView<
-  TData = Awaited<ReturnType<typeof profileView>>,
-  TError = ErrorType<unknown>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof profileView>>,
-          TError,
-          Awaited<ReturnType<typeof profileView>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useProfileView<
-  TData = Awaited<ReturnType<typeof profileView>>,
-  TError = ErrorType<unknown>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-/**
- * @summary Retorna os dados do usuário da requisição
- */
-
-export function useProfileView<
-  TData = Awaited<ReturnType<typeof profileView>>,
-  TError = ErrorType<unknown>,
->(
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof profileView>>, TError, TData>
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getProfileViewQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
-}
-
-/**
- * Usa os dados de id e token (gerados automaticamente) para autenticar e aprovar um usuário como estagiário
- * @summary Aprova um estagiário
- */
-export const aprovarEstagiario = (
-  id: string,
-  token: string,
-  options?: SecondParameter<typeof customInstance>,
-  signal?: AbortSignal
-) => {
-  return customInstance<null>(
-    { url: `/api/users/aprovar/${id}/${token}/`, method: 'GET', signal },
-    options
-  )
-}
-
-export const getAprovarEstagiarioQueryKey = (id?: string, token?: string) => {
-  return [`/api/users/aprovar/${id}/${token}/`] as const
-}
-
-export const getAprovarEstagiarioQueryOptions = <
-  TData = Awaited<ReturnType<typeof aprovarEstagiario>>,
-  TError = ErrorType<null | null>,
->(
-  id: string,
-  token: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof aprovarEstagiario>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
+    return perfilPsicologoUpdate(data, requestOptions)
   }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey =
-    queryOptions?.queryKey ?? getAprovarEstagiarioQueryKey(id, token)
-
-  const queryFn: QueryFunction<
-    Awaited<ReturnType<typeof aprovarEstagiario>>
-  > = ({ signal }) => aprovarEstagiario(id, token, requestOptions, signal)
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: !!(id && token),
-    ...queryOptions,
-  } as UseQueryOptions<
-    Awaited<ReturnType<typeof aprovarEstagiario>>,
-    TError,
-    TData
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
+  return { mutationFn, ...mutationOptions }
 }
 
-export type AprovarEstagiarioQueryResult = NonNullable<
-  Awaited<ReturnType<typeof aprovarEstagiario>>
+export type PerfilPsicologoUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof perfilPsicologoUpdate>>
 >
-export type AprovarEstagiarioQueryError = ErrorType<null | null>
+export type PerfilPsicologoUpdateMutationBody = BodyType<
+  NonReadonly<PatchedPerfilPsicologo>
+>
+export type PerfilPsicologoUpdateMutationError = ErrorType<null | null | null>
 
-export function useAprovarEstagiario<
-  TData = Awaited<ReturnType<typeof aprovarEstagiario>>,
-  TError = ErrorType<null | null>,
->(
-  id: string,
-  token: string,
-  options: {
-    query: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof aprovarEstagiario>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof aprovarEstagiario>>,
-          TError,
-          Awaited<ReturnType<typeof aprovarEstagiario>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): DefinedUseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAprovarEstagiario<
-  TData = Awaited<ReturnType<typeof aprovarEstagiario>>,
-  TError = ErrorType<null | null>,
->(
-  id: string,
-  token: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof aprovarEstagiario>>,
-        TError,
-        TData
-      >
-    > &
-      Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof aprovarEstagiario>>,
-          TError,
-          Awaited<ReturnType<typeof aprovarEstagiario>>
-        >,
-        'initialData'
-      >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
-export function useAprovarEstagiario<
-  TData = Awaited<ReturnType<typeof aprovarEstagiario>>,
-  TError = ErrorType<null | null>,
->(
-  id: string,
-  token: string,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof aprovarEstagiario>>,
-        TError,
-        TData
-      >
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-}
 /**
- * @summary Aprova um estagiário
+ * @summary Atualiza o perfil profissional do psicólogo autenticado
  */
-
-export function useAprovarEstagiario<
-  TData = Awaited<ReturnType<typeof aprovarEstagiario>>,
-  TError = ErrorType<null | null>,
+export const usePerfilPsicologoUpdate = <
+  TError = ErrorType<null | null | null>,
+  TContext = unknown,
 >(
-  id: string,
-  token: string,
   options?: {
-    query?: Partial<
-      UseQueryOptions<
-        Awaited<ReturnType<typeof aprovarEstagiario>>,
-        TError,
-        TData
-      >
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof perfilPsicologoUpdate>>,
+      TError,
+      { data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
+      TContext
     >
     request?: SecondParameter<typeof customInstance>
   },
   queryClient?: QueryClient
-): UseQueryResult<TData, TError> & {
-  queryKey: DataTag<QueryKey, TData, TError>
-} {
-  const queryOptions = getAprovarEstagiarioQueryOptions(id, token, options)
+): UseMutationResult<
+  Awaited<ReturnType<typeof perfilPsicologoUpdate>>,
+  TError,
+  { data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
+  TContext
+> => {
+  const mutationOptions = getPerfilPsicologoUpdateMutationOptions(options)
 
-  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
-    TData,
-    TError
-  > & { queryKey: DataTag<QueryKey, TData, TError> }
-
-  query.queryKey = queryOptions.queryKey
-
-  return query
+  return useMutation(mutationOptions, queryClient)
 }
-
 /**
  * Recebe um objeto JSON e cria um usuário com base nos dados enviados, podendo ser ou do tipo `PSICÓLOGO` ou `GESTOR`.
  * @summary Cria um usuário
  */
-export const psicologoCreate = (
+export const usuarioCreate = (
   customRegister: BodyType<CustomRegister>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
   return customInstance<CustomRegister>(
     {
-      url: `/api/users/cadastrar/`,
+      url: `/api/usuarios/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       data: customRegister,
@@ -798,24 +553,24 @@ export const psicologoCreate = (
   )
 }
 
-export const getPsicologoCreateMutationOptions = <
+export const getUsuarioCreateMutationOptions = <
   TError = ErrorType<null>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof psicologoCreate>>,
+    Awaited<ReturnType<typeof usuarioCreate>>,
     TError,
     { data: BodyType<CustomRegister> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof psicologoCreate>>,
+  Awaited<ReturnType<typeof usuarioCreate>>,
   TError,
   { data: BodyType<CustomRegister> },
   TContext
 > => {
-  const mutationKey = ['psicologoCreate']
+  const mutationKey = ['usuarioCreate']
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       'mutationKey' in options.mutation &&
@@ -825,33 +580,30 @@ export const getPsicologoCreateMutationOptions = <
     : { mutation: { mutationKey }, request: undefined }
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof psicologoCreate>>,
+    Awaited<ReturnType<typeof usuarioCreate>>,
     { data: BodyType<CustomRegister> }
   > = props => {
     const { data } = props ?? {}
 
-    return psicologoCreate(data, requestOptions)
+    return usuarioCreate(data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
 }
 
-export type PsicologoCreateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof psicologoCreate>>
+export type UsuarioCreateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof usuarioCreate>>
 >
-export type PsicologoCreateMutationBody = BodyType<CustomRegister>
-export type PsicologoCreateMutationError = ErrorType<null>
+export type UsuarioCreateMutationBody = BodyType<CustomRegister>
+export type UsuarioCreateMutationError = ErrorType<null>
 
 /**
  * @summary Cria um usuário
  */
-export const usePsicologoCreate = <
-  TError = ErrorType<null>,
-  TContext = unknown,
->(
+export const useUsuarioCreate = <TError = ErrorType<null>, TContext = unknown>(
   options?: {
     mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof psicologoCreate>>,
+      Awaited<ReturnType<typeof usuarioCreate>>,
       TError,
       { data: BodyType<CustomRegister> },
       TContext
@@ -860,196 +612,12 @@ export const usePsicologoCreate = <
   },
   queryClient?: QueryClient
 ): UseMutationResult<
-  Awaited<ReturnType<typeof psicologoCreate>>,
+  Awaited<ReturnType<typeof usuarioCreate>>,
   TError,
   { data: BodyType<CustomRegister> },
   TContext
 > => {
-  const mutationOptions = getPsicologoCreateMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
- * Permite que um **gestor** remova o supervisor atualmente associado a um estagiário da sua instituição. Após a remoção, o campo `supervisor_confirmado` é definido como `False`.
- * @summary Remover supervisor de um estagiário
- */
-export const apiUsersRemoverSupervisorPartialUpdate = (
-  estagiario: string,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<null>(
-    { url: `/api/users/remover-supervisor/${estagiario}/`, method: 'PATCH' },
-    options
-  )
-}
-
-export const getApiUsersRemoverSupervisorPartialUpdateMutationOptions = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>,
-    TError,
-    { estagiario: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>,
-  TError,
-  { estagiario: string },
-  TContext
-> => {
-  const mutationKey = ['apiUsersRemoverSupervisorPartialUpdate']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>,
-    { estagiario: string }
-  > = props => {
-    const { estagiario } = props ?? {}
-
-    return apiUsersRemoverSupervisorPartialUpdate(estagiario, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type ApiUsersRemoverSupervisorPartialUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>
->
-
-export type ApiUsersRemoverSupervisorPartialUpdateMutationError = ErrorType<
-  null | null | null
->
-
-/**
- * @summary Remover supervisor de um estagiário
- */
-export const useApiUsersRemoverSupervisorPartialUpdate = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>,
-      TError,
-      { estagiario: string },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof apiUsersRemoverSupervisorPartialUpdate>>,
-  TError,
-  { estagiario: string },
-  TContext
-> => {
-  const mutationOptions =
-    getApiUsersRemoverSupervisorPartialUpdateMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
- * Permite que um **gestor** troque o supervisor associado a um estagiário dentro da mesma instituição. Apenas gestores da instituição do estagiário e do novo supervisor podem executar esta operação.
- * @summary Trocar supervisor de um estagiário
- */
-export const apiUsersTrocarSupervisorPartialUpdate = (
-  estagiario: string,
-  novoSupervisor: string,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<null>(
-    {
-      url: `/api/users/trocar-supervisor/${estagiario}/${novoSupervisor}/`,
-      method: 'PATCH',
-    },
-    options
-  )
-}
-
-export const getApiUsersTrocarSupervisorPartialUpdateMutationOptions = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>,
-    TError,
-    { estagiario: string; novoSupervisor: string },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>,
-  TError,
-  { estagiario: string; novoSupervisor: string },
-  TContext
-> => {
-  const mutationKey = ['apiUsersTrocarSupervisorPartialUpdate']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>,
-    { estagiario: string; novoSupervisor: string }
-  > = props => {
-    const { estagiario, novoSupervisor } = props ?? {}
-
-    return apiUsersTrocarSupervisorPartialUpdate(
-      estagiario,
-      novoSupervisor,
-      requestOptions
-    )
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type ApiUsersTrocarSupervisorPartialUpdateMutationResult = NonNullable<
-  Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>
->
-
-export type ApiUsersTrocarSupervisorPartialUpdateMutationError = ErrorType<
-  null | null | null
->
-
-/**
- * @summary Trocar supervisor de um estagiário
- */
-export const useApiUsersTrocarSupervisorPartialUpdate = <
-  TError = ErrorType<null | null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>,
-      TError,
-      { estagiario: string; novoSupervisor: string },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof apiUsersTrocarSupervisorPartialUpdate>>,
-  TError,
-  { estagiario: string; novoSupervisor: string },
-  TContext
-> => {
-  const mutationOptions =
-    getApiUsersTrocarSupervisorPartialUpdateMutationOptions(options)
+  const mutationOptions = getUsuarioCreateMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
