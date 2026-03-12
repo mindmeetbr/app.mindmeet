@@ -24,7 +24,7 @@ import { useState } from 'react'
 import { PageLayout } from '../../../components/layout'
 import dayjs from 'dayjs'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
-import { useInstituicaoDetail } from '../../../api/endpoints/users/users'
+import { useInstituicaoDetail, useListarPsicologos } from '../../../api/endpoints/instituicoes/instituicoes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { usePaginacao } from '../../../hooks/usePaginacao'
@@ -34,80 +34,17 @@ export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,
 })
 
-const generateId = () => crypto.randomUUID()
-
-const enderecoPadrao = {
-  id: generateId(),
-  rua: 'Rua Exemplo',
-  numero: '100',
-  complemento: 'Sala 1',
-  cep: '12345-678',
-  cidade: 'São Paulo',
-  uf: 'SP',
-}
-
-const psicologosMock: PerfilPsicologo[] = [
-  {
-    id: generateId(),
-    usuario: {
-      id: generateId(),
-      nome_completo: 'Ana Paula Silva',
-      email: 'ana.paula@mindmeet.com',
-      cpf: '111.222.333-44',
-      data_nascimento: '1985-02-10',
-      numero_telefone: '(11) 91234-5678',
-      sexo: 'F',
-      verificado: true,
-      endereco: enderecoPadrao,
-    },
-    crp: '00/12345',
-    is_estagiario: false,
-    supervisor: undefined,
-    supervisor_confirmado: true,
-  },
-  {
-    id: generateId(),
-    usuario: {
-      id: generateId(),
-      nome_completo: 'Carlos Eduardo Lima',
-      email: 'carlos.lima@mindmeet.com',
-      cpf: '222.333.444-55',
-      data_nascimento: '1980-07-21',
-      numero_telefone: '(11) 98765-4321',
-      sexo: 'M',
-      verificado: true,
-      endereco: enderecoPadrao,
-    },
-    crp: '00/67890',
-    is_estagiario: false,
-    supervisor: undefined,
-    supervisor_confirmado: true,
-  },
-  {
-    id: generateId(),
-    usuario: {
-      id: generateId(),
-      nome_completo: 'Luciana Fernandes',
-      email: 'luciana.fernandes@mindmeet.com',
-      cpf: '333.444.555-66',
-      data_nascimento: '1990-11-15',
-      numero_telefone: '(11) 99876-5432',
-      sexo: 'F',
-      verificado: true,
-      endereco: enderecoPadrao,
-    },
-    crp: '00/11223',
-    is_estagiario: true,
-    supervisor: 'carlos.lima@mindmeet.com',
-    supervisor_confirmado: true,
-  },
-]
 
 function TabelaPsicologos() {
   const [searchTerm, setSearchTerm] = useState('')
   const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
+  const { data, isLoading, isError, refetch } = useListarPsicologos(
+    { pagina, tamanho },
+    { query: { queryKey: ['psicologos', pagina, tamanho] } }
+  )
+  const listaPsicologos = data?.results ?? []
 
-  const psicologosFiltrados = psicologosMock.filter(
+  const psicologosFiltrados = listaPsicologos.filter(
     psic =>
       psic.usuario?.nome_completo
         .toLowerCase()
@@ -170,10 +107,10 @@ function TabelaPsicologos() {
   return (
     <TabelaPaginada
       dados={psicologosFiltrados}
-      total={psicologosMock.length}
-      isLoading={false}
-      isError={false}
-      onRetry={() => console.log('me implemente por favor')}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
       colunas={COLUNAS_PSICOLOGOS}
       renderLinha={renderLinhaPsicologo}
       pagina={pagina}

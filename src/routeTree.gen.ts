@@ -20,7 +20,6 @@ import { Route as CadastroPsicologoRouteImport } from './routes/cadastro/psicolo
 import { Route as CadastroGestorRouteImport } from './routes/cadastro/gestor'
 import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
 import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
-import { Route as AppAprovarRouteImport } from './routes/app/aprovar'
 import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
 import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificacoes/index'
 import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
@@ -87,11 +86,6 @@ const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
   path: '/configuracoes',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAprovarRoute = AppAprovarRouteImport.update({
-  id: '/aprovar',
-  path: '/aprovar',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
   id: '/pacientes/',
   path: '/pacientes/',
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
@@ -173,7 +166,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
@@ -197,7 +189,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
@@ -223,7 +214,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/login'
-    | '/app/aprovar'
     | '/app/configuracoes'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
@@ -246,7 +236,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
-    | '/app/aprovar'
     | '/app/configuracoes'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
@@ -269,7 +258,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/login'
-    | '/app/aprovar'
     | '/app/configuracoes'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
@@ -379,13 +367,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppConfiguracoesRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/aprovar': {
-      id: '/app/aprovar'
-      path: '/aprovar'
-      fullPath: '/app/aprovar'
-      preLoaderRoute: typeof AppAprovarRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/pacientes/': {
       id: '/app/pacientes/'
       path: '/pacientes'
@@ -471,7 +452,6 @@ const AppDisponibilidadeRouteWithChildren =
   AppDisponibilidadeRoute._addFileChildren(AppDisponibilidadeRouteChildren)
 
 interface AppRouteChildren {
-  AppAprovarRoute: typeof AppAprovarRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -487,7 +467,6 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAprovarRoute: AppAprovarRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,

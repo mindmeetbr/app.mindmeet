@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
 import { Card, Text, Title } from '@mantine/core'
 import { useNotificacaoDetail } from '../../../api/endpoints/notificacoes/notificacoes'
@@ -38,17 +38,6 @@ function CardNotificacao(props: CardNotificacaoProps) {
         <Title order={1}>{notificacao.titulo}</Title>
       </Card.Section>
       <Text style={{ whiteSpace: 'pre-wrap' }}>{notificacao.mensagem}</Text>
-      {notificacao.tipo === 'CONFIRMACAO' && notificacao && (
-        <Link
-          to="/app/aprovar"
-          search={{
-            id: notificacao.dados_extras.id || '',
-            token: notificacao.dados_extras.token! || '',
-          }}
-        >
-          Ir para página de aprovação
-        </Link>
-      )}
     </Card>
   )
 }

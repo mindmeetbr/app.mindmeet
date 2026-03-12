@@ -16,7 +16,7 @@ import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import {
   useInstituicaoDetail,
   useInstituicaoUpdate,
-} from '../../../api/endpoints/users/users'
+} from '../../../api/endpoints/instituicoes/instituicoes'
 import { notifications } from '@mantine/notifications'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
