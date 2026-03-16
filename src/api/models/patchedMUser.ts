@@ -24,4 +24,5 @@ export interface PatchedMUser {
   readonly verificado?: boolean
   endereco?: Endereco
   readonly papel?: PapelEnum
+  readonly vinculo?: string
 }

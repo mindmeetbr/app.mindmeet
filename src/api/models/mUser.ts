@@ -24,4 +24,5 @@ export interface MUser {
   readonly verificado: boolean
   endereco?: Endereco
   readonly papel: PapelEnum
+  readonly vinculo: string
 }
