@@ -19,11 +19,11 @@ import { Route as PsicologoIdRouteImport } from './routes/psicologo/$id'
 import { Route as CadastroPsicologoRouteImport } from './routes/cadastro/psicologo'
 import { Route as CadastroGestorRouteImport } from './routes/cadastro/gestor'
 import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
-import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
 import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
 import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificacoes/index'
 import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
 import { Route as AppDisponibilidadeIndexRouteImport } from './routes/app/disponibilidade/index'
+import { Route as AppConfiguracoesIndexRouteImport } from './routes/app/configuracoes/index'
 import { Route as AppPacientesNovoRouteImport } from './routes/app/pacientes/novo'
 import { Route as AppPacientesIdRouteImport } from './routes/app/pacientes/$id'
 import { Route as AppNotificacoesIdRouteImport } from './routes/app/notificacoes/$id'
@@ -81,11 +81,6 @@ const AppDisponibilidadeRoute = AppDisponibilidadeRouteImport.update({
   path: '/disponibilidade',
   getParentRoute: () => AppRoute,
 } as any)
-const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
   id: '/pacientes/',
   path: '/pacientes/',
@@ -105,6 +100,11 @@ const AppDisponibilidadeIndexRoute = AppDisponibilidadeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppDisponibilidadeRoute,
+} as any)
+const AppConfiguracoesIndexRoute = AppConfiguracoesIndexRouteImport.update({
+  id: '/configuracoes/',
+  path: '/configuracoes/',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPacientesNovoRoute = AppPacientesNovoRouteImport.update({
   id: '/pacientes/novo',
@@ -144,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
@@ -157,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
@@ -166,7 +166,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -178,6 +177,7 @@ export interface FileRoutesByTo {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
@@ -189,7 +189,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
@@ -202,6 +201,7 @@ export interface FileRoutesById {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/configuracoes/': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao/': typeof AppInstituicaoIndexRoute
   '/app/notificacoes/': typeof AppNotificacoesIndexRoute
@@ -214,7 +214,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/login'
-    | '/app/configuracoes'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
@@ -227,6 +226,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/configuracoes'
     | '/app/disponibilidade/'
     | '/app/instituicao'
     | '/app/notificacoes'
@@ -236,7 +236,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
-    | '/app/configuracoes'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
     | '/psicologo/$id'
@@ -248,6 +247,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/configuracoes'
     | '/app/disponibilidade'
     | '/app/instituicao'
     | '/app/notificacoes'
@@ -258,7 +258,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/app'
     | '/login'
-    | '/app/configuracoes'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
@@ -271,6 +270,7 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/configuracoes/'
     | '/app/disponibilidade/'
     | '/app/instituicao/'
     | '/app/notificacoes/'
@@ -360,13 +360,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDisponibilidadeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/configuracoes': {
-      id: '/app/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/app/configuracoes'
-      preLoaderRoute: typeof AppConfiguracoesRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/pacientes/': {
       id: '/app/pacientes/'
       path: '/pacientes'
@@ -394,6 +387,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/disponibilidade/'
       preLoaderRoute: typeof AppDisponibilidadeIndexRouteImport
       parentRoute: typeof AppDisponibilidadeRoute
+    }
+    '/app/configuracoes/': {
+      id: '/app/configuracoes/'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/pacientes/novo': {
       id: '/app/pacientes/novo'
@@ -452,7 +452,6 @@ const AppDisponibilidadeRouteWithChildren =
   AppDisponibilidadeRoute._addFileChildren(AppDisponibilidadeRouteChildren)
 
 interface AppRouteChildren {
-  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppInstituicaoEditarRoute: typeof AppInstituicaoEditarRoute
@@ -461,13 +460,13 @@ interface AppRouteChildren {
   AppNotificacoesIdRoute: typeof AppNotificacoesIdRoute
   AppPacientesIdRoute: typeof AppPacientesIdRoute
   AppPacientesNovoRoute: typeof AppPacientesNovoRoute
+  AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
   AppInstituicaoIndexRoute: typeof AppInstituicaoIndexRoute
   AppNotificacoesIndexRoute: typeof AppNotificacoesIndexRoute
   AppPacientesIndexRoute: typeof AppPacientesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppInstituicaoEditarRoute: AppInstituicaoEditarRoute,
@@ -476,6 +475,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificacoesIdRoute: AppNotificacoesIdRoute,
   AppPacientesIdRoute: AppPacientesIdRoute,
   AppPacientesNovoRoute: AppPacientesNovoRoute,
+  AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
   AppInstituicaoIndexRoute: AppInstituicaoIndexRoute,
   AppNotificacoesIndexRoute: AppNotificacoesIndexRoute,
   AppPacientesIndexRoute: AppPacientesIndexRoute,
