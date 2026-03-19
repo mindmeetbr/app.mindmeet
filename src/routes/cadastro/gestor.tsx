@@ -28,7 +28,7 @@ import {
   IconX,
 } from '@tabler/icons-react'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
-import { usePsicologoCreate } from '../../api/endpoints/users/users'
+import { useUsuarioCreate } from '../../api/endpoints/users/users'
 import { PapelEnum } from '../../api/models'
 import { notifications } from '@mantine/notifications'
 
@@ -44,7 +44,7 @@ export const Route = createFileRoute('/cadastro/gestor')({
 
 function CadastroGestor() {
   const router = useRouter()
-  const { mutate: criarGestor } = usePsicologoCreate()
+  const { mutate: criarGestor } = useUsuarioCreate()
 
   const camposPasso = [
     ['nome_completo', 'username', 'email', 'data_nascimento'],
@@ -141,7 +141,6 @@ function CadastroGestor() {
   })
 
   const handleSubmit = (values: typeof form.values) => {
-    // TODO: Implementar isso
     console.log(JSON.stringify(values, null, 2))
     const data = {
       ...form.values,

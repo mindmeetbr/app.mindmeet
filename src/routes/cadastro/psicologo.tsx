@@ -15,7 +15,7 @@ import { useForm } from '@mantine/form'
 import { DatePickerInput, DatesProvider } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
-import { usePsicologoCreate } from '../../api/endpoints/users/users'
+import { useUsuarioCreate } from '../../api/endpoints/users/users'
 import { notifications } from '@mantine/notifications'
 import {
   IconX,
@@ -34,12 +34,11 @@ export const Route = createFileRoute('/cadastro/psicologo')({
 
 function PaginaCadastro() {
   const router = useRouter()
-  const { mutate: criarUsuario } = usePsicologoCreate()
+  const { mutate: criarUsuario } = useUsuarioCreate()
   const [active, setActive] = useState(0)
   const camposPasso = [
     ['nomeCompleto', 'username', 'email', 'dataNascimento'],
     ['password1', 'password2'],
-    // ['isEstagiario', 'crp', 'supervisor'],
     ['crp'],
   ]
 
@@ -68,8 +67,6 @@ function PaginaCadastro() {
       password2: '',
       dataNascimento: null,
       crp: '',
-      // isEstagiario: false,
-      // supervisor: '',
     },
     validate: {
       nomeCompleto: value =>
@@ -117,11 +114,6 @@ function PaginaCadastro() {
           ? null
           : 'CRP inválido. Use o formato 00/00000'
       },
-
-      // supervisor: (value, values) => {
-      //   if (!values.isEstagiario) return null
-      //   else return /^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'
-      // },
     },
   })
 
@@ -139,9 +131,6 @@ function PaginaCadastro() {
       },
       papel: PapelEnum.PSICOLOGO,
     }
-    // is_estagiario: values.isEstagiario,
-    // crp: values.isEstagiario ? undefined : values.crp,
-    // supervisor: values.isEstagiario ? values.supervisor : undefined,
 
     console.log(JSON.stringify(data, null, 2))
 
@@ -295,47 +284,6 @@ function PaginaCadastro() {
                     {...form.getInputProps('crp')}
                     error={form.errors.crp}
                   />
-                  {/*
-                  {/* <Group grow>
-                    <Switch
-                      size="sm"
-                      label="É estagiário?"
-                      description="Marque somente se for estagiário"
-                      withThumbIndicator={false}
-                      {...form.getInputProps('isEstagiario', {
-                        type: 'checkbox',
-                      })}
-                      onChange={e => {
-                        form.setFieldValue(
-                          'isEstagiario',
-                          e.currentTarget.checked
-                        )
-                        if (!e.currentTarget.checked)
-                          form.setFieldValue('crp', '')
-                        else form.setFieldValue('supervisor', '')
-                      }}
-                      error={form.errors.isEstagiario}
-                    />
-                    {form.getValues().isEstagiario ? (
-                      <TextInput
-                        label="Supervisor"
-                        placeholder="Insira o email do seu supervisor"
-                        description="Buscaremos este email no nosso sistema e, caso ele exista, enviaremos uma notifição ao usuário para confirmação"
-                        required={form.getValues().isEstagiario}
-                        error={form.errors.supervisor}
-                        {...form.getInputProps('supervisor')}
-                      />
-                    ) : (
-                      <TextInput
-                        label="CRP"
-                        placeholder="00/00000"
-                        maxLength={8}
-                        required={!form.getValues().isEstagiario}
-                        {...form.getInputProps('crp')}
-                        error={form.errors.crp}
-                      />
-                    )}
-                  </Group> */}
                 </Stack>
                 <Group justify="space-between" mt="xl">
                   <Button variant="default" onClick={voltarEtapa}>
