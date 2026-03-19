@@ -71,11 +71,11 @@ function TabelaAgendamentos({ agendamentos }: AgendaProps) {
       ag.estado?.includes(estadoBusca.toLowerCase())
   )
 
-  const handleDeleteClick = (idAgendamento: Agendamento['id']) => {
+  const handleDeleteClick = (id: Agendamento['id']) => {
     const resposta = window.confirm(
       'Tem certeza que deseja apagar esse agendamento?'
     )
-    if (resposta) apagarAgendamento({ idAgendamento })
+    if (resposta) apagarAgendamento({ id })
   }
 
   return (

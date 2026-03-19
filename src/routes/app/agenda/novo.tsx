@@ -32,19 +32,6 @@ export const Route = createFileRoute('/app/agenda/novo')({
   }),
 })
 
-// const mockAgendamento: Agendamento = {
-//   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-//   data: '2025-11-13',
-//   tipo: AgendamentoTipoEnum.online,
-//   horario_inicio: '01:41:04.550Z',
-//   horario_fim: '02:41:04.550Z',
-//   paciente_nome: 'Marina Oliveira',
-//   paciente_email: 'marina.oliveira@example.com',
-//   paciente_numero_telefone: '(81) 98877-6655',
-//   estado: EstadoEnum.cancelado,
-//   motivo_cancelamento: 'Está gripada',
-// }
-
 interface Breadcrumb {
   label: string
   href?: string
@@ -150,7 +137,7 @@ function AgendamentoCreatePage() {
       setIsSubmitting(true)
       if (isEditing) {
         editarAgendamento(
-          { idAgendamento: idAgendamento!, data: dados },
+          { id: idAgendamento!, data: dados },
           {
             onSuccess: () => {
               router.navigate({
