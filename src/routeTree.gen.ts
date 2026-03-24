@@ -176,9 +176,9 @@ export interface FileRoutesByFullPath {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
-  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -200,9 +200,9 @@ export interface FileRoutesByTo {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/configuracoes': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
-  '/app/agenda': typeof AppAgendaIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -227,9 +227,9 @@ export interface FileRoutesById {
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda/': typeof AppAgendaIndexRoute
   '/app/configuracoes/': typeof AppConfiguracoesIndexRoute
   '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
-  '/app/agenda/': typeof AppAgendaIndexRoute
   '/app/instituicao/': typeof AppInstituicaoIndexRoute
   '/app/notificacoes/': typeof AppNotificacoesIndexRoute
   '/app/pacientes/': typeof AppPacientesIndexRoute
@@ -255,9 +255,9 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda'
     | '/app/configuracoes'
     | '/app/disponibilidade/'
-    | '/app/agenda'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -279,9 +279,9 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda'
     | '/app/configuracoes'
     | '/app/disponibilidade'
-    | '/app/agenda'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -305,9 +305,9 @@ export interface FileRouteTypes {
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda/'
     | '/app/configuracoes/'
     | '/app/disponibilidade/'
-    | '/app/agenda/'
     | '/app/instituicao/'
     | '/app/notificacoes/'
     | '/app/pacientes/'
@@ -519,8 +519,8 @@ interface AppRouteChildren {
   AppNotificacoesIdRoute: typeof AppNotificacoesIdRoute
   AppPacientesIdRoute: typeof AppPacientesIdRoute
   AppPacientesNovoRoute: typeof AppPacientesNovoRoute
-  AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
   AppAgendaIndexRoute: typeof AppAgendaIndexRoute
+  AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
   AppInstituicaoIndexRoute: typeof AppInstituicaoIndexRoute
   AppNotificacoesIndexRoute: typeof AppNotificacoesIndexRoute
   AppPacientesIndexRoute: typeof AppPacientesIndexRoute
@@ -537,8 +537,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificacoesIdRoute: AppNotificacoesIdRoute,
   AppPacientesIdRoute: AppPacientesIdRoute,
   AppPacientesNovoRoute: AppPacientesNovoRoute,
-  AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
   AppAgendaIndexRoute: AppAgendaIndexRoute,
+  AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
   AppInstituicaoIndexRoute: AppInstituicaoIndexRoute,
   AppNotificacoesIndexRoute: AppNotificacoesIndexRoute,
   AppPacientesIndexRoute: AppPacientesIndexRoute,

@@ -16,7 +16,8 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { z } from 'zod'
-import { useApiAuthLoginCreate } from '../api/endpoints/api/api'
+// import { useApiAuthLoginCreate } from '../api/endpoints/api/api'
+import { useAuthLoginCreate } from '../api/endpoints/auth/auth'
 import useAuthStore from '../stores/auth-store'
 import { Link } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
@@ -54,7 +55,7 @@ function RouteComponent() {
       notifMostrada.current = true
     }
   }, [state?.mensagem])
-  const { mutate: login, isPending } = useApiAuthLoginCreate({
+  const { mutate: login, isPending } = useAuthLoginCreate({
     mutation: {
       onSuccess: data => {
         authStore.login(data.access, data.refresh)
