@@ -31,6 +31,8 @@ import type {
 import type {
   AgendaPessoalParams,
   Agendamento,
+  AgendamentoListParams,
+  PaginatedAgendamentoList,
   PatchedAgendamento,
 } from '../../models'
 
@@ -75,35 +77,43 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
  * @summary Lista todos os agendamentos do psicólogo
  */
 export const agendamentoList = (
+  params?: AgendamentoListParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Agendamento[]>(
-    { url: `/api/agendamentos/`, method: 'GET', signal },
+  return customInstance<PaginatedAgendamentoList>(
+    { url: `/api/agendamentos/`, method: 'GET', params, signal },
     options
   )
 }
 
-export const getAgendamentoListQueryKey = () => {
-  return [`/api/agendamentos/`] as const
+export const getAgendamentoListQueryKey = (params?: AgendamentoListParams) => {
+  return [`/api/agendamentos/`, ...(params ? [params] : [])] as const
 }
 
 export const getAgendamentoListQueryOptions = <
   TData = Awaited<ReturnType<typeof agendamentoList>>,
   TError = ErrorType<null | null>,
->(options?: {
-  query?: Partial<
-    UseQueryOptions<Awaited<ReturnType<typeof agendamentoList>>, TError, TData>
-  >
-  request?: SecondParameter<typeof customInstance>
-}) => {
+>(
+  params?: AgendamentoListParams,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof agendamentoList>>,
+        TError,
+        TData
+      >
+    >
+    request?: SecondParameter<typeof customInstance>
+  }
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
-  const queryKey = queryOptions?.queryKey ?? getAgendamentoListQueryKey()
+  const queryKey = queryOptions?.queryKey ?? getAgendamentoListQueryKey(params)
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof agendamentoList>>> = ({
     signal,
-  }) => agendamentoList(requestOptions, signal)
+  }) => agendamentoList(params, requestOptions, signal)
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof agendamentoList>>,
@@ -121,6 +131,7 @@ export function useAgendamentoList<
   TData = Awaited<ReturnType<typeof agendamentoList>>,
   TError = ErrorType<null | null>,
 >(
+  params: undefined | AgendamentoListParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -147,6 +158,7 @@ export function useAgendamentoList<
   TData = Awaited<ReturnType<typeof agendamentoList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: AgendamentoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -173,6 +185,7 @@ export function useAgendamentoList<
   TData = Awaited<ReturnType<typeof agendamentoList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: AgendamentoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -195,6 +208,7 @@ export function useAgendamentoList<
   TData = Awaited<ReturnType<typeof agendamentoList>>,
   TError = ErrorType<null | null>,
 >(
+  params?: AgendamentoListParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -209,7 +223,7 @@ export function useAgendamentoList<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getAgendamentoListQueryOptions(options)
+  const queryOptions = getAgendamentoListQueryOptions(params, options)
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,
