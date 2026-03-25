@@ -73,7 +73,7 @@ type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
- * Retorna uma lista com todos os agendamentos associados ao psicólogo autenticado.
+ * Retorna uma lista com todos os agendamentos associados ao psicólogo autenticado. Pode ser filtrada pelo estado do agendamento através do parâmetro `estado`.
  * @summary Lista todos os agendamentos do psicólogo
  */
 export const agendamentoList = (

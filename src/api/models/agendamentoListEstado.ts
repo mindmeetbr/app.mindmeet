@@ -12,19 +12,13 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import type { AgendamentoListEstado } from './agendamentoListEstado'
 
-export type AgendamentoListParams = {
-  /**
-   * Filtra os agendamentos pelo estado.
-   */
-  estado?: AgendamentoListEstado
-  /**
-   * Um número de página dentro do conjunto de resultados paginado.
-   */
-  pagina?: number
-  /**
-   * Número de resultados a serem retornados por página.
-   */
-  tamanho?: number
-}
+export type AgendamentoListEstado =
+  (typeof AgendamentoListEstado)[keyof typeof AgendamentoListEstado]
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AgendamentoListEstado = {
+  agendado: 'agendado',
+  cancelado: 'cancelado',
+  realizado: 'realizado',
+} as const
