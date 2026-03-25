@@ -30,6 +30,7 @@ import type {
 
 import type {
   AdicionarHorarios,
+  AgendaDisponivelParams,
   AgendaDisponivelResponse,
   Disponibilidade,
   PatchedDisponibilidade,
@@ -765,6 +766,7 @@ export const useAdicionarHorarios = <
  */
 export const agendaDisponivel = (
   idPsicologo: string,
+  params?: AgendaDisponivelParams,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
@@ -772,14 +774,21 @@ export const agendaDisponivel = (
     {
       url: `/api/disponibilidades/agenda/${idPsicologo}/`,
       method: 'GET',
+      params,
       signal,
     },
     options
   )
 }
 
-export const getAgendaDisponivelQueryKey = (idPsicologo?: string) => {
-  return [`/api/disponibilidades/agenda/${idPsicologo}/`] as const
+export const getAgendaDisponivelQueryKey = (
+  idPsicologo?: string,
+  params?: AgendaDisponivelParams
+) => {
+  return [
+    `/api/disponibilidades/agenda/${idPsicologo}/`,
+    ...(params ? [params] : []),
+  ] as const
 }
 
 export const getAgendaDisponivelQueryOptions = <
@@ -787,6 +796,7 @@ export const getAgendaDisponivelQueryOptions = <
   TError = ErrorType<null>,
 >(
   idPsicologo: string,
+  params?: AgendaDisponivelParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -801,11 +811,12 @@ export const getAgendaDisponivelQueryOptions = <
   const { query: queryOptions, request: requestOptions } = options ?? {}
 
   const queryKey =
-    queryOptions?.queryKey ?? getAgendaDisponivelQueryKey(idPsicologo)
+    queryOptions?.queryKey ?? getAgendaDisponivelQueryKey(idPsicologo, params)
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof agendaDisponivel>>
-  > = ({ signal }) => agendaDisponivel(idPsicologo, requestOptions, signal)
+  > = ({ signal }) =>
+    agendaDisponivel(idPsicologo, params, requestOptions, signal)
 
   return {
     queryKey,
@@ -829,6 +840,7 @@ export function useAgendaDisponivel<
   TError = ErrorType<null>,
 >(
   idPsicologo: string,
+  params: undefined | AgendaDisponivelParams,
   options: {
     query: Partial<
       UseQueryOptions<
@@ -856,6 +868,7 @@ export function useAgendaDisponivel<
   TError = ErrorType<null>,
 >(
   idPsicologo: string,
+  params?: AgendaDisponivelParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -883,6 +896,7 @@ export function useAgendaDisponivel<
   TError = ErrorType<null>,
 >(
   idPsicologo: string,
+  params?: AgendaDisponivelParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -906,6 +920,7 @@ export function useAgendaDisponivel<
   TError = ErrorType<null>,
 >(
   idPsicologo: string,
+  params?: AgendaDisponivelParams,
   options?: {
     query?: Partial<
       UseQueryOptions<
@@ -920,7 +935,11 @@ export function useAgendaDisponivel<
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>
 } {
-  const queryOptions = getAgendaDisponivelQueryOptions(idPsicologo, options)
+  const queryOptions = getAgendaDisponivelQueryOptions(
+    idPsicologo,
+    params,
+    options
+  )
 
   const query = useQuery(queryOptions, queryClient) as UseQueryResult<
     TData,

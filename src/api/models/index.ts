@@ -15,6 +15,7 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
 
 export * from './adicionarHorarios'
 export * from './adicionarHorariosDiaEnum'
+export * from './agendaDisponivelParams'
 export * from './agendaDisponivelResponse'
 export * from './agendaPessoalParams'
 export * from './agendamento'
