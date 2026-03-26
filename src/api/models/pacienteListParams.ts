@@ -19,6 +19,10 @@ export type PacienteListParams = {
    */
   pagina?: number
   /**
+   * Buscar por todos os pacientes que contenham essa string no email ou nome.
+   */
+  search?: string
+  /**
    * Número de resultados a serem retornados por página.
    */
   tamanho?: number
