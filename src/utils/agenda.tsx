@@ -28,7 +28,7 @@ export function getTipoBadge(tipo: Agendamento['tipo']) {
 }
 
 export function formatarHora(horaString: string): string {
-  const data = new Date(`2000-01-01T${horaString}`)
+  const data = new Date(`2000-01-01T${horaString}Z`)
   const horaFormatada = new Date(data).toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
@@ -38,7 +38,7 @@ export function formatarHora(horaString: string): string {
 }
 
 export function formatarData(dataString: string): string {
-  const dataFormatada = new Date(dataString).toLocaleDateString('pt-BR', {
+  const dataFormatada = new Date(`${dataString}T00:00:00Z`).toLocaleDateString('pt-BR', {
     day: '2-digit',
     month: 'short',
     timeZone: 'UTC',
