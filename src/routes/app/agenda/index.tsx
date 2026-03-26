@@ -13,22 +13,22 @@ import {
   Table,
   Tabs,
   Text,
-  TextInput,
   Timeline,
 } from '@mantine/core'
 import {
   IconAlertCircle,
   IconCalendarPlus,
   IconCalendarWeek,
+  IconCheck,
   IconEdit,
   IconEye,
   IconListDetails,
-  IconSearch,
   IconTrash,
 } from '@tabler/icons-react'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
 import {
+  type AgendamentoListEstado,
   AgendamentoTipoEnum,
   EstadoEnum,
   type Agendamento,
@@ -43,20 +43,42 @@ import {
 import {
   useAgendamentoDelete,
   useAgendamentoList,
+  useAgendamentoUpdate,
+  useAgendaPessoal,
 } from '../../../api/endpoints/agendamentos/agendamentos'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
+import { useQueryClient } from '@tanstack/react-query'
+import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/app/agenda/')({
   component: PaginaAgendamentos,
 })
 
-interface AgendaProps {
-  agendamentos: Agendamento[]
-}
-
-function TabelaAgendamentos({ agendamentos }: AgendaProps) {
-  const [nomeBusca, setNomeBusca] = useState('')
-  const [estadoBusca, setEstadoBusca] = useState('')
+function TabelaAgendamentos() {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [estadoFiltro, setEstadoFiltro] = useState('')
   const { mutate: apagarAgendamento } = useAgendamentoDelete()
+  const queryClient = useQueryClient()
+  const { mutate: concluirAgendamento, isPending } = useAgendamentoUpdate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+        notifications.show({ title: 'Sucesso', message: 'Consulta finalizada' })
+      },
+      onError: () => {},
+    },
+  })
+
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
+  const { data, isLoading, isError, refetch } = useAgendamentoList(
+    {
+      pagina,
+      tamanho,
+      estado: (estadoFiltro as keyof typeof AgendamentoListEstado) || undefined,
+    },
+    { query: { queryKey: ['agendamentos', pagina, tamanho, estadoFiltro] } }
+  )
 
   const estados = [
     { label: 'Todos', value: '' },
@@ -65,11 +87,21 @@ function TabelaAgendamentos({ agendamentos }: AgendaProps) {
     { label: paraMaiuscula(EstadoEnum.realizado), value: EstadoEnum.realizado },
   ]
 
-  const agendamentosFiltrados = agendamentos.filter(
+  const listaAgendamentos = data?.results ?? []
+  const agendamentosFiltrados = listaAgendamentos.filter(
     ag =>
-      ag.paciente_nome.toLowerCase().includes(nomeBusca.toLowerCase()) &&
-      ag.estado?.includes(estadoBusca.toLowerCase())
+      ag.paciente.nome_completo
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      ag.paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const handleConcluir = (id: string) => {
+    concluirAgendamento({
+      id,
+      data: { estado: EstadoEnum.realizado },
+    })
+  }
 
   const handleDeleteClick = (id: Agendamento['id']) => {
     const resposta = window.confirm(
@@ -78,104 +110,136 @@ function TabelaAgendamentos({ agendamentos }: AgendaProps) {
     if (resposta) apagarAgendamento({ id })
   }
 
+  const renderLinhaAgendamento = (agendamento: Agendamento) => (
+    <Table.Tr key={agendamento.id}>
+      <Table.Td>
+        <Stack gap={0}>
+          <Text fw={500}>{agendamento.paciente.nome_completo}</Text>
+          <Text size="xs" c="dimmed">
+            {agendamento.paciente.email}
+          </Text>
+        </Stack>
+      </Table.Td>
+      <Table.Td>
+        {getTipoBadge(
+          AgendamentoTipoEnum[
+            agendamento.tipo as keyof typeof AgendamentoTipoEnum
+          ]
+        )}
+      </Table.Td>
+      <Table.Td>
+        <Stack gap={0}>
+          <Text>
+            {formatarDataHora(agendamento.data, agendamento.horario_inicio)}
+          </Text>
+        </Stack>
+      </Table.Td>
+
+      <Table.Td>
+        {getEstadoBadge(
+          EstadoEnum[agendamento.estado as keyof typeof EstadoEnum]
+        )}
+      </Table.Td>
+      {/* ações com o agendamento */}
+      <Table.Td>
+        <Flex gap="xs">
+          {agendamento.estado === EstadoEnum.agendado && (
+            <ActionIcon
+              variant="light"
+              color="green"
+              size="sm"
+              title="Marcar como realizado"
+              onClick={() => handleConcluir(agendamento.id)}
+              loading={isPending}
+            >
+              <IconCheck style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          )}
+          <Link to="/app/agenda/$id" params={{ id: agendamento.id }}>
+            <ActionIcon variant="light" color="blue" size="sm">
+              <IconEye style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+          <Link to="/app/agenda/novo" search={{ id: agendamento.id }}>
+            <ActionIcon variant="light" color="orange" size="sm">
+              <IconEdit style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          </Link>
+          <ActionIcon
+            onClick={() => handleDeleteClick(agendamento.id)}
+            variant="light"
+            color="red"
+            size="sm"
+          >
+            <IconTrash style={{ width: rem(14), height: rem(14) }} />
+          </ActionIcon>
+        </Flex>
+      </Table.Td>
+    </Table.Tr>
+  )
+
+  const COLUNAS_AGENDAMENTOS = [
+    { chave: 'paciente', label: 'Paciente' },
+    { chave: 'tipo', label: 'Tipo' },
+    { chave: 'data', label: 'Data' },
+    { chave: 'estado', label: 'Estado' },
+    { chave: 'ações', label: 'Ações', largura: 160 },
+  ]
+
+  const handleEstadoChange = (valor: string) => {
+    setEstadoFiltro(valor)
+    setPagina(1)
+  }
+
   return (
-    <Card withBorder radius="md" p="md">
-      <Group mb="md">
-        <TextInput
-          placeholder="Buscar por nome do paciente ou email..."
-          leftSection={
-            <IconSearch style={{ width: rem(16), height: rem(16) }} />
-          }
-          value={nomeBusca}
-          onChange={e => setNomeBusca(e.target.value)}
-          style={{ flex: 1 }}
-        />
+    <TabelaPaginada
+      dados={agendamentosFiltrados}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      colunas={COLUNAS_AGENDAMENTOS}
+      renderLinha={renderLinhaAgendamento}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      termoBusca={searchTerm}
+      onBuscaChange={setSearchTerm}
+      placeholderBusca="Buscar por nome do paciente ou email..."
+      mensagemVazia="Nenhum agendamento encontrado."
+      mensagemErro="Não foi possível carregar seus agendamentos. Tente novamente."
+      acoes={
         <SegmentedControl
-          defaultValue={estadoBusca}
-          value={estadoBusca}
-          onChange={setEstadoBusca}
+          defaultValue={estadoFiltro}
+          value={estadoFiltro}
+          onChange={handleEstadoChange}
           data={estados}
         />
-      </Group>
-      <Table.ScrollContainer minWidth={800}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Paciente</Table.Th>
-              <Table.Th>Tipo</Table.Th>
-              <Table.Th>Data</Table.Th>
-              <Table.Th>Estado</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {agendamentosFiltrados.map(agendamento => (
-              <Table.Tr key={agendamento.id}>
-                <Table.Td>
-                  <Stack gap={0}>
-                    <Text fw={500}>{agendamento.paciente_nome}</Text>
-                    <Text size="xs" c="dimmed">
-                      {agendamento.paciente_email}
-                    </Text>
-                  </Stack>
-                </Table.Td>
-                {/* isso não existe bicho */}
-                <Table.Td>
-                  {getTipoBadge(
-                    AgendamentoTipoEnum[
-                      agendamento.tipo as keyof typeof AgendamentoTipoEnum
-                    ]
-                  )}
-                </Table.Td>
-                <Table.Td>
-                  <Stack gap={0}>
-                    <Text>
-                      {formatarDataHora(
-                        agendamento.data,
-                        agendamento.horario_inicio
-                      )}
-                    </Text>
-                  </Stack>
-                </Table.Td>
-
-                <Table.Td>
-                  {getEstadoBadge(
-                    EstadoEnum[agendamento.estado as keyof typeof EstadoEnum]
-                  )}
-                </Table.Td>
-                <Table.Td>
-                  <Flex gap="xs">
-                    <Link to="/app/agenda/$id" params={{ id: agendamento.id }}>
-                      <ActionIcon variant="light" color="blue" size="sm">
-                        <IconEye style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                    <Link to="/app/agenda/novo" search={{ id: agendamento.id }}>
-                      <ActionIcon variant="light" color="orange" size="sm">
-                        <IconEdit style={{ width: rem(14), height: rem(14) }} />
-                      </ActionIcon>
-                    </Link>
-                    <ActionIcon
-                      onClick={() => handleDeleteClick(agendamento.id)}
-                      variant="light"
-                      color="red"
-                      size="sm"
-                    >
-                      <IconTrash style={{ width: rem(14), height: rem(14) }} />
-                    </ActionIcon>
-                  </Flex>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-      </Table.ScrollContainer>
-    </Card>
+      }
+    />
   )
 }
 
-function AgendaFutura({ agendamentos }: AgendaProps) {
-  const [horizonteBusca, setHorizonteBusca] = useState('7')
+function AgendaFutura() {
+  const limparHorizonte = (h: string | undefined) => {
+    const dias = Number(h)
+    if (Number.isNaN(dias)) return undefined
+    return dias
+  }
+
+  const [horizonteBusca, setHorizonteBusca] = useState<string>('7')
+  const { data } = useAgendaPessoal(
+    { dias: limparHorizonte(horizonteBusca) },
+    {
+      query: {
+        queryKey: ['agendamentosFuturos', horizonteBusca],
+        staleTime: 1000 * 60 * 5,
+        placeholderData: previousData => previousData,
+      },
+    }
+  )
+  const agendamentos = data ?? []
 
   const agora = new Date()
 
@@ -196,13 +260,13 @@ function AgendaFutura({ agendamentos }: AgendaProps) {
       const horaInicio = new Date(`${ag.data}T${ag.horario_inicio}`)
       return horaInicio <= limiteData
     })
-    .sort(
-      (a, b) =>
-        new Date(`${a.data}T${a.horario_inicio}`) -
-        new Date(`${b.data}T${b.horario_fim}`)
-    )
+    .sort((a, b) => {
+      const dataA = new Date(`${a.data}T${a.horario_inicio}`)
+      const dataB = new Date(`${b.data}T${b.horario_fim}`)
+      return dataA - dataB
+    })
 
-  const horizonteOpcoes = [
+  const horizonteOpcoes: { label: string; value: string }[] = [
     { label: 'Próximos 7 Dias', value: '7' },
     { label: 'Próximos 30 Dias', value: '30' },
     { label: 'Tudo (Futuro)', value: 'todos' },
@@ -235,7 +299,9 @@ function AgendaFutura({ agendamentos }: AgendaProps) {
             {agendamentosFuturos.map(agendamento => (
               <Timeline.Item
                 key={agendamento.id}
-                title={<Text fw={500}>{agendamento.paciente_nome}</Text>}
+                title={
+                  <Text fw={500}>{agendamento.paciente.nome_completo}</Text>
+                }
                 bullet={getTipoBadge(
                   AgendamentoTipoEnum[
                     agendamento.tipo as keyof typeof AgendamentoTipoEnum
@@ -261,7 +327,7 @@ function AgendaFutura({ agendamentos }: AgendaProps) {
                       {paraMaiuscula(agendamento.tipo)}
                     </Badge>
                     <Text size="xs" c="dimmed">
-                      {agendamento.paciente_numero_telefone}
+                      {agendamento.paciente.numero_telefone}
                     </Text>
                   </Group>
                 </Stack>
@@ -351,11 +417,11 @@ function PaginaAgendamentos() {
         </Tabs.List>
 
         <Tabs.Panel value="agendamentos" pt="md">
-          <TabelaAgendamentos agendamentos={agendamentos} />
+          <TabelaAgendamentos />
         </Tabs.Panel>
 
         <Tabs.Panel value="agenda" pt="md">
-          <AgendaFutura agendamentos={agendamentos} />
+          <AgendaFutura />
         </Tabs.Panel>
       </Tabs>
     </PageLayout>
