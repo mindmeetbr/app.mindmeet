@@ -78,7 +78,7 @@ function AgendamentoDetalhePage() {
     )
   }
 
-  const tituloLayout = `Agendamento com ${agendamento.paciente_nome} (${formatarDataHora(
+  const tituloLayout = `Agendamento com ${agendamento.paciente.nome_completo} (${formatarDataHora(
     agendamento.data,
     agendamento.horario_inicio
   )})`
@@ -88,7 +88,7 @@ function AgendamentoDetalhePage() {
       breadcrumbs={[
         { label: 'Agenda', href: '/app/agenda' },
         {
-          label: `Agendamento com ${agendamento.paciente_nome}`,
+          label: `Agendamento com ${agendamento.paciente.nome_completo}`,
           isCurrentPage: true,
         },
       ]}
@@ -109,17 +109,17 @@ function AgendamentoDetalhePage() {
             <Grid>
               <Grid.Col span={4}>
                 <Text fw={600}>Nome do(a) Paciente:</Text>
-                <Text>{agendamento.paciente_nome}</Text>
+                <Text>{agendamento.paciente.nome_completo}</Text>
               </Grid.Col>
               <Grid.Col span={4}>
                 <Text fw={600}>Email do(a) Paciente:</Text>
-                <Text>{agendamento.paciente_email}</Text>
+                <Text>{agendamento.paciente.email}</Text>
               </Grid.Col>
               <Grid.Col span={4}>
                 <Text fw={600}>Telefone do(a) Paciente:</Text>
                 <Text>
-                  {agendamento.paciente_numero_telefone
-                    ? agendamento.paciente_numero_telefone
+                  {agendamento.paciente.numero_telefone
+                    ? agendamento.paciente.numero_telefone
                     : 'Sem telefone'}
                 </Text>
               </Grid.Col>
