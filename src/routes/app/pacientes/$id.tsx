@@ -27,6 +27,7 @@ import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
 import { BotaoNovaConsulta } from './-components/BotaoNovaConsulta'
 import { PerfilPaciente } from './-components/PerfilPaciente'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/pacientes/$id')({
   component: PacienteDetalhePage,
@@ -47,6 +48,11 @@ function PacienteDetalhePage() {
     refetch,
     error,
   } = usePacienteDetail(id)
+  const queryClient = useQueryClient()
+
+  const handleRecarregarConsultas = () => {
+    queryClient.invalidateQueries({ queryKey: ['anotacoes', id] })
+  }
 
   const titulo = paciente?.nome_completo
     ? `Paciente: ${paciente.nome_completo}`
@@ -189,10 +195,20 @@ function PacienteDetalhePage() {
           <Card withBorder radius="md" p="xl">
             <Group justify="space-between" mb="lg">
               <Title order={4}>Linha do Tempo das Consultas</Title>
-              <BotaoNovaConsulta
-                pacienteId={id}
-                desativado={!!paciente?.acompanhado_por}
-              />
+              <Group justify="space-between">
+                <Button
+                  variant="outline"
+                  color="gray"
+                  onClick={handleRecarregarConsultas}
+                  leftSection={<IconRefresh size={20} />}
+                >
+                  Recarregar
+                </Button>
+                <BotaoNovaConsulta
+                  pacienteId={id}
+                  desativado={!!paciente?.acompanhado_por}
+                />
+              </Group>
             </Group>
 
             <ComponenteLinhaDoTempo
