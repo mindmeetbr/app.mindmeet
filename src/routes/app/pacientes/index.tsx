@@ -13,18 +13,13 @@ import {
   IconPlus,
   IconEye,
   IconEdit,
-  IconTrash,
   IconPhone,
   IconMail,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { PageLayout } from '../../../components/layout'
-import {
-  usePacienteList,
-  usePacienteDelete,
-} from '../../../api/endpoints/pacientes/pacientes'
-import { notifications } from '@mantine/notifications'
+import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { usePaginacao } from '../../../hooks/usePaginacao'
 import type { Paciente } from '../../../api/models'
@@ -51,42 +46,12 @@ function TabelaPacientes() {
     { query: { queryKey: ['pacientes', pagina, tamanho] } }
   )
 
-  const { mutate: apagarPaciente } = usePacienteDelete()
-
   const listaPacientes = data?.results ?? []
   const pacientesFiltrados = listaPacientes.filter(
     paciente =>
       paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
-  const handleClick = (id: string) => {
-    const apagar = window.confirm(
-      'Tem certeza que deseja apagar este paciente?'
-    )
-
-    if (apagar) {
-      apagarPaciente(
-        { id },
-        {
-          onSuccess: () => {
-            notifications.show({
-              title: 'Sucesso',
-              message: 'Paciente apagado com sucesso.',
-              color: 'green',
-            })
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Erro',
-              message: 'Não foi possível apagar o paciente, tente novamente.',
-              color: 'red',
-            })
-          },
-        }
-      )
-    }
-  }
 
   const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
@@ -155,15 +120,6 @@ function TabelaPacientes() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
-          <ActionIcon
-            variant="light"
-            color="red"
-            size="sm"
-            disabled={!!paciente.acompanhado_por}
-            onClick={() => handleClick(paciente.id)}
-          >
-            <IconTrash style={{ width: rem(14), height: rem(14) }} />
-          </ActionIcon>
         </Flex>
       </Table.Td>
     </Table.Tr>
