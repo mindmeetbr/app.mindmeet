@@ -22,10 +22,12 @@ import { PageLayout } from '../../../components/layout'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { usePaginacao } from '../../../hooks/usePaginacao'
-import type { Paciente } from '../../../api/models'
+import { PapelEnum, type Paciente } from '../../../api/models'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
+import { exigirPapel } from '../../../utils/auth'
 
 export const Route = createFileRoute('/app/pacientes/')({
+  beforeLoad: exigirPapel(PapelEnum.PSICOLOGO),
   component: PacientesPage,
 })
 

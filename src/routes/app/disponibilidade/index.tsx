@@ -22,7 +22,7 @@ import {
   useDisponibilidadeCreate,
   useDisponibilidadeUpdate,
 } from '../../../api/endpoints/disponibilidades/disponibilidades'
-import { AdicionarHorariosDiaEnum } from '../../../api/models'
+import { AdicionarHorariosDiaEnum, PapelEnum } from '../../../api/models'
 import { notifications } from '@mantine/notifications'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import type { DisponibilidadeLocal, HorarioLocal } from './-types'
@@ -31,8 +31,10 @@ import {
   salvarDisponibilidades,
   useDisponibilidadesMerged,
 } from './-useDisponibilidade'
+import { exigirPapel } from '../../../utils/auth'
 
 export const Route = createFileRoute('/app/disponibilidade/')({
+  beforeLoad: exigirPapel(PapelEnum.PSICOLOGO),
   component: CardDisponibilidades,
 })
 

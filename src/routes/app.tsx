@@ -39,9 +39,12 @@ import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'
 
+const { isAuthenticated, user } = useAuthStore.getState()
+const isGestor = user?.papel === PapelEnum.GESTOR
+const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
+
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
-    const { isAuthenticated } = useAuthStore.getState()
     if (!isAuthenticated) {
       throw redirect({ to: '/login' })
     }
@@ -178,33 +181,39 @@ function AppLayout() {
           }
           activeOptions={{ exact: true }}
         />
-        <NavLink
-          component={Link}
-          to="/app/agenda"
-          label="Agenda"
-          leftSection={
-            <IconCalendarWeek style={{ width: rem(16), height: rem(16) }} />
-          }
-          activeOptions={{ exact: true }}
-        />
-        <NavLink
-          component={Link}
-          to="/app/disponibilidade"
-          label="Disponibilidade"
-          leftSection={
-            <IconClock style={{ width: rem(16), height: rem(16) }} />
-          }
-          activeOptions={{ exact: true }}
-        />
-        <NavLink
-          component={Link}
-          to="/app/pacientes"
-          label="Pacientes"
-          leftSection={
-            <IconUsers style={{ width: rem(16), height: rem(16) }} />
-          }
-          activeOptions={{ exact: true }}
-        />
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/agenda"
+            label="Agenda"
+            leftSection={
+              <IconCalendarWeek style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/disponibilidade"
+            label="Disponibilidade"
+            leftSection={
+              <IconClock style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/pacientes"
+            label="Pacientes"
+            leftSection={
+              <IconUsers style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
         <NavLink
           component={Link}
           to="/app/configuracoes"
@@ -232,7 +241,7 @@ function AppLayout() {
           activeOptions={{ exact: true }}
         />
 
-        {user?.papel === PapelEnum.GESTOR && (
+        {isGestor && (
           <NavLink
             component={Link}
             to="/app/instituicao"

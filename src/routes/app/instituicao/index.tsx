@@ -24,16 +24,28 @@ import { useState } from 'react'
 import { PageLayout } from '../../../components/layout'
 import dayjs from 'dayjs'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
-import { useInstituicaoDetail, useListarPsicologos } from '../../../api/endpoints/instituicoes/instituicoes'
+import {
+  useInstituicaoDetail,
+  useListarPsicologos,
+} from '../../../api/endpoints/instituicoes/instituicoes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { usePaginacao } from '../../../hooks/usePaginacao'
-import type { Paciente, PerfilPsicologo } from '../../../api/models'
+import {
+  PapelEnum,
+  type Paciente,
+  type PerfilPsicologo,
+} from '../../../api/models'
+import { exigirPapel } from '../../../utils/auth'
+import useAuthStore from '../../../stores/auth-store'
 
 export const Route = createFileRoute('/app/instituicao/')({
+  beforeLoad: exigirPapel(PapelEnum.GESTOR),
   component: PaginaInstituicao,
 })
 
+const { user } = useAuthStore.getState()
+const isGestor = user?.papel === PapelEnum.GESTOR
 
 function TabelaPsicologos() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -182,7 +194,9 @@ function TabelaPacientes() {
       </Table.Td>
       <Table.Td>{calcularIdade(paciente.data_nascimento)} anos</Table.Td>
       <Table.Td>
-        {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
+        {isGestor
+          ? (paciente.acompanhado_por ?? 'Ninguém')
+          : (paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma')}
       </Table.Td>
       <Table.Td>
         <Flex gap="xs">
@@ -201,11 +215,17 @@ function TabelaPacientes() {
     </Table.Tr>
   )
 
+  const getColunaPaciente = () => {
+    if (isGestor)
+      return { chave: 'psicologoPaciente', label: 'Acompanhado por' }
+    else return { chave: 'queixa', label: 'Queixa Principal' }
+  }
+
   const COLUNAS_PACIENTES = [
     { chave: 'paciente', label: 'Paciente' },
     { chave: 'contato', label: 'Contato' },
     { chave: 'idade', label: 'Idade' },
-    { chave: 'queixa', label: 'Queixa Principal' },
+    getColunaPaciente(),
     { chave: 'acoes', label: 'Ações', largura: 100 },
   ]
 
@@ -238,10 +258,6 @@ function TabelaPacientes() {
       }
     />
   )
-}
-
-function Gerenciamento() {
-  return <p>oiiii</p>
 }
 
 function PaginaInstituicao() {
@@ -289,10 +305,6 @@ function PaginaInstituicao() {
 
         <Tabs.Panel value="pacientes" pt="md">
           <TabelaPacientes />
-        </Tabs.Panel>
-
-        <Tabs.Panel value="gerenciamento" pt="md">
-          <Gerenciamento />
         </Tabs.Panel>
       </Tabs>
     </PageLayout>
