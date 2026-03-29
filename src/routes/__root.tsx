@@ -19,7 +19,7 @@ function RootComponent() {
     matchRoute({ from: '/', to: '/login' }) ||
     matchRoute({ from: '/', to: '/cadastro', fuzzy: true }) ||
     matchRoute({ from: '/', to: '/psicologo/$id' }) ||
-    matchRoute({ from: '/', to: '/about' })
+    matchRoute({ from: '/', to: '/sobre' })
 
   const isCadastroIndex = matchRoute({
     from: '/',
@@ -53,36 +53,13 @@ function RootComponent() {
                 <Text
                   component={Link}
                   className={classes.link}
-                  to="/about"
+                  to="/sobre"
                   activeOptions={{ exact: true }}
                   activeProps={{
                     className: `${classes.link} ${classes.active}`,
                   }}
                 >
-                  Sobre
-                </Text>
-                <Text
-                  component={Link}
-                  className={classes.link}
-                  to="/app"
-                  activeOptions={{ exact: true }}
-                  activeProps={{
-                    className: `${classes.link} ${classes.active}`,
-                  }}
-                >
-                  Dashboard
-                </Text>
-                <Text
-                  component={Link}
-                  className={classes.link}
-                  to="/psicologo/$id"
-                  params={{ id: '1' }}
-                  activeOptions={{ exact: true }}
-                  activeProps={{
-                    className: `${classes.link} ${classes.active}`,
-                  }}
-                >
-                  Perfil Público
+                  Sobre o Projeto
                 </Text>
               </Group>
             </Flex>

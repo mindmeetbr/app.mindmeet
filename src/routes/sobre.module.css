@@ -16,20 +16,25 @@
   color: #1c1c1c;
 }
 
+.active {
+  font-weight: 500;
+}
+
 /* HERO */
 .hero {
   padding-top: 8rem;
-  padding-bottom: 6rem;
+  padding-bottom: 4rem;
 }
 
 /* SECTIONS */
 .section {
-  padding: 5rem 0;
+  padding: 4rem 0;
 }
 
 /* CARDS */
 .card {
   border: 1px solid #f1f3f5;
+  padding: 1.5rem;
   transition: all 0.2s ease;
 }
 
@@ -40,5 +45,5 @@
 
 /* CTA */
 .cta {
-  padding: 6rem 0;
+  padding: 5rem 0;
 }

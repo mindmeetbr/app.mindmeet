@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .link {
   text-decoration: none;
   transition: color 0.4s ease;

@@ -9,9 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CadastroIndexRouteImport } from './routes/cadastro/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
@@ -34,6 +34,11 @@ import { Route as AppInstituicaoEditarRouteImport } from './routes/app/instituic
 import { Route as AppAgendaNovoRouteImport } from './routes/app/agenda/novo'
 import { Route as AppAgendaIdRouteImport } from './routes/app/agenda/$id'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -42,11 +47,6 @@ const LoginRoute = LoginRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -159,9 +159,9 @@ const AppAgendaIdRoute = AppAgendaIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/sobre': typeof SobreRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
@@ -185,8 +185,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/sobre': typeof SobreRoute
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -210,9 +210,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/sobre': typeof SobreRoute
   '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
@@ -238,9 +238,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/app'
     | '/login'
+    | '/sobre'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
@@ -264,8 +264,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/login'
+    | '/sobre'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
     | '/psicologo/$id'
@@ -288,9 +288,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/app'
     | '/login'
+    | '/sobre'
     | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
@@ -315,9 +315,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
+  SobreRoute: typeof SobreRoute
   CadastroGestorRoute: typeof CadastroGestorRoute
   CadastroPsicologoRoute: typeof CadastroPsicologoRoute
   PsicologoIdRoute: typeof PsicologoIdRoute
@@ -326,6 +326,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -338,13 +345,6 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -548,9 +548,9 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
+  SobreRoute: SobreRoute,
   CadastroGestorRoute: CadastroGestorRoute,
   CadastroPsicologoRoute: CadastroPsicologoRoute,
   PsicologoIdRoute: PsicologoIdRoute,
