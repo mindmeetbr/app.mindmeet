@@ -29,6 +29,7 @@ import type {
 } from '@tanstack/react-query'
 
 import type {
+  CadastrarPsicologo,
   CustomRegister,
   MUser,
   PatchedMUser,
@@ -537,6 +538,98 @@ export const usePerfilPsicologoUpdate = <
   TContext
 > => {
   const mutationOptions = getPerfilPsicologoUpdateMutationOptions(options)
+
+  return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Recebe um objeto JSON e cria um usuário do tipo `PSICÓLOGO`, associando-o à instituição do gestor autenticado. O usuário deve possuir as permissões adequadas (`GESTOR`) para realizar esta ação.
+ * @summary Cadastra um psicólogo
+ */
+export const cadastrarPsicologo = (
+  cadastrarPsicologo: BodyType<CadastrarPsicologo>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<CadastrarPsicologo>(
+    {
+      url: `/api/psicologos/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: cadastrarPsicologo,
+      signal,
+    },
+    options
+  )
+}
+
+export const getCadastrarPsicologoMutationOptions = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cadastrarPsicologo>>,
+    TError,
+    { data: BodyType<CadastrarPsicologo> },
+    TContext
+  >
+  request?: SecondParameter<typeof customInstance>
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof cadastrarPsicologo>>,
+  TError,
+  { data: BodyType<CadastrarPsicologo> },
+  TContext
+> => {
+  const mutationKey = ['cadastrarPsicologo']
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      'mutationKey' in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined }
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof cadastrarPsicologo>>,
+    { data: BodyType<CadastrarPsicologo> }
+  > = props => {
+    const { data } = props ?? {}
+
+    return cadastrarPsicologo(data, requestOptions)
+  }
+
+  return { mutationFn, ...mutationOptions }
+}
+
+export type CadastrarPsicologoMutationResult = NonNullable<
+  Awaited<ReturnType<typeof cadastrarPsicologo>>
+>
+export type CadastrarPsicologoMutationBody = BodyType<CadastrarPsicologo>
+export type CadastrarPsicologoMutationError = ErrorType<null | null>
+
+/**
+ * @summary Cadastra um psicólogo
+ */
+export const useCadastrarPsicologo = <
+  TError = ErrorType<null | null>,
+  TContext = unknown,
+>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof cadastrarPsicologo>>,
+      TError,
+      { data: BodyType<CadastrarPsicologo> },
+      TContext
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof cadastrarPsicologo>>,
+  TError,
+  { data: BodyType<CadastrarPsicologo> },
+  TContext
+> => {
+  const mutationOptions = getCadastrarPsicologoMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
 }
