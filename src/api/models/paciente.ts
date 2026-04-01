@@ -27,6 +27,7 @@ export interface Paciente {
   endereco?: PacienteEndereco
   /** @nullable */
   informacoes_clinicas?: PacienteInformacoesClinicas
+  readonly psicologo: string
   /** @nullable */
   readonly acompanhado_por: string | null
   /** @maxLength 255 */
