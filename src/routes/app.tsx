@@ -39,12 +39,10 @@ import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'
 
-const { isAuthenticated, user } = useAuthStore.getState()
-const isGestor = user?.papel === PapelEnum.GESTOR
-const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
+    const { isAuthenticated } = useAuthStore.getState()
     if (!isAuthenticated) {
       throw redirect({ to: '/login' })
     }
@@ -80,6 +78,8 @@ function AppLayout() {
       redirector.navigate({ to: '/login' })
     }
   }, [isAuthenticated, redirector])
+  const isGestor = user?.papel === PapelEnum.GESTOR
+  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
 
   return (
     <AppShell
