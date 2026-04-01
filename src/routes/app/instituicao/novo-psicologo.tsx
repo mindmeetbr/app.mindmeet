@@ -11,12 +11,20 @@ import {
   rem,
   Checkbox,
   Grid,
+  Alert,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { PageLayout } from '../../../components/layout'
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
+import {
+  IconArrowLeft,
+  IconDeviceFloppy,
+  IconInfoCircle,
+} from '@tabler/icons-react'
 import dayjs from 'dayjs'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { useCadastrarPsicologo } from '../../../api/endpoints/users/users'
+import { notifications } from '@mantine/notifications'
+import { useListarPsicologos } from '../../../api/endpoints/instituicoes/instituicoes'
 export const Route = createFileRoute('/app/instituicao/novo-psicologo')({
   component: NovoPsicologo,
 })
@@ -24,10 +32,21 @@ export const Route = createFileRoute('/app/instituicao/novo-psicologo')({
 function NovoPsicologo() {
   useAlterarTitle('Cadastrar Psicólogo')
   const router = useRouter()
+  const { mutate: cadastrarPsicologo } = useCadastrarPsicologo()
+  const { data } = useListarPsicologos()
+  const listaSupervisores =
+    data?.results.filter(psi => !psi.is_estagiario) ?? []
+
+  const selectSupervisores: { value: string; label: string }[] =
+    listaSupervisores.map(sup => ({
+      value: sup.usuario?.email ?? '',
+      label: `${sup.usuario?.email} | ${sup.usuario?.nome_completo}`,
+    }))
 
   const form = useForm({
     initialValues: {
       nome_completo: '',
+      username: '',
       data_nascimento: '',
       email: '',
       numero_telefone: '',
@@ -37,6 +56,7 @@ function NovoPsicologo() {
     },
     validate: {
       nome_completo: value => (!value ? 'Informe o nome completo' : null),
+      username: value => (!value ? 'Informe o nome de usuário' : null),
       email: value => (!value ? 'Informe o e-mail' : null),
       numero_telefone: value => (!value ? 'Informe o telefone' : null),
       supervisor: (value, values) =>
@@ -60,7 +80,21 @@ function NovoPsicologo() {
   const handleSubmit = (values: typeof form.values) => {
     // TODO: integrar com a API
     console.log(JSON.stringify(values, null, 2))
-    // router.navigate({ to: '/app/instituicao' })
+    cadastrarPsicologo(
+      { data: values },
+      {
+        onSuccess: () => {
+          router.navigate({ to: '/app/instituicao' })
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Erro',
+            message: 'Não foi possível cadastrar o psicólogo, tente novamente.',
+            color: 'red',
+          })
+        },
+      }
+    )
   }
 
   return (
@@ -79,13 +113,23 @@ function NovoPsicologo() {
         onClick: () => router.navigate({ to: '/app/instituicao' }),
       }}
     >
+      <Alert
+        variant="light"
+        color="indigo"
+        title="Aviso"
+        mx="auto"
+        w="100%"
+        icon={<IconInfoCircle />}
+      >
+        A senha para o acesso será enviada ao email do psicólogo cadastrado.
+      </Alert>
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <Card withBorder radius="md" p="xl">
             <Stack gap="md">
               <Title order={4}>Informações Pessoais</Title>
               <Grid>
-                <Grid.Col span={{ base: 12, md: 6 }}>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                   <TextInput
                     label="Nome completo"
                     placeholder="Digite o nome completo"
@@ -94,7 +138,16 @@ function NovoPsicologo() {
                     {...form.getInputProps('nome_completo')}
                   />
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, md: 6 }}>
+                <Grid.Col span={{ base: 12, md: 4 }}>
+                  <TextInput
+                    label="Nome de usuário"
+                    placeholder="Digite o nome de usuário"
+                    required
+                    withAsterisk
+                    {...form.getInputProps('username')}
+                  />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, md: 4 }}>
                   <TextInput
                     label="Data de Nascimento"
                     type="date"
@@ -149,11 +202,7 @@ function NovoPsicologo() {
                 <Select
                   label="Supervisor"
                   placeholder="Selecione o supervisor"
-                  data={[
-                    { value: '1', label: 'Dra. Ana Souza' },
-                    { value: '2', label: 'Dr. Carlos Pereira' },
-                    { value: '3', label: 'Dra. Mariana Alves' },
-                  ]}
+                  data={selectSupervisores}
                   disabled={!form.values.is_estagiario}
                   required={form.values.is_estagiario}
                   {...form.getInputProps('supervisor')}

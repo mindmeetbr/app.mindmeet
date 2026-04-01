@@ -9,6 +9,10 @@ import {
   Flex,
   Tabs,
   Button,
+  Stack,
+  Modal,
+  Alert,
+  Select,
 } from '@mantine/core'
 import {
   IconPlus,
@@ -18,11 +22,16 @@ import {
   IconPhone,
   IconEdit,
   IconEye,
+  IconAlertCircle,
+  IconUserPlus,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 import { PageLayout } from '../../../components/layout'
 import dayjs from 'dayjs'
-import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
+import {
+  usePacienteList,
+  useTrocarPsicologo,
+} from '../../../api/endpoints/pacientes/pacientes'
 import {
   useInstituicaoDetail,
   useListarPsicologos,
@@ -37,6 +46,8 @@ import {
 } from '../../../api/models'
 import { exigirPapel } from '../../../utils/auth'
 import useAuthStore from '../../../stores/auth-store'
+import { useQueryClient } from '@tanstack/react-query'
+import { notifications } from '@mantine/notifications'
 
 export const Route = createFileRoute('/app/instituicao/')({
   beforeLoad: exigirPapel(PapelEnum.GESTOR),
@@ -145,13 +156,145 @@ function TabelaPsicologos() {
   )
 }
 
+interface ModalAtribuirPsicologoProps {
+  paciente: Paciente | null
+  onClose: () => void
+  onSucesso: () => void
+}
+
+function ModalAtribuirPsicologo({
+  paciente,
+  onClose,
+  onSucesso,
+}: ModalAtribuirPsicologoProps) {
+  const [psicologoSelecionado, setPsicologoSelecionado] = useState<
+    string | null
+  >(null)
+  const queryClient = useQueryClient()
+
+  const { data: psicologos, isLoading: carregandoPsicologos } =
+    useListarPsicologos(
+      { pagina: 1, tamanho: 100 },
+      {
+        query: {
+          queryKey: ['psicologos-instituicao'],
+          staleTime: 5 * 60 * 1000,
+        },
+      }
+    )
+
+  const { mutate: trocarPsicologo, isPending } = useTrocarPsicologo()
+
+  const opcoesPsicologos =
+    psicologos?.results?.map(p => ({
+      value: p.id,
+      label: `${p.usuario?.nome_completo} — CRP ${p.crp ?? 'não informado'}`,
+    })) ?? []
+
+  const handleSalvar = () => {
+    if (!paciente || !psicologoSelecionado) return
+
+    trocarPsicologo(
+      { id: paciente.id, novoPsicologo: psicologoSelecionado },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: 'Psicólogo atribuído',
+            message: `${paciente.nome_completo} foi transferido com sucesso.`,
+            color: 'green',
+          })
+          queryClient.invalidateQueries({ queryKey: ['pacientes'] })
+          onSucesso()
+          onClose()
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Erro ao atribuir',
+            message: 'Verifique se o psicólogo pertence à sua instituição.',
+            color: 'red',
+          })
+        },
+      }
+    )
+  }
+
+  const handleClose = () => {
+    setPsicologoSelecionado(null)
+    onClose()
+  }
+
+  return (
+    <Modal
+      opened={!!paciente}
+      onClose={handleClose}
+      title={
+        <Text fw={600}>
+          Atribuir psicólogo —{' '}
+          <Text span c="dimmed" fw={400}>
+            {paciente?.nome_completo}
+          </Text>
+        </Text>
+      }
+      centered
+      size="md"
+    >
+      <Stack gap="lg">
+        {paciente?.psicologo && (
+          <Alert
+            variant="light"
+            color="orange"
+            icon={<IconAlertCircle size={16} />}
+          >
+            Este paciente já é acompanhado por{' '}
+            <Text span fw={500}>
+              {paciente.psicologo}
+            </Text>
+            . Ao salvar, o psicólogo será substituído.
+          </Alert>
+        )}
+
+        <Select
+          label="Psicólogo"
+          description="Selecione o psicólogo que acompanhará este paciente"
+          placeholder={
+            carregandoPsicologos ? 'Carregando...' : 'Escolha um psicólogo'
+          }
+          data={opcoesPsicologos}
+          value={psicologoSelecionado}
+          onChange={setPsicologoSelecionado}
+          searchable
+          nothingFoundMessage="Nenhum psicólogo encontrado"
+          disabled={carregandoPsicologos}
+        />
+
+        <Group justify="flex-end" gap="sm">
+          <Button variant="subtle" color="gray" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSalvar}
+            loading={isPending}
+            disabled={!psicologoSelecionado}
+          >
+            Salvar
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  )
+}
+
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [pacienteParaAtribuir, setPacienteParaAtribuir] =
+    useState<Paciente | null>(null)
+
   const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
   const { data, isLoading, isError, refetch } = usePacienteList(
     { pagina, tamanho },
     { query: { queryKey: ['pacientes', pagina, tamanho] } }
   )
+
   const listaPacientes = data?.results ?? []
 
   const calcularIdade = (dataNascimento?: string) =>
@@ -194,7 +337,7 @@ function TabelaPacientes() {
       <Table.Td>{calcularIdade(paciente.data_nascimento)} anos</Table.Td>
       <Table.Td>
         {isGestor
-          ? (paciente.acompanhado_por ?? 'Ninguém')
+          ? (paciente.psicologo ?? 'Ninguém')
           : (paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma')}
       </Table.Td>
       <Table.Td>
@@ -209,15 +352,26 @@ function TabelaPacientes() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
+          {/* botão de atribuição — somente para gestores */}
+          {isGestor && (
+            <ActionIcon
+              variant="light"
+              color="green"
+              size="sm"
+              title="Atribuir psicólogo"
+              onClick={() => setPacienteParaAtribuir(paciente)}
+            >
+              <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          )}
         </Flex>
       </Table.Td>
     </Table.Tr>
   )
 
   const getColunaPaciente = () => {
-    if (isGestor)
-      return { chave: 'psicologoPaciente', label: 'Acompanhado por' }
-    else return { chave: 'queixa', label: 'Queixa Principal' }
+    if (isGestor) return { chave: 'psicologoPaciente', label: 'Psicólogo' }
+    return { chave: 'queixa', label: 'Queixa Principal' }
   }
 
   const COLUNAS_PACIENTES = [
@@ -225,37 +379,45 @@ function TabelaPacientes() {
     { chave: 'contato', label: 'Contato' },
     { chave: 'idade', label: 'Idade' },
     getColunaPaciente(),
-    { chave: 'acoes', label: 'Ações', largura: 100 },
+    { chave: 'acoes', label: 'Ações', largura: isGestor ? 120 : 100 },
   ]
 
   return (
-    <TabelaPaginada
-      dados={pacientesFiltrados}
-      total={data?.count ?? 0}
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      colunas={COLUNAS_PACIENTES}
-      renderLinha={renderLinhaPaciente}
-      pagina={pagina}
-      tamanho={tamanho}
-      onPaginaChange={setPagina}
-      onTamanhoChange={setTamanho}
-      termoBusca={searchTerm}
-      onBuscaChange={setSearchTerm}
-      placeholderBusca="Buscar por nome ou email..."
-      mensagemVazia="Nenhum paciente encontrado."
-      mensagemErro="Não foi possível carregar seus pacientes. Tente novamente."
-      acoes={
-        <Button
-          component={Link}
-          to="/app/instituicao/novo-paciente"
-          leftSection={<IconPlus />}
-        >
-          Adicionar Paciente
-        </Button>
-      }
-    />
+    <>
+      <TabelaPaginada
+        dados={pacientesFiltrados}
+        total={data?.count ?? 0}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={refetch}
+        colunas={COLUNAS_PACIENTES}
+        renderLinha={renderLinhaPaciente}
+        pagina={pagina}
+        tamanho={tamanho}
+        onPaginaChange={setPagina}
+        onTamanhoChange={setTamanho}
+        termoBusca={searchTerm}
+        onBuscaChange={setSearchTerm}
+        placeholderBusca="Buscar por nome ou email..."
+        mensagemVazia="Nenhum paciente encontrado."
+        mensagemErro="Não foi possível carregar seus pacientes. Tente novamente."
+        acoes={
+          <Button
+            component={Link}
+            to="/app/instituicao/novo-paciente"
+            leftSection={<IconPlus />}
+          >
+            Adicionar Paciente
+          </Button>
+        }
+      />
+
+      <ModalAtribuirPsicologo
+        paciente={pacienteParaAtribuir}
+        onClose={() => setPacienteParaAtribuir(null)}
+        onSucesso={() => setPacienteParaAtribuir(null)}
+      />
+    </>
   )
 }
 
