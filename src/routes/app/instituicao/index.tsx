@@ -14,7 +14,6 @@ import {
   IconPlus,
   IconUserCheck,
   IconUser,
-  IconSettings,
   IconMail,
   IconPhone,
   IconEdit,
@@ -290,12 +289,6 @@ function PaginaInstituicao() {
           </Tabs.Tab>
           <Tabs.Tab leftSection={<IconUser size={18} />} value="pacientes">
             Pacientes
-          </Tabs.Tab>
-          <Tabs.Tab
-            leftSection={<IconSettings size={18} />}
-            value="gerenciamento"
-          >
-            Gerenciamento
           </Tabs.Tab>
         </Tabs.List>
 
