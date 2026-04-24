@@ -14,7 +14,7 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  */
 
 export interface Anotacao {
-  readonly id: number
+  readonly id: string
   /** @nullable */
   readonly escrita_por: string | null
   data?: string

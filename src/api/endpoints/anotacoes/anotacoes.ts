@@ -337,7 +337,7 @@ export const useAnotacaoCreate = <
  */
 export const anotacaoDetail = (
   pacientePk: string,
-  id: number,
+  id: string,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
@@ -351,7 +351,7 @@ export const anotacaoDetail = (
   )
 }
 
-export const getAnotacaoDetailQueryKey = (pacientePk?: string, id?: number) => {
+export const getAnotacaoDetailQueryKey = (pacientePk?: string, id?: string) => {
   return [`/api/pacientes/${pacientePk}/anotacoes/${id}/`] as const
 }
 
@@ -360,7 +360,7 @@ export const getAnotacaoDetailQueryOptions = <
   TError = ErrorType<null | null | null>,
 >(
   pacientePk: string,
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>
@@ -399,7 +399,7 @@ export function useAnotacaoDetail<
   TError = ErrorType<null | null | null>,
 >(
   pacientePk: string,
-  id: number,
+  id: string,
   options: {
     query: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>
@@ -423,7 +423,7 @@ export function useAnotacaoDetail<
   TError = ErrorType<null | null | null>,
 >(
   pacientePk: string,
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>
@@ -447,7 +447,7 @@ export function useAnotacaoDetail<
   TError = ErrorType<null | null | null>,
 >(
   pacientePk: string,
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>
@@ -467,7 +467,7 @@ export function useAnotacaoDetail<
   TError = ErrorType<null | null | null>,
 >(
   pacientePk: string,
-  id: number,
+  id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof anotacaoDetail>>, TError, TData>
@@ -496,7 +496,7 @@ export function useAnotacaoDetail<
  */
 export const anotacaoUpdate = (
   pacientePk: string,
-  id: number,
+  id: string,
   patchedAnotacao: BodyType<NonReadonly<PatchedAnotacao>>,
   options?: SecondParameter<typeof customInstance>
 ) => {
@@ -520,7 +520,7 @@ export const getAnotacaoUpdateMutationOptions = <
     TError,
     {
       pacientePk: string
-      id: number
+      id: string
       data: BodyType<NonReadonly<PatchedAnotacao>>
     },
     TContext
@@ -531,7 +531,7 @@ export const getAnotacaoUpdateMutationOptions = <
   TError,
   {
     pacientePk: string
-    id: number
+    id: string
     data: BodyType<NonReadonly<PatchedAnotacao>>
   },
   TContext
@@ -549,7 +549,7 @@ export const getAnotacaoUpdateMutationOptions = <
     Awaited<ReturnType<typeof anotacaoUpdate>>,
     {
       pacientePk: string
-      id: number
+      id: string
       data: BodyType<NonReadonly<PatchedAnotacao>>
     }
   > = props => {
@@ -580,7 +580,7 @@ export const useAnotacaoUpdate = <
       TError,
       {
         pacientePk: string
-        id: number
+        id: string
         data: BodyType<NonReadonly<PatchedAnotacao>>
       },
       TContext
@@ -593,7 +593,7 @@ export const useAnotacaoUpdate = <
   TError,
   {
     pacientePk: string
-    id: number
+    id: string
     data: BodyType<NonReadonly<PatchedAnotacao>>
   },
   TContext
@@ -608,7 +608,7 @@ export const useAnotacaoUpdate = <
  */
 export const anotacaoDelete = (
   pacientePk: string,
-  id: number,
+  id: string,
   options?: SecondParameter<typeof customInstance>
 ) => {
   return customInstance<null>(
@@ -624,14 +624,14 @@ export const getAnotacaoDeleteMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof anotacaoDelete>>,
     TError,
-    { pacientePk: string; id: number },
+    { pacientePk: string; id: string },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof anotacaoDelete>>,
   TError,
-  { pacientePk: string; id: number },
+  { pacientePk: string; id: string },
   TContext
 > => {
   const mutationKey = ['anotacaoDelete']
@@ -645,7 +645,7 @@ export const getAnotacaoDeleteMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof anotacaoDelete>>,
-    { pacientePk: string; id: number }
+    { pacientePk: string; id: string }
   > = props => {
     const { pacientePk, id } = props ?? {}
 
@@ -672,7 +672,7 @@ export const useAnotacaoDelete = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof anotacaoDelete>>,
       TError,
-      { pacientePk: string; id: number },
+      { pacientePk: string; id: string },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -681,7 +681,7 @@ export const useAnotacaoDelete = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof anotacaoDelete>>,
   TError,
-  { pacientePk: string; id: number },
+  { pacientePk: string; id: string },
   TContext
 > => {
   const mutationOptions = getAnotacaoDeleteMutationOptions(options)

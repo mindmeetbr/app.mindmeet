@@ -14,7 +14,7 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  */
 
 export interface CriarAnotacao {
-  readonly id: number
+  readonly id: string
   readonly psicologo: string
   readonly paciente: string
   data?: string

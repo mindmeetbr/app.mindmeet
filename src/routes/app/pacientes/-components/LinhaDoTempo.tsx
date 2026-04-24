@@ -36,12 +36,12 @@ interface LinhaDoTempoProps {
 interface ItemConsultaProps {
   consulta: Anotacao
   podeEditar?: boolean
-  editandoId: number | null
+  editandoId: string | null
   registrosTemp: string
   apresentadaTemp: string
   identificadaTemp: string
   onEditar: (consulta: Anotacao) => void
-  onSalvar: (id: number) => void
+  onSalvar: (id: string) => void
   onCancelar: () => void
   onRegistrosChange: (value: string) => void
   onApresentadaChange: (value: string) => void
@@ -173,7 +173,7 @@ export function LinhaDoTempo({ pacienteId, podeEditar }: LinhaDoTempoProps) {
 
   const { mutate: editarAnotacao } = useAnotacaoUpdate()
 
-  const [editandoId, setEditandoId] = useState<number | null>(null)
+  const [editandoId, setEditandoId] = useState<string | null>(null)
   const [registrosTemp, setRegistrosTemp] = useState('')
   const [apresentadaTemp, setApresentadaTemp] = useState('')
   const [identificadaTemp, setIdentificadaTemp] = useState('')
@@ -185,7 +185,7 @@ export function LinhaDoTempo({ pacienteId, podeEditar }: LinhaDoTempoProps) {
     setIdentificadaTemp(consulta.queixa_identificada as string)
   }
 
-  const handleSalvar = (consultaId: number) => {
+  const handleSalvar = (consultaId: string) => {
     editarAnotacao(
       {
         pacientePk: pacienteId,
