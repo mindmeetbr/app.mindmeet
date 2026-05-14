@@ -1,36 +1,37 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
-import { Table, ActionIcon, rem, Flex, Text } from '@mantine/core'
+import { Table, ActionIcon, rem, Flex } from '@mantine/core'
 import dayjs from 'dayjs'
 import { IconEye, IconTrash } from '@tabler/icons-react'
-import { useNotificacaoList } from '../../../api/endpoints/api/api'
+import { useNotificacaoList } from '../../../api/endpoints/notificacoes/notificacoes'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import type { Notificacao } from '../../../api/models'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 
 export const Route = createFileRoute('/app/notificacoes/')({
   component: PaginaNotificacoes,
 })
 
+const COLUNAS_NOTIFICACOES = [
+  { chave: 'titulo', label: 'Título' },
+  { chave: 'data', label: 'Data' },
+  { chave: 'lida', label: 'Lida?' },
+  { chave: 'acoes', label: 'Opções', largura: 80 },
+]
+
 function TabelaNotificacoes() {
-  // adicionar filtros: texto, lida;
+  useAlterarTitle('Notificações')
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
+  // TODO: adicionar filtros: buscar, marcar como lidas (todas)
+  //  filtrar por status, implementar função para apagar
 
-  const { data: notificacoes, isLoading, isError } = useNotificacaoList()
+  const { data, isLoading, isError, refetch } = useNotificacaoList(
+    { pagina, tamanho },
+    { query: { queryKey: ['notificacoes', pagina, tamanho] } }
+  )
 
-  if (isLoading) {
-    return <Text fs="xl">Carregando notificações...</Text>
-  }
-
-  if (isError) {
-    return (
-      <Text fs="xl">
-        Não foi possível carregar suas notificações, tente novamente.
-      </Text>
-    )
-  }
-
-  if (!notificacoes) {
-    return <p>Nenhuma notificação encontrada.</p>
-  }
-
-  const linhas = notificacoes.map(notificacao => (
+  const renderLinhaNotificacao = (notificacao: Notificacao) => (
     <Table.Tr key={notificacao.id}>
       <Table.Td>{notificacao.titulo}</Table.Td>
       <Table.Td>
@@ -56,21 +57,26 @@ function TabelaNotificacoes() {
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ))
+  )
+
   return (
-    <Table.ScrollContainer minWidth={800}>
-      <Table withTableBorder withRowBorders striped highlightOnHover>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Título</Table.Th>
-            <Table.Th>Data</Table.Th>
-            <Table.Th>Lida?</Table.Th>
-            <Table.Th>Opções</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{linhas}</Table.Tbody>
-      </Table>
-    </Table.ScrollContainer>
+    <TabelaPaginada
+      dados={data?.results ?? []}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      colunas={COLUNAS_NOTIFICACOES}
+      renderLinha={renderLinhaNotificacao}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      mensagemVazia="Nenhuma notificação."
+      mensagemErro="Não foi possível carregar suas notificações. Tente novamente."
+      comBordaLinhas
+      comBordaTabela
+    />
   )
 }
 

@@ -1,9 +1,9 @@
 import {
   createFileRoute,
+  Link,
   Outlet,
   redirect,
   useRouter,
-  useRouterState,
 } from '@tanstack/react-router'
 import {
   AppShell,
@@ -14,29 +14,31 @@ import {
   UnstyledButton,
   Menu,
   rem,
+  Indicator,
   ActionIcon,
-  Tooltip,
+  useMantineColorScheme,
+  useComputedColorScheme,
+  Burger,
 } from '@mantine/core'
 import {
   IconDashboard,
   IconSettings,
-  // IconCalendar,
   IconUsers,
   IconLogout,
   IconChevronDown,
   IconClock,
-  IconEye,
-  IconEyeOff,
   IconBell,
-  IconBellExclamation,
+  IconBuildingCommunity,
+  IconSun,
+  IconMoonStars,
+  IconCalendarWeek,
 } from '@tabler/icons-react'
 import useAuthStore from '../stores/auth-store'
-import usePreferencesStore from '../stores/preferences-store'
-import {
-  useNotificacaoPendenteList,
-  useProfileView,
-} from '../api/endpoints/api/api'
-import { useEffect, useState } from 'react'
+import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notificacoes'
+import { useEffect } from 'react'
+import { PapelEnum } from '../api/models'
+import { useDisclosure } from '@mantine/hooks'
+
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -49,69 +51,85 @@ export const Route = createFileRoute('/app')({
 })
 
 function AppLayout() {
-  const { isAuthenticated, logout } = useAuthStore()
-  const { hideFinancialDetails, toggleFinancialDetails } = usePreferencesStore()
-  const router = useRouterState()
+  const { isAuthenticated, logout, user } = useAuthStore()
+  const { setColorScheme } = useMantineColorScheme()
+  const { data: pendentes } = useNotificacaoPendenteList({
+    query: {
+      staleTime: 10 * 60 * 1000, // 10 minutos
+      refetchInterval: 10 * 60 * 1000, // 10 minutos
+      refetchIntervalInBackground: false,
+      refetchOnWindowFocus: false,
+      queryKey: ['notificacoes-pendentes'],
+    },
+  })
   const redirector = useRouter()
-  const [temNaoLidas, setTemNaoLidas] = useState(false)
-  const { data: pendentes, isError, isLoading } = useNotificacaoPendenteList()
-  const { data: user } = useProfileView()
-
-  const isActive = (path: string) => {
-    return (
-      router.location.pathname === path ||
-      router.location.pathname.startsWith(`${path}/`)
-    )
-  }
+  const computedColorScheme = useComputedColorScheme('light')
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
 
   const handleLogoutClick = () => {
     logout()
   }
 
-  useEffect(() => {
-    if (!pendentes || isError || isLoading) setTemNaoLidas(false)
-    else if (pendentes.nao_lidas > 0) setTemNaoLidas(true)
-  }, [pendentes, isError, isLoading])
+  const temNaoLidas = !!pendentes?.nao_lidas && pendentes.nao_lidas > 0
 
   useEffect(() => {
     if (!isAuthenticated) {
       redirector.navigate({ to: '/login' })
     }
   }, [isAuthenticated, redirector])
+  const isGestor = user?.papel === PapelEnum.GESTOR
+  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
 
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 250, breakpoint: 'sm' }}
-      padding="md"
+      navbar={{
+        width: 250,
+        breakpoint: 'sm',
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+      }}
+      py="md"
+      px="sm"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Text size="xl" fw={700} c="blue">
-            MindMeet
-          </Text>
+          <Group h="100%" justify="flex-start" gap="xs">
+            <Burger
+              opened={mobileOpened}
+              onClick={toggleMobile}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            <Burger
+              opened={desktopOpened}
+              onClick={toggleDesktop}
+              visibleFrom="sm"
+              size="sm"
+            />
+
+            <Text size="xl" fw={700} c="blue">
+              MindMeet
+            </Text>
+          </Group>
 
           <Group gap="sm">
-            <Tooltip
-              label={
-                hideFinancialDetails
-                  ? 'Mostrar valores financeiros'
-                  : 'Ocultar valores financeiros'
+            <ActionIcon
+              size="lg"
+              variant="subtle"
+              aria-label="Alterar esquema de cor"
+              onClick={() =>
+                setColorScheme(
+                  computedColorScheme === 'light' ? 'dark' : 'light'
+                )
               }
-              position="bottom"
             >
-              <ActionIcon
-                variant="subtle"
-                color="gray"
-                onClick={toggleFinancialDetails}
-              >
-                {hideFinancialDetails ? (
-                  <IconEye style={{ width: rem(18), height: rem(18) }} />
-                ) : (
-                  <IconEyeOff style={{ width: rem(18), height: rem(18) }} />
-                )}
-              </ActionIcon>
-            </Tooltip>
+              {computedColorScheme === 'light' ? (
+                <IconSun stroke={1.5} />
+              ) : (
+                <IconMoonStars stroke={1.5} />
+              )}
+            </ActionIcon>
 
             <Menu shadow="md" width={200}>
               <Menu.Target>
@@ -119,7 +137,7 @@ function AppLayout() {
                   <Group gap={7}>
                     <Avatar size={32} radius="xl" />
                     <Text fw={500} size="sm" lh={1} mr={3}>
-                      {user?.email || user?.nome_completo || 'Usuário'}
+                      {user?.email || 'Usuário'}
                     </Text>
                     <IconChevronDown
                       style={{ width: rem(12), height: rem(12) }}
@@ -155,59 +173,87 @@ function AppLayout() {
 
       <AppShell.Navbar p="md">
         <NavLink
-          href="/app"
+          component={Link}
+          to="/app"
           label="Dashboard"
           leftSection={
             <IconDashboard style={{ width: rem(16), height: rem(16) }} />
           }
-          active={router.location.pathname === '/app'}
+          activeOptions={{ exact: true }}
         />
-        {/* <NavLink
-          href="/app/agendamentos"
-          label="Agendamentos"
-          leftSection={
-            <IconCalendar style={{ width: rem(16), height: rem(16) }} />
-          }
-          active={isActive('/app/agendamentos')}
-        /> */}
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/agenda"
+            label="Agenda"
+            leftSection={
+              <IconCalendarWeek style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/disponibilidade"
+            label="Disponibilidade"
+            leftSection={
+              <IconClock style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
+        {isPsicologo && (
+          <NavLink
+            component={Link}
+            to="/app/pacientes"
+            label="Pacientes"
+            leftSection={
+              <IconUsers style={{ width: rem(16), height: rem(16) }} />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
         <NavLink
-          href="/app/disponibilidade"
-          label="Disponibilidade"
-          leftSection={
-            <IconClock style={{ width: rem(16), height: rem(16) }} />
-          }
-          active={isActive('/app/disponibilidade')}
-        />
-        <NavLink
-          href="/app/pacientes"
-          label="Pacientes"
-          leftSection={
-            <IconUsers style={{ width: rem(16), height: rem(16) }} />
-          }
-          active={isActive('/app/pacientes')}
-        />
-        <NavLink
-          href="/app/configuracoes"
+          component={Link}
+          to="/app/configuracoes"
           label="Configurações"
           leftSection={
             <IconSettings style={{ width: rem(16), height: rem(16) }} />
           }
-          active={isActive('/app/configuracoes')}
+          activeOptions={{ exact: true }}
         />
         <NavLink
-          href="/app/notificacoes"
+          component={Link}
+          to="/app/notificacoes"
           label="Notificações"
           leftSection={
-            temNaoLidas ? (
-              <IconBellExclamation
-                style={{ width: rem(16), height: rem(16), color: 'red' }}
-              />
-            ) : (
+            <Indicator
+              disabled={!temNaoLidas}
+              position="top-start"
+              color="red"
+              size={8}
+              offset={2}
+            >
               <IconBell style={{ width: rem(16), height: rem(16) }} />
-            )
+            </Indicator>
           }
-          active={isActive('/app/notificacoes')}
+          activeOptions={{ exact: true }}
         />
+
+        {isGestor && (
+          <NavLink
+            component={Link}
+            to="/app/instituicao"
+            label="Instituição"
+            leftSection={
+              <IconBuildingCommunity
+                style={{ width: rem(16), height: rem(16) }}
+              />
+            }
+            activeOptions={{ exact: true }}
+          />
+        )}
       </AppShell.Navbar>
 
       <AppShell.Main>

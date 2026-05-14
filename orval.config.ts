@@ -3,7 +3,6 @@ import { defineConfig } from 'orval'
 export default defineConfig({
   sipe: {
     input: {
-      //target: 'http://localhost:8000/api/schema',
       target: 'schema.json',
     },
     output: {
@@ -22,6 +21,7 @@ export default defineConfig({
           name: 'customFormData',
         },
       },
+      biome: true,
     },
     hooks: {},
   },

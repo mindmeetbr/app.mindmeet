@@ -4,8 +4,8 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import { EstadoCivilEnum } from './estadoCivilEnum';
-import { BlankEnum } from './blankEnum';
+import { EstadoCivilEnum } from './estadoCivilEnum'
+import { BlankEnum } from './blankEnum'
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const PacienteEstadoCivil = {...EstadoCivilEnum,...BlankEnum,} as const
+export const PacienteEstadoCivil = { ...EstadoCivilEnum, ...BlankEnum } as const

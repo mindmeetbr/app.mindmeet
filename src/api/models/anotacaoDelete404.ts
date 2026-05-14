@@ -5,4 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type AnotacaoDelete404 = {[key: string]: unknown};
+export type AnotacaoDelete404 = { [key: string]: unknown }

@@ -5,90 +5,59 @@ import {
   Text,
   Group,
   ActionIcon,
-  TextInput,
-  Card,
   rem,
   Flex,
   Badge,
 } from '@mantine/core'
 import {
   IconPlus,
-  IconSearch,
   IconEye,
   IconEdit,
-  IconTrash,
   IconPhone,
   IconMail,
 } from '@tabler/icons-react'
 import { useState } from 'react'
 import dayjs from 'dayjs'
 import { PageLayout } from '../../../components/layout'
-import {
-  usePacienteList,
-  usePacienteDelete,
-} from '../../../api/endpoints/api/api'
-import { notifications } from '@mantine/notifications'
+import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import { PapelEnum, type Paciente } from '../../../api/models'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
+import { exigirPapel } from '../../../utils/auth'
+import useAuthStore from '../../../stores/auth-store'
+import { useUsuarioDetail } from '../../../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app/pacientes/')({
+  beforeLoad: exigirPapel(PapelEnum.PSICOLOGO),
   component: PacientesPage,
 })
 
+const COLUNAS_PACIENTES = [
+  { chave: 'paciente', label: 'Paciente' },
+  { chave: 'contato', label: 'Contato' },
+  { chave: 'idade', label: 'Idade' },
+  { chave: 'queixa', label: 'Queixa Principal' },
+  { chave: 'acoes', label: 'Ações', largura: 100 },
+]
+
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
-  const { data: pacientes, isLoading, isError } = usePacienteList()
-  const { mutate: apagarPaciente } = usePacienteDelete()
+  const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
 
-  const calcularIdade = (dataNascimento: string) => {
-    return dayjs().diff(dayjs(dataNascimento), 'year')
-  }
+  const { data, isLoading, isError, refetch } = usePacienteList(
+    { pagina, tamanho },
+    { query: { queryKey: ['pacientes', pagina, tamanho] } }
+  )
 
-  const handleClick = (idPaciente: string) => {
-    const apagar = window.confirm(
-      'Tem certeza que deseja apagar este paciente?'
-    )
-
-    if (apagar) {
-      apagarPaciente(
-        { idPaciente },
-        {
-          onSuccess: () => {
-            notifications.show({
-              title: 'Sucesso',
-              message: 'Paciente apagado com sucesso.',
-              color: 'green',
-            })
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Erro',
-              message: 'Não foi possível apagar o paciente, tente novamente.',
-              color: 'red',
-            })
-          },
-        }
-      )
-    }
-  }
-
-  if (isLoading) {
-    return <p>Carregando pacientes...</p>
-  }
-
-  if (isError || !pacientes) {
-    return <p>Não foi possível carregar seus pacientes, tente novamente.</p>
-  }
-
-  if (pacientes.length === 0) {
-    return <p>Nenhum paciente cadastrado.</p>
-  }
-
-  const pacientesFiltrados = pacientes.filter(
+  const listaPacientes = data?.results ?? []
+  const pacientesFiltrados = listaPacientes.filter(
     paciente =>
       paciente.nome_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
       paciente.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const linhasTabela = pacientesFiltrados.map(paciente => (
+  const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
         <Group gap="sm">
@@ -129,13 +98,13 @@ function TabelaPacientes() {
         </div>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{calcularIdade(paciente.data_nascimento)} anos</Text>
+        <Text size="sm">
+          {dayjs().diff(dayjs(paciente.data_nascimento), 'year')} anos
+        </Text>
       </Table.Td>
       <Table.Td>
         <Text lineClamp={2}>
-          {paciente.informacoes_clinicas?.queixa_principal
-            ? paciente.informacoes_clinicas.queixa_principal
-            : 'Nenhuma'}
+          {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
         </Text>
       </Table.Td>
       <Table.Td>
@@ -155,60 +124,45 @@ function TabelaPacientes() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
-          <ActionIcon
-            variant="light"
-            color="red"
-            size="sm"
-            disabled={!!paciente.acompanhado_por}
-            onClick={() => handleClick(paciente.id)}
-          >
-            <IconTrash style={{ width: rem(14), height: rem(14) }} />
-          </ActionIcon>
         </Flex>
       </Table.Td>
     </Table.Tr>
-  ))
+  )
 
   return (
-    <Card withBorder radius="md" p="md">
-      <Group mb="md">
-        <TextInput
-          placeholder="Buscar por nome ou email..."
-          leftSection={
-            <IconSearch style={{ width: rem(16), height: rem(16) }} />
-          }
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ flex: 1 }}
-        />
-      </Group>
-
-      <Table.ScrollContainer minWidth={800}>
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Paciente</Table.Th>
-              <Table.Th>Contato</Table.Th>
-              <Table.Th>Idade</Table.Th>
-              <Table.Th>Queixa Principal</Table.Th>
-              <Table.Th>Ações</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{linhasTabela}</Table.Tbody>
-        </Table>
-
-        {pacientesFiltrados.length === 0 && (
-          <Text ta="center" py="xl" c="dimmed">
-            Nenhum paciente encontrado
-          </Text>
-        )}
-      </Table.ScrollContainer>
-    </Card>
+    <TabelaPaginada
+      dados={pacientesFiltrados}
+      total={data?.count ?? 0}
+      isLoading={isLoading}
+      isError={isError}
+      onRetry={refetch}
+      colunas={COLUNAS_PACIENTES}
+      renderLinha={renderLinhaPaciente}
+      pagina={pagina}
+      tamanho={tamanho}
+      onPaginaChange={setPagina}
+      onTamanhoChange={setTamanho}
+      termoBusca={searchTerm}
+      onBuscaChange={setSearchTerm}
+      placeholderBusca="Buscar por nome ou email..."
+      mensagemVazia="Nenhum paciente encontrado."
+      mensagemErro="Não foi possível carregar seus pacientes. Tente novamente."
+    />
   )
 }
 
 function PacientesPage() {
+  useAlterarTitle('Seus Pacientes')
   const router = useRouter()
+  const { data: dadosUsuario } = useUsuarioDetail({
+    query: {
+      queryKey: ['dados-usuario'],
+      staleTime: 5 * 60 * 1000,
+    },
+  })
+
+
+  const temVinculo = !!dadosUsuario?.vinculo
 
   return (
     <PageLayout
@@ -218,7 +172,7 @@ function PacientesPage() {
       ]}
       title="Pacientes"
       description="Gerencie o cadastro e acompanhe o histórico dos seus pacientes"
-      primaryAction={{
+      primaryAction={temVinculo ? undefined : {
         label: 'Novo Paciente',
         icon: <IconPlus style={{ width: rem(16), height: rem(16) }} />,
         onClick: () => router.navigate({ to: '/app/pacientes/novo' }),

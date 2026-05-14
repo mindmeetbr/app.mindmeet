@@ -21,7 +21,9 @@ import {
   usePacienteCreate,
   usePacienteUpdate,
   usePacienteDetail,
-} from '../../../api/endpoints/api/api'
+} from '../../../api/endpoints/pacientes/pacientes'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { type BreadcrumbItem } from '../../../components/layout'
 
 export const Route = createFileRoute('/app/pacientes/novo')({
   component: NovoPacientePage,
@@ -37,6 +39,7 @@ function NovoPacientePage() {
 
   const isEditing = !!search.id
   const pacienteId = search.id
+  useAlterarTitle(isEditing ? 'Editar Paciente' : 'Novo Paciente')
 
   const { mutate: criarPaciente } = usePacienteCreate()
   const { mutate: editarPaciente } = usePacienteUpdate()
@@ -95,7 +98,7 @@ function NovoPacientePage() {
 
       endereco: {
         cep: '',
-        endereco: '',
+        rua: '',
         numero: '',
         complemento: '',
         bairro: '',
@@ -127,7 +130,7 @@ function NovoPacientePage() {
       },
     }
 
-    if (isEditing && pacienteId && isSuccess && paciente) {
+    if (isEditing && pacienteId && paciente) {
       return paciente
     }
 
@@ -149,6 +152,11 @@ function NovoPacientePage() {
       data_nascimento: (value: string) =>
         !value ? 'Data de nascimento é obrigatória' : null,
       cpf: (value: string) => (!value ? 'CPF é obrigatório' : null),
+      contato_emergencia: {
+        nome: value => (!value ? 'Nome do contato é obrigatório' : null),
+        numero_telefone: value =>
+          !value ? 'Telefone do contato é obrigatório' : null,
+      },
     },
   })
 
@@ -164,7 +172,7 @@ function NovoPacientePage() {
     try {
       if (isEditing) {
         editarPaciente(
-          { idPaciente: pacienteId!, data: values },
+          { id: pacienteId!, data: values },
           {
             onSuccess: () => {
               router.navigate({
@@ -217,7 +225,7 @@ function NovoPacientePage() {
   }
 
   const getBreadcrumbs = () => {
-    const breadcrumbs = [{ label: 'Pacientes', href: '/app/pacientes' }]
+    const breadcrumbs: BreadcrumbItem[] = [{ label: 'Pacientes', href: '/app/pacientes' }]
 
     if (isEditing) {
       breadcrumbs.push({
@@ -367,9 +375,9 @@ function NovoPacientePage() {
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6 }}>
                   <TextInput
-                    label="Endereço"
+                    label="Rua"
                     placeholder="Rua, Avenida..."
-                    {...form.getInputProps('endereco.endereco')}
+                    {...form.getInputProps('endereco.rua')}
                   />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 3 }}>
@@ -465,6 +473,8 @@ function NovoPacientePage() {
                   <TextInput
                     label="Nome"
                     placeholder="Nome do contato"
+                    required
+                    withAsterisk
                     {...form.getInputProps('contato_emergencia.nome')}
                   />
                 </Grid.Col>
@@ -472,6 +482,8 @@ function NovoPacientePage() {
                   <TextInput
                     label="Telefone"
                     placeholder="(11) 99999-9999"
+                    required
+                    withAsterisk
                     {...form.getInputProps(
                       'contato_emergencia.numero_telefone'
                     )}

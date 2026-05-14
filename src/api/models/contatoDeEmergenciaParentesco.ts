@@ -4,8 +4,11 @@
  * MindMeet API
  * OpenAPI spec version: 1.0.0
  */
-import { ParentescoEnum } from './parentescoEnum';
-import { BlankEnum } from './blankEnum';
+import { ParentescoEnum } from './parentescoEnum'
+import { BlankEnum } from './blankEnum'
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ContatoDeEmergenciaParentesco = {...ParentescoEnum,...BlankEnum,} as const
+export const ContatoDeEmergenciaParentesco = {
+  ...ParentescoEnum,
+  ...BlankEnum,
+} as const

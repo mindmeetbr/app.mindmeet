@@ -1,0 +1,175 @@
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+
+import { PageLayout } from '../../../components/layout'
+import {
+  Card,
+  Stack,
+  Text,
+  Divider,
+  rem,
+  Grid,
+  Title,
+  LoadingOverlay,
+  Center,
+  Alert,
+} from '@mantine/core'
+import { IconAlertCircle, IconEdit } from '@tabler/icons-react'
+
+import { EstadoEnum } from '../../../api/models'
+
+import {
+  getEstadoBadge,
+  getTipoBadge,
+  formatarDataHora,
+  formatarData,
+  formatarHora,
+} from '../../../utils/agenda'
+import { useAgendamentoDetail } from '../../../api/endpoints/agendamentos/agendamentos'
+export const Route = createFileRoute('/app/agenda/$id')({
+  component: AgendamentoDetalhePage,
+})
+
+function AgendamentoDetalhePage() {
+  const router = useRouter()
+  const { id } = Route.useParams()
+  const { data: agendamento, isLoading, isError } = useAgendamentoDetail(id)
+
+  if (isLoading) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Agenda', href: '/app/agenda' },
+          {
+            label: 'Agendamento com Paciente',
+            isCurrentPage: true,
+          },
+        ]}
+        title="Agendamento"
+      >
+        <LoadingOverlay visible overlayProps={{ blur: 2 }} />
+      </PageLayout>
+    )
+  }
+
+  if (isError || agendamento === undefined) {
+    return (
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/app' },
+          {
+            label: 'Agendamento com Paciente',
+            isCurrentPage: true,
+          },
+        ]}
+        title="Agendamento"
+        description="Gerencie seus agendamentos e consultas"
+      >
+        <Center mt="xl">
+          <Alert
+            icon={<IconAlertCircle size={16} />}
+            title="Erro ao carregar dados"
+            color="red"
+            variant="filled"
+          >
+            Não foi possível carregar o agendamento. Tente novamente mais tarde.
+          </Alert>
+        </Center>
+      </PageLayout>
+    )
+  }
+
+  const tituloLayout = `Agendamento com ${agendamento.paciente.nome_completo} (${formatarDataHora(
+    agendamento.data,
+    agendamento.horario_inicio
+  )})`
+
+  return (
+    <PageLayout
+      breadcrumbs={[
+        { label: 'Agenda', href: '/app/agenda' },
+        {
+          label: `Agendamento com ${agendamento.paciente.nome_completo}`,
+          isCurrentPage: true,
+        },
+      ]}
+      title={tituloLayout}
+      primaryAction={{
+        label: 'Editar',
+        icon: <IconEdit style={{ width: rem(16), height: rem(16) }} />,
+        variant: 'light',
+        onClick: () =>
+          router.navigate({ to: '/app/agenda/novo', search: { id } }),
+      }}
+    >
+      <Stack gap="lg">
+        <Card withBorder p="xl" radius="md">
+          <Stack gap="md">
+            <Title order={4}>Informações do Paciente</Title>
+            <Divider />
+            <Grid>
+              <Grid.Col span={4}>
+                <Text fw={600}>Nome do(a) Paciente:</Text>
+                <Text>{agendamento.paciente.nome_completo}</Text>
+              </Grid.Col>
+              <Grid.Col span={4}>
+                <Text fw={600}>Email do(a) Paciente:</Text>
+                <Text>{agendamento.paciente.email}</Text>
+              </Grid.Col>
+              <Grid.Col span={4}>
+                <Text fw={600}>Telefone do(a) Paciente:</Text>
+                <Text>
+                  {agendamento.paciente.numero_telefone
+                    ? agendamento.paciente.numero_telefone
+                    : 'Sem telefone'}
+                </Text>
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        </Card>
+
+        <Card withBorder p="xl" radius="md">
+          <Stack>
+            <Title order={4}>Informações Gerais</Title>
+            <Divider />
+            <Grid>
+              <Grid.Col span={4}>
+                <Text fw={600}>Data:</Text>
+                <Text>{formatarData(agendamento.data)}</Text>
+              </Grid.Col>
+              <Grid.Col span={4}>
+                <Text fw={600}>Horário de Início:</Text>
+                <Text>{formatarHora(agendamento.horario_inicio)}</Text>
+              </Grid.Col>
+              <Grid.Col span={4}>
+                <Text fw={600}>Horário de Fim:</Text>
+                <Text>{formatarHora(agendamento.horario_fim)}</Text>
+              </Grid.Col>
+              <Grid.Col span="auto">
+                <Text fw={600}>Tipo de Agendamento:</Text>
+                <Text>{getTipoBadge(agendamento.tipo)}</Text>
+              </Grid.Col>
+              <Grid.Col span="auto">
+                <Text fw={600}>Estado:</Text>
+                <Text>
+                  {agendamento.estado
+                    ? getEstadoBadge(agendamento.estado)
+                    : 'Desconhecido'}
+                </Text>
+              </Grid.Col>
+              {agendamento.estado === EstadoEnum.cancelado && (
+                <Grid.Col span="auto">
+                  <Text fw={600}>Motivo do Cancelamento:</Text>
+                  <Text>
+                    {agendamento.motivo_cancelamento
+                      ? agendamento.motivo_cancelamento
+                      : 'Não informado'}
+                  </Text>
+                </Grid.Col>
+              )}
+            </Grid>
+          </Stack>
+        </Card>
+      </Stack>
+    </PageLayout>
+  )
+}

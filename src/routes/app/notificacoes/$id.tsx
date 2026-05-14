@@ -1,11 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
 import { Card, Text, Title } from '@mantine/core'
-import { useNotificacaoDetail } from '../../../api/endpoints/api/api'
+import { useNotificacaoDetail } from '../../../api/endpoints/notificacoes/notificacoes'
 import type { Notificacao } from '../../../api/models'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/notificacoes/$id')({
-  component: RouteComponent,
+  component: NotificacaoIndividual,
 })
 
 interface CardNotificacaoProps {
@@ -35,24 +38,27 @@ function CardNotificacao(props: CardNotificacaoProps) {
         <Title order={1}>{notificacao.titulo}</Title>
       </Card.Section>
       <Text style={{ whiteSpace: 'pre-wrap' }}>{notificacao.mensagem}</Text>
-      {notificacao.tipo === 'CONFIRMACAO' && notificacao && (
-        <Link
-          to="/app/aprovar"
-          search={{
-            id: notificacao.dados_extras.id || '',
-            token: notificacao.dados_extras.token! || '',
-          }}
-        >
-          Ir para página de aprovação
-        </Link>
-      )}
     </Card>
   )
 }
 
-function RouteComponent() {
+function NotificacaoIndividual() {
   const { id } = Route.useParams()
-  const { data: notificacao, isLoading, isError } = useNotificacaoDetail(id)
+  const {
+    data: notificacao,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useNotificacaoDetail(id)
+  const queryClient = useQueryClient()
+
+  useAlterarTitle(notificacao?.titulo ?? 'Notificação')
+
+  useEffect(() => {
+    if (isSuccess) {
+      queryClient.invalidateQueries({ queryKey: ['notificacoes-pendentes'] })
+    }
+  }, [isSuccess, queryClient])
 
   return (
     <PageLayout

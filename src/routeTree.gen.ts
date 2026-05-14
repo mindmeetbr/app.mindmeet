@@ -9,30 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AppRouteImport } from './routes/app'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CadastroIndexRouteImport } from './routes/cadastro/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as PsicologoIdRouteImport } from './routes/psicologo/$id'
+import { Route as CadastroPsicologoRouteImport } from './routes/cadastro/psicologo'
+import { Route as CadastroGestorRouteImport } from './routes/cadastro/gestor'
 import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
-import { Route as AppConfiguracoesRouteImport } from './routes/app/configuracoes'
-import { Route as AppAprovarRouteImport } from './routes/app/aprovar'
 import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
 import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificacoes/index'
+import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
+import { Route as AppDisponibilidadeIndexRouteImport } from './routes/app/disponibilidade/index'
+import { Route as AppConfiguracoesIndexRouteImport } from './routes/app/configuracoes/index'
+import { Route as AppAgendaIndexRouteImport } from './routes/app/agenda/index'
 import { Route as AppPacientesNovoRouteImport } from './routes/app/pacientes/novo'
 import { Route as AppPacientesIdRouteImport } from './routes/app/pacientes/$id'
 import { Route as AppNotificacoesIdRouteImport } from './routes/app/notificacoes/$id'
+import { Route as AppInstituicaoNovoPsicologoRouteImport } from './routes/app/instituicao/novo-psicologo'
+import { Route as AppInstituicaoNovoPacienteRouteImport } from './routes/app/instituicao/novo-paciente'
+import { Route as AppInstituicaoEditarRouteImport } from './routes/app/instituicao/editar'
+import { Route as AppAgendaNovoRouteImport } from './routes/app/agenda/novo'
+import { Route as AppAgendaIdRouteImport } from './routes/app/agenda/$id'
 
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CadastroRoute = CadastroRouteImport.update({
-  id: '/cadastro',
-  path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -40,14 +49,14 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroIndexRoute = CadastroIndexRouteImport.update({
+  id: '/cadastro/',
+  path: '/cadastro/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -60,19 +69,19 @@ const PsicologoIdRoute = PsicologoIdRouteImport.update({
   path: '/psicologo/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroPsicologoRoute = CadastroPsicologoRouteImport.update({
+  id: '/cadastro/psicologo',
+  path: '/cadastro/psicologo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroGestorRoute = CadastroGestorRouteImport.update({
+  id: '/cadastro/gestor',
+  path: '/cadastro/gestor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppDisponibilidadeRoute = AppDisponibilidadeRouteImport.update({
   id: '/disponibilidade',
   path: '/disponibilidade',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAprovarRoute = AppAprovarRouteImport.update({
-  id: '/aprovar',
-  path: '/aprovar',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
@@ -83,6 +92,26 @@ const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
 const AppNotificacoesIndexRoute = AppNotificacoesIndexRouteImport.update({
   id: '/notificacoes/',
   path: '/notificacoes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInstituicaoIndexRoute = AppInstituicaoIndexRouteImport.update({
+  id: '/instituicao/',
+  path: '/instituicao/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDisponibilidadeIndexRoute = AppDisponibilidadeIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppDisponibilidadeRoute,
+} as any)
+const AppConfiguracoesIndexRoute = AppConfiguracoesIndexRouteImport.update({
+  id: '/configuracoes/',
+  path: '/configuracoes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgendaIndexRoute = AppAgendaIndexRouteImport.update({
+  id: '/agenda/',
+  path: '/agenda/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPacientesNovoRoute = AppPacientesNovoRouteImport.update({
@@ -100,55 +129,108 @@ const AppNotificacoesIdRoute = AppNotificacoesIdRouteImport.update({
   path: '/notificacoes/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInstituicaoNovoPsicologoRoute =
+  AppInstituicaoNovoPsicologoRouteImport.update({
+    id: '/instituicao/novo-psicologo',
+    path: '/instituicao/novo-psicologo',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppInstituicaoNovoPacienteRoute =
+  AppInstituicaoNovoPacienteRouteImport.update({
+    id: '/instituicao/novo-paciente',
+    path: '/instituicao/novo-paciente',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppInstituicaoEditarRoute = AppInstituicaoEditarRouteImport.update({
+  id: '/instituicao/editar',
+  path: '/instituicao/editar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgendaNovoRoute = AppAgendaNovoRouteImport.update({
+  id: '/agenda/novo',
+  path: '/agenda/novo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgendaIdRoute = AppAgendaIdRouteImport.update({
+  id: '/agenda/$id',
+  path: '/agenda/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/sobre': typeof SobreRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
+  '/cadastro': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
+  '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
+  '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
+  '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
+  '/app/configuracoes': typeof AppConfiguracoesIndexRoute
+  '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
+  '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/sobre': typeof SobreRoute
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app': typeof AppIndexRoute
+  '/cadastro': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
+  '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
+  '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
+  '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda': typeof AppAgendaIndexRoute
+  '/app/configuracoes': typeof AppConfiguracoesIndexRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
+  '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/app': typeof AppRouteWithChildren
-  '/cadastro': typeof CadastroRoute
   '/login': typeof LoginRoute
-  '/app/aprovar': typeof AppAprovarRoute
-  '/app/configuracoes': typeof AppConfiguracoesRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRoute
+  '/sobre': typeof SobreRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
+  '/cadastro/gestor': typeof CadastroGestorRoute
+  '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
   '/app/': typeof AppIndexRoute
+  '/cadastro/': typeof CadastroIndexRoute
+  '/app/agenda/$id': typeof AppAgendaIdRoute
+  '/app/agenda/novo': typeof AppAgendaNovoRoute
+  '/app/instituicao/editar': typeof AppInstituicaoEditarRoute
+  '/app/instituicao/novo-paciente': typeof AppInstituicaoNovoPacienteRoute
+  '/app/instituicao/novo-psicologo': typeof AppInstituicaoNovoPsicologoRoute
   '/app/notificacoes/$id': typeof AppNotificacoesIdRoute
   '/app/pacientes/$id': typeof AppPacientesIdRoute
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
+  '/app/agenda/': typeof AppAgendaIndexRoute
+  '/app/configuracoes/': typeof AppConfiguracoesIndexRoute
+  '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
+  '/app/instituicao/': typeof AppInstituicaoIndexRoute
   '/app/notificacoes/': typeof AppNotificacoesIndexRoute
   '/app/pacientes/': typeof AppPacientesIndexRoute
 }
@@ -156,78 +238,106 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/app'
-    | '/cadastro'
     | '/login'
-    | '/app/aprovar'
-    | '/app/configuracoes'
+    | '/sobre'
     | '/app/disponibilidade'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app/'
+    | '/cadastro'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
+    | '/app/instituicao/editar'
+    | '/app/instituicao/novo-paciente'
+    | '/app/instituicao/novo-psicologo'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda'
+    | '/app/configuracoes'
+    | '/app/disponibilidade/'
+    | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
-    | '/cadastro'
     | '/login'
-    | '/app/aprovar'
-    | '/app/configuracoes'
-    | '/app/disponibilidade'
+    | '/sobre'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app'
+    | '/cadastro'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
+    | '/app/instituicao/editar'
+    | '/app/instituicao/novo-paciente'
+    | '/app/instituicao/novo-psicologo'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda'
+    | '/app/configuracoes'
+    | '/app/disponibilidade'
+    | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/app'
-    | '/cadastro'
     | '/login'
-    | '/app/aprovar'
-    | '/app/configuracoes'
+    | '/sobre'
     | '/app/disponibilidade'
+    | '/cadastro/gestor'
+    | '/cadastro/psicologo'
     | '/psicologo/$id'
     | '/app/'
+    | '/cadastro/'
+    | '/app/agenda/$id'
+    | '/app/agenda/novo'
+    | '/app/instituicao/editar'
+    | '/app/instituicao/novo-paciente'
+    | '/app/instituicao/novo-psicologo'
     | '/app/notificacoes/$id'
     | '/app/pacientes/$id'
     | '/app/pacientes/novo'
+    | '/app/agenda/'
+    | '/app/configuracoes/'
+    | '/app/disponibilidade/'
+    | '/app/instituicao/'
     | '/app/notificacoes/'
     | '/app/pacientes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   AppRoute: typeof AppRouteWithChildren
-  CadastroRoute: typeof CadastroRoute
   LoginRoute: typeof LoginRoute
+  SobreRoute: typeof SobreRoute
+  CadastroGestorRoute: typeof CadastroGestorRoute
+  CadastroPsicologoRoute: typeof CadastroPsicologoRoute
   PsicologoIdRoute: typeof PsicologoIdRoute
+  CadastroIndexRoute: typeof CadastroIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cadastro': {
-      id: '/cadastro'
-      path: '/cadastro'
-      fullPath: '/cadastro'
-      preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -237,18 +347,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro/': {
+      id: '/cadastro/'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -265,25 +375,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PsicologoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro/psicologo': {
+      id: '/cadastro/psicologo'
+      path: '/cadastro/psicologo'
+      fullPath: '/cadastro/psicologo'
+      preLoaderRoute: typeof CadastroPsicologoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro/gestor': {
+      id: '/cadastro/gestor'
+      path: '/cadastro/gestor'
+      fullPath: '/cadastro/gestor'
+      preLoaderRoute: typeof CadastroGestorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/disponibilidade': {
       id: '/app/disponibilidade'
       path: '/disponibilidade'
       fullPath: '/app/disponibilidade'
       preLoaderRoute: typeof AppDisponibilidadeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/configuracoes': {
-      id: '/app/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/app/configuracoes'
-      preLoaderRoute: typeof AppConfiguracoesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/aprovar': {
-      id: '/app/aprovar'
-      path: '/aprovar'
-      fullPath: '/app/aprovar'
-      preLoaderRoute: typeof AppAprovarRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pacientes/': {
@@ -298,6 +408,34 @@ declare module '@tanstack/react-router' {
       path: '/notificacoes'
       fullPath: '/app/notificacoes'
       preLoaderRoute: typeof AppNotificacoesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/instituicao/': {
+      id: '/app/instituicao/'
+      path: '/instituicao'
+      fullPath: '/app/instituicao'
+      preLoaderRoute: typeof AppInstituicaoIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/disponibilidade/': {
+      id: '/app/disponibilidade/'
+      path: '/'
+      fullPath: '/app/disponibilidade/'
+      preLoaderRoute: typeof AppDisponibilidadeIndexRouteImport
+      parentRoute: typeof AppDisponibilidadeRoute
+    }
+    '/app/configuracoes/': {
+      id: '/app/configuracoes/'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agenda/': {
+      id: '/app/agenda/'
+      path: '/agenda'
+      fullPath: '/app/agenda'
+      preLoaderRoute: typeof AppAgendaIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/pacientes/novo': {
@@ -321,29 +459,87 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificacoesIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/instituicao/novo-psicologo': {
+      id: '/app/instituicao/novo-psicologo'
+      path: '/instituicao/novo-psicologo'
+      fullPath: '/app/instituicao/novo-psicologo'
+      preLoaderRoute: typeof AppInstituicaoNovoPsicologoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/instituicao/novo-paciente': {
+      id: '/app/instituicao/novo-paciente'
+      path: '/instituicao/novo-paciente'
+      fullPath: '/app/instituicao/novo-paciente'
+      preLoaderRoute: typeof AppInstituicaoNovoPacienteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/instituicao/editar': {
+      id: '/app/instituicao/editar'
+      path: '/instituicao/editar'
+      fullPath: '/app/instituicao/editar'
+      preLoaderRoute: typeof AppInstituicaoEditarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agenda/novo': {
+      id: '/app/agenda/novo'
+      path: '/agenda/novo'
+      fullPath: '/app/agenda/novo'
+      preLoaderRoute: typeof AppAgendaNovoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agenda/$id': {
+      id: '/app/agenda/$id'
+      path: '/agenda/$id'
+      fullPath: '/app/agenda/$id'
+      preLoaderRoute: typeof AppAgendaIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppDisponibilidadeRouteChildren {
+  AppDisponibilidadeIndexRoute: typeof AppDisponibilidadeIndexRoute
+}
+
+const AppDisponibilidadeRouteChildren: AppDisponibilidadeRouteChildren = {
+  AppDisponibilidadeIndexRoute: AppDisponibilidadeIndexRoute,
+}
+
+const AppDisponibilidadeRouteWithChildren =
+  AppDisponibilidadeRoute._addFileChildren(AppDisponibilidadeRouteChildren)
+
 interface AppRouteChildren {
-  AppAprovarRoute: typeof AppAprovarRoute
-  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
-  AppDisponibilidadeRoute: typeof AppDisponibilidadeRoute
+  AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
+  AppAgendaIdRoute: typeof AppAgendaIdRoute
+  AppAgendaNovoRoute: typeof AppAgendaNovoRoute
+  AppInstituicaoEditarRoute: typeof AppInstituicaoEditarRoute
+  AppInstituicaoNovoPacienteRoute: typeof AppInstituicaoNovoPacienteRoute
+  AppInstituicaoNovoPsicologoRoute: typeof AppInstituicaoNovoPsicologoRoute
   AppNotificacoesIdRoute: typeof AppNotificacoesIdRoute
   AppPacientesIdRoute: typeof AppPacientesIdRoute
   AppPacientesNovoRoute: typeof AppPacientesNovoRoute
+  AppAgendaIndexRoute: typeof AppAgendaIndexRoute
+  AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
+  AppInstituicaoIndexRoute: typeof AppInstituicaoIndexRoute
   AppNotificacoesIndexRoute: typeof AppNotificacoesIndexRoute
   AppPacientesIndexRoute: typeof AppPacientesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAprovarRoute: AppAprovarRoute,
-  AppConfiguracoesRoute: AppConfiguracoesRoute,
-  AppDisponibilidadeRoute: AppDisponibilidadeRoute,
+  AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
+  AppAgendaIdRoute: AppAgendaIdRoute,
+  AppAgendaNovoRoute: AppAgendaNovoRoute,
+  AppInstituicaoEditarRoute: AppInstituicaoEditarRoute,
+  AppInstituicaoNovoPacienteRoute: AppInstituicaoNovoPacienteRoute,
+  AppInstituicaoNovoPsicologoRoute: AppInstituicaoNovoPsicologoRoute,
   AppNotificacoesIdRoute: AppNotificacoesIdRoute,
   AppPacientesIdRoute: AppPacientesIdRoute,
   AppPacientesNovoRoute: AppPacientesNovoRoute,
+  AppAgendaIndexRoute: AppAgendaIndexRoute,
+  AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
+  AppInstituicaoIndexRoute: AppInstituicaoIndexRoute,
   AppNotificacoesIndexRoute: AppNotificacoesIndexRoute,
   AppPacientesIndexRoute: AppPacientesIndexRoute,
 }
@@ -352,11 +548,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   AppRoute: AppRouteWithChildren,
-  CadastroRoute: CadastroRoute,
   LoginRoute: LoginRoute,
+  SobreRoute: SobreRoute,
+  CadastroGestorRoute: CadastroGestorRoute,
+  CadastroPsicologoRoute: CadastroPsicologoRoute,
   PsicologoIdRoute: PsicologoIdRoute,
+  CadastroIndexRoute: CadastroIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

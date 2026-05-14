@@ -1,0 +1,49 @@
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.logo {
+  font-weight: 600;
+  text-decoration: none;
+  color: #1c1c1c;
+}
+
+.active {
+  font-weight: 500;
+}
+
+/* HERO */
+.hero {
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+}
+
+/* SECTIONS */
+.section {
+  padding: 4rem 0;
+}
+
+/* CARDS */
+.card {
+  border: 1px solid #f1f3f5;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #d0bfff;
+  transform: translateY(-2px);
+}
+
+/* CTA */
+.cta {
+  padding: 5rem 0;
+}

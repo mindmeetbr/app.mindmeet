@@ -1,10 +1,44 @@
-.test {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: var(--mantine--);
-    
+.nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.logo {
+  font-weight: 600;
+  text-decoration: none;
+  color: #1c1c1c;
+}
+
+/* HERO */
+.hero {
+  padding-top: 8rem;
+  padding-bottom: 6rem;
+}
+
+/* SECTIONS */
+.section {
+  padding: 5rem 0;
+}
+
+/* CARDS */
+.card {
+  border: 1px solid #f1f3f5;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #d0bfff;
+  transform: translateY(-2px);
+}
+
+/* CTA */
+.cta {
+  padding: 6rem 0;
 }

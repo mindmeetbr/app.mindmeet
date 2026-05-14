@@ -5,4 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type AnotacaoUpdate400 = {[key: string]: unknown};
+export type AnotacaoUpdate400 = { [key: string]: unknown }

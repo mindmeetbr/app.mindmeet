@@ -1,60 +1,132 @@
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Group,
+  Stack,
+  Badge,
+  SimpleGrid,
+  Card,
+} from '@mantine/core'
+import { Link } from '@tanstack/react-router'
+import styles from './index.module.css'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button, Container, Flex, Group, Stack, Text } from '@mantine/core'
-
-import classes from './index.module.css'
 
 export const Route = createFileRoute('/')({
-  component: Index,
+  component: HomePage,
 })
 
-function Index() {
-
+function HomePage() {
   return (
-    <div className={classes.test}>
-      <Container size={900}>
-        <Flex direction="row" gap="md" justify="space-between">
-          <Stack gap="sm">
-            <h1>
-              A{' '}
-              <Text
-                component="span"
-                variant="gradient"
-                gradient={{ from: 'blue', to: 'cyan' }}
-                inherit
-              >
-                fully featured
-              </Text>{' '}
-              React components and hooks library
-            </h1>
+    <>
+      {/* HERO */}
+      <Container size="md" className={styles.hero}>
+        <Stack gap="lg" align="center">
+          <Badge color="indigo" variant="light">
+            Gestão clínica simplificada
+          </Badge>
 
-            <Text>
-              Build fully functional accessible web applications with ease –
-              Mantine includes more than 100 customizable components and hooks
-              to cover you in any situation
-            </Text>
+          <Title ta="center" className={styles.title}>
+            Organize sua rotina clínica
+            <br />
+            sem esforço
+          </Title>
 
-            <Group>
-              <Button
-                size="xl"
-                variant="gradient"
-                gradient={{ from: 'blue', to: 'cyan' }}
-              >
-                Get started
-              </Button>
+          <Text c="dimmed" size="lg" ta="center" maw={520}>
+            Agenda, pacientes e registros em um só lugar — pensado para
+            psicólogos que querem mais clareza no dia a dia.
+          </Text>
 
-              <Button
-                component="a"
-                href="https://github.com/mantinedev/mantine"
-                size="xl"
-                variant="default"
-              >
-                GitHub
-              </Button>
-            </Group>
-          </Stack>
-          <img src="https://mantine.dev/static/logo.svg" alt="Mantine logo" />
-        </Flex>
+          <Group>
+            <Button component={Link} to="/cadastro" size="md" radius="xl">
+              Criar conta gratuita
+            </Button>
+          </Group>
+        </Stack>
       </Container>
-    </div>
+
+      {/* FUNCIONALIDADES */}
+      <Container size="lg" id="funcionalidades" className={styles.section}>
+        <Stack gap="xs" mb="xl">
+          <Badge color="fuchsia" variant="light">
+            Funcionalidades
+          </Badge>
+
+          <Title order={2}>Tudo que você precisa para atender melhor</Title>
+
+          <Text c="dimmed" maw={480}>
+            Sem complexidade desnecessária — apenas o essencial para organizar
+            sua prática clínica.
+          </Text>
+        </Stack>
+
+        <SimpleGrid cols={3} spacing="lg">
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Agenda</Title>
+            <Text size="sm" c="dimmed">
+              Visualize sua semana com clareza e evite conflitos
+              automaticamente.
+            </Text>
+          </Card>
+
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Pacientes</Title>
+            <Text size="sm" c="dimmed">
+              Centralize informações importantes em um só lugar.
+            </Text>
+          </Card>
+
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Registros</Title>
+            <Text size="sm" c="dimmed">
+              Acompanhe a evolução clínica com histórico organizado.
+            </Text>
+          </Card>
+
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Notificações</Title>
+            <Text size="sm" c="dimmed">
+              Receba lembretes importantes do seu fluxo de atendimento.
+            </Text>
+          </Card>
+
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Institucional</Title>
+            <Text size="sm" c="dimmed">
+              Gerencie equipes e supervisões em um único sistema.
+            </Text>
+          </Card>
+
+          <Card className={styles.card} radius="md" padding="lg">
+            <Title order={4}>Segurança</Title>
+            <Text size="sm" c="dimmed">
+              Dados protegidos com autenticação segura e boas práticas.
+            </Text>
+          </Card>
+        </SimpleGrid>
+      </Container>
+
+      {/* CTA FINAL */}
+      <Container size="sm" className={styles.cta}>
+        <Stack align="center" gap="md">
+          <Title ta="center">Comece a organizar sua prática hoje</Title>
+
+          <Text c="dimmed" ta="center">
+            Crie sua conta gratuitamente e veja como pode ser mais simples.
+          </Text>
+
+          <Button
+            component={Link}
+            to="/cadastro"
+            size="md"
+            radius="xl"
+            color="fuchsia"
+          >
+            Criar conta gratuita
+          </Button>
+        </Stack>
+      </Container>
+    </>
   )
 }
