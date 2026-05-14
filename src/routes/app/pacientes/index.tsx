@@ -25,6 +25,8 @@ import { usePaginacao } from '../../../hooks/usePaginacao'
 import { PapelEnum, type Paciente } from '../../../api/models'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { exigirPapel } from '../../../utils/auth'
+import useAuthStore from '../../../stores/auth-store'
+import { useUsuarioDetail } from '../../../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app/pacientes/')({
   beforeLoad: exigirPapel(PapelEnum.PSICOLOGO),
@@ -152,6 +154,15 @@ function TabelaPacientes() {
 function PacientesPage() {
   useAlterarTitle('Seus Pacientes')
   const router = useRouter()
+  const { data: dadosUsuario } = useUsuarioDetail({
+    query: {
+      queryKey: ['dados-usuario'],
+      staleTime: 5 * 60 * 1000,
+    },
+  })
+
+
+  const temVinculo = !!dadosUsuario?.vinculo
 
   return (
     <PageLayout
@@ -161,7 +172,7 @@ function PacientesPage() {
       ]}
       title="Pacientes"
       description="Gerencie o cadastro e acompanhe o histórico dos seus pacientes"
-      primaryAction={{
+      primaryAction={temVinculo ? undefined : {
         label: 'Novo Paciente',
         icon: <IconPlus style={{ width: rem(16), height: rem(16) }} />,
         onClick: () => router.navigate({ to: '/app/pacientes/novo' }),
