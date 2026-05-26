@@ -78,8 +78,6 @@ function NovoPsicologo() {
   })
 
   const handleSubmit = (values: typeof form.values) => {
-    // TODO: integrar com a API
-    console.log(JSON.stringify(values, null, 2))
     cadastrarPsicologo(
       { data: values },
       {
