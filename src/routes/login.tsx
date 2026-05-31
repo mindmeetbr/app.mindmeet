@@ -16,7 +16,7 @@ import {
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { z } from 'zod'
-// import { useApiAuthLoginCreate } from '../api/endpoints/api/api'
+
 import { useAuthLoginCreate } from '../api/endpoints/auth/auth'
 import useAuthStore from '../stores/auth-store'
 import { Link } from '@tanstack/react-router'
@@ -24,6 +24,8 @@ import { useEffect, useRef } from 'react'
 import { showNotification } from '@mantine/notifications'
 import { IconCheck } from '@tabler/icons-react'
 import { useAlterarTitle } from '../hooks/useAlterarTitle'
+
+import classes from './login.module.css'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: () => {
@@ -111,21 +113,13 @@ function RouteComponent() {
   }
 
   return (
-    <Container
-      size="xs"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <Container size="xs" className={classes.container}>
       <Card
         shadow="sm"
         padding="xl"
         radius="md"
         withBorder
-        style={{ width: '100%', maxWidth: '400px' }}
+        className={classes.card}
       >
         <Stack gap="lg">
           <div style={{ textAlign: 'center' }}>

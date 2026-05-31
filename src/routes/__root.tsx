@@ -32,7 +32,7 @@ function RootComponent() {
   return (
     <>
       {paginaInicial && (
-        <header style={{ height: 45 }}>
+        <header style={{ height: 48 }}>
           <Flex
             justify="space-between"
             align="center"
@@ -89,7 +89,7 @@ function RootComponent() {
         </header>
       )}
 
-      <main>
+      <main className={classes.page}>
         <Outlet />
       </main>
       <TanStackRouterDevtools />
