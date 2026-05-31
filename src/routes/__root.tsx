@@ -47,23 +47,6 @@ function RootComponent() {
               </Text>
             </Flex>
 
-            {/* meio */}
-            <Flex flex={1} justify="center">
-              <Group gap="lg">
-                <Text
-                  component={Link}
-                  className={classes.link}
-                  to="/sobre"
-                  activeOptions={{ exact: true }}
-                  activeProps={{
-                    className: `${classes.link} ${classes.active}`,
-                  }}
-                >
-                  Sobre o Projeto
-                </Text>
-              </Group>
-            </Flex>
-
             {/* direita */}
             <Flex flex={1} justify="flex-end">
               <Group>
