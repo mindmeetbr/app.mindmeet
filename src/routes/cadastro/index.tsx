@@ -53,7 +53,7 @@ function TipoCadastro() {
 
   return (
     <Container size="md" py="xl">
-      <Stack align="center" mb="xl">
+      <Stack align="center" mb="xl" gap="xs">
         <Title order={2} ta="center">
           Escolha o tipo de conta
         </Title>
@@ -63,7 +63,7 @@ function TipoCadastro() {
         </Text>
       </Stack>
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="xl">
         {planos.map(plano => (
           <Card
             key={plano.tipo}
@@ -74,7 +74,7 @@ function TipoCadastro() {
           >
             <Stack gap="xs">
               <Title order={3}>{plano.tipo}</Title>
-              <Text size="sm" c="dimmed">
+              <Text size="sm" c="dimmed" ta="justify">
                 {plano.descricao}
               </Text>
 
@@ -88,8 +88,8 @@ function TipoCadastro() {
                   </ThemeIcon>
                 }
               >
-                {plano.funcionalidades.map(f => (
-                  <List.Item key={f}>{f}</List.Item>
+                {plano.funcionalidades.map(funcionalidade => (
+                  <List.Item key={funcionalidade}>{funcionalidade}</List.Item>
                 ))}
               </List>
 
@@ -99,6 +99,7 @@ function TipoCadastro() {
                   to={plano.rota}
                   color={plano.cor}
                   radius="md"
+                  w="100%"
                 >
                   Criar conta de {plano.tipo}
                 </Button>
