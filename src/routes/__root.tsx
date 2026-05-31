@@ -26,7 +26,6 @@ function RootComponent() {
     to: '/cadastro',
     fuzzy: false,
   })
-
   const isLogin = matchRoute({ from: '/', to: '/login' })
 
   return (
@@ -49,19 +48,25 @@ function RootComponent() {
 
             {/* direita */}
             <Flex flex={1} justify="flex-end">
-              <Group>
+              <Group gap="xs" wrap="nowrap">
                 {!isLogin && (
                   <Button
                     variant="outline"
                     size="xs"
                     component={Link}
                     to="/login"
+                    px={{ base: 'xs', sm: 'md' }}
                   >
                     Entrar
                   </Button>
                 )}
                 {!isCadastroIndex && (
-                  <Button size="xs" component={Link} to="/cadastro">
+                  <Button
+                    size="xs"
+                    component={Link}
+                    to="/cadastro"
+                    px={{ base: 'xs', sm: 'md' }}
+                  >
                     Cadastrar-se
                   </Button>
                 )}
