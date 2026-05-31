@@ -24,7 +24,7 @@
 
 /* SECTIONS */
 .section {
-  padding: 5rem 0;
+  padding: 5rem 1.5rem;
 }
 
 /* CARDS */
@@ -40,5 +40,5 @@
 
 /* CTA */
 .cta {
-  padding: 6rem 0;
+  padding: 6rem 1.5rem;
 }
