@@ -10,7 +10,15 @@ video {
   height: auto;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   margin: 0;
   overflow-x: hidden;
+}
+
+:root {
+  --navbar-height: 3rem;
 }
