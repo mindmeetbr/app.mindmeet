@@ -1,0 +1,13 @@
+.page {
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mantine-spacing-md) 0;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  margin: 1.5rem;
+}
