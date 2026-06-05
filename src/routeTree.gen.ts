@@ -18,7 +18,6 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as PsicologoIdRouteImport } from './routes/psicologo/$id'
 import { Route as CadastroPsicologoRouteImport } from './routes/cadastro/psicologo'
 import { Route as CadastroGestorRouteImport } from './routes/cadastro/gestor'
-import { Route as AppDisponibilidadeRouteImport } from './routes/app/disponibilidade'
 import { Route as AppPacientesIndexRouteImport } from './routes/app/pacientes/index'
 import { Route as AppNotificacoesIndexRouteImport } from './routes/app/notificacoes/index'
 import { Route as AppInstituicaoIndexRouteImport } from './routes/app/instituicao/index'
@@ -79,11 +78,6 @@ const CadastroGestorRoute = CadastroGestorRouteImport.update({
   path: '/cadastro/gestor',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppDisponibilidadeRoute = AppDisponibilidadeRouteImport.update({
-  id: '/disponibilidade',
-  path: '/disponibilidade',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppPacientesIndexRoute = AppPacientesIndexRouteImport.update({
   id: '/pacientes/',
   path: '/pacientes/',
@@ -100,9 +94,9 @@ const AppInstituicaoIndexRoute = AppInstituicaoIndexRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppDisponibilidadeIndexRoute = AppDisponibilidadeIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppDisponibilidadeRoute,
+  id: '/disponibilidade/',
+  path: '/disponibilidade/',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppConfiguracoesIndexRoute = AppConfiguracoesIndexRouteImport.update({
   id: '/configuracoes/',
@@ -162,7 +156,6 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/sobre': typeof SobreRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -178,7 +171,7 @@ export interface FileRoutesByFullPath {
   '/app/pacientes/novo': typeof AppPacientesNovoRoute
   '/app/agenda': typeof AppAgendaIndexRoute
   '/app/configuracoes': typeof AppConfiguracoesIndexRoute
-  '/app/disponibilidade/': typeof AppDisponibilidadeIndexRoute
+  '/app/disponibilidade': typeof AppDisponibilidadeIndexRoute
   '/app/instituicao': typeof AppInstituicaoIndexRoute
   '/app/notificacoes': typeof AppNotificacoesIndexRoute
   '/app/pacientes': typeof AppPacientesIndexRoute
@@ -213,7 +206,6 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/sobre': typeof SobreRoute
-  '/app/disponibilidade': typeof AppDisponibilidadeRouteWithChildren
   '/cadastro/gestor': typeof CadastroGestorRoute
   '/cadastro/psicologo': typeof CadastroPsicologoRoute
   '/psicologo/$id': typeof PsicologoIdRoute
@@ -241,7 +233,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/sobre'
-    | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
     | '/psicologo/$id'
@@ -257,7 +248,7 @@ export interface FileRouteTypes {
     | '/app/pacientes/novo'
     | '/app/agenda'
     | '/app/configuracoes'
-    | '/app/disponibilidade/'
+    | '/app/disponibilidade'
     | '/app/instituicao'
     | '/app/notificacoes'
     | '/app/pacientes'
@@ -291,7 +282,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/sobre'
-    | '/app/disponibilidade'
     | '/cadastro/gestor'
     | '/cadastro/psicologo'
     | '/psicologo/$id'
@@ -389,13 +379,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CadastroGestorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/disponibilidade': {
-      id: '/app/disponibilidade'
-      path: '/disponibilidade'
-      fullPath: '/app/disponibilidade'
-      preLoaderRoute: typeof AppDisponibilidadeRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/pacientes/': {
       id: '/app/pacientes/'
       path: '/pacientes'
@@ -419,10 +402,10 @@ declare module '@tanstack/react-router' {
     }
     '/app/disponibilidade/': {
       id: '/app/disponibilidade/'
-      path: '/'
-      fullPath: '/app/disponibilidade/'
+      path: '/disponibilidade'
+      fullPath: '/app/disponibilidade'
       preLoaderRoute: typeof AppDisponibilidadeIndexRouteImport
-      parentRoute: typeof AppDisponibilidadeRoute
+      parentRoute: typeof AppRoute
     }
     '/app/configuracoes/': {
       id: '/app/configuracoes/'
@@ -497,19 +480,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AppDisponibilidadeRouteChildren {
-  AppDisponibilidadeIndexRoute: typeof AppDisponibilidadeIndexRoute
-}
-
-const AppDisponibilidadeRouteChildren: AppDisponibilidadeRouteChildren = {
-  AppDisponibilidadeIndexRoute: AppDisponibilidadeIndexRoute,
-}
-
-const AppDisponibilidadeRouteWithChildren =
-  AppDisponibilidadeRoute._addFileChildren(AppDisponibilidadeRouteChildren)
-
 interface AppRouteChildren {
-  AppDisponibilidadeRoute: typeof AppDisponibilidadeRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppAgendaIdRoute: typeof AppAgendaIdRoute
   AppAgendaNovoRoute: typeof AppAgendaNovoRoute
@@ -521,13 +492,13 @@ interface AppRouteChildren {
   AppPacientesNovoRoute: typeof AppPacientesNovoRoute
   AppAgendaIndexRoute: typeof AppAgendaIndexRoute
   AppConfiguracoesIndexRoute: typeof AppConfiguracoesIndexRoute
+  AppDisponibilidadeIndexRoute: typeof AppDisponibilidadeIndexRoute
   AppInstituicaoIndexRoute: typeof AppInstituicaoIndexRoute
   AppNotificacoesIndexRoute: typeof AppNotificacoesIndexRoute
   AppPacientesIndexRoute: typeof AppPacientesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppDisponibilidadeRoute: AppDisponibilidadeRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppAgendaIdRoute: AppAgendaIdRoute,
   AppAgendaNovoRoute: AppAgendaNovoRoute,
@@ -539,6 +510,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppPacientesNovoRoute: AppPacientesNovoRoute,
   AppAgendaIndexRoute: AppAgendaIndexRoute,
   AppConfiguracoesIndexRoute: AppConfiguracoesIndexRoute,
+  AppDisponibilidadeIndexRoute: AppDisponibilidadeIndexRoute,
   AppInstituicaoIndexRoute: AppInstituicaoIndexRoute,
   AppNotificacoesIndexRoute: AppNotificacoesIndexRoute,
   AppPacientesIndexRoute: AppPacientesIndexRoute,
