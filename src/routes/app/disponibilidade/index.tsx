@@ -98,19 +98,18 @@ function BotaoAdicionarHorarios() {
 
   return (
     <>
-      <Group>
-        <Button
-          leftSection={<IconClockPlus size={16} />}
-          onClick={() => setOpened(true)}
-        >
-          Adicionar horário
-        </Button>
-      </Group>
+      <Button
+        variant="outline"
+        leftSection={<IconClockPlus size={16} />}
+        onClick={() => setOpened(true)}
+      >
+        Adicionar horários em lote
+      </Button>
 
       <Modal
         opened={opened}
         onClose={handleFechar}
-        title="Adicionar horários"
+        title="Adicionar horários em lote para um dia da semana"
         centered
       >
         <Stack gap="sm">
@@ -290,8 +289,14 @@ function CardDisponibilidades() {
         loading: carregando,
       }}
     >
-      <Flex align="flex-start" justify="space-between" gap="lg" w="100%">
-        <Card withBorder p="xl" miw={600} style={{ maxWidth: 600 }}>
+      <Flex
+        align="flex-start"
+        justify="space-between"
+        direction={{ base: 'column', md: 'row' }}
+        gap="lg"
+        w="100%"
+      >
+        <Card withBorder p="xl" w="100%" maw="600px">
           <LoadingOverlay visible={isLoading} />
           <Accordion variant="contained" multiple>
             {disponibilidadesLocais.map((dia, diaIndex) => {
@@ -326,6 +331,7 @@ function CardDisponibilidades() {
                           variant="filled"
                           color="blue"
                           size="sm"
+                          mr="sm"
                           onClick={handleAdicionarHorario}
                           aria-label="Adicionar horário"
                         >
@@ -406,7 +412,12 @@ function CardDisponibilidades() {
           </Accordion>
         </Card>
 
-        <BotaoAdicionarHorarios />
+        <Flex
+          w={{ base: '100%', md: 'auto' }}
+          justify={{ base: 'center', md: 'flex-start' }}
+        >
+          <BotaoAdicionarHorarios />
+        </Flex>
       </Flex>
     </PageLayout>
   )
