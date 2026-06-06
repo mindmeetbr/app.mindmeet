@@ -17,7 +17,7 @@ import {
 } from '@mantine/core'
 import { IconAlertCircle } from '@tabler/icons-react'
 import { SecaoHeader } from './SecaoHeader'
-import { BotoesEdicao } from './BotoesEdicao.'
+import { BotoesEdicao } from './BotoesEdicao'
 export function AbaPerfil({
   dadosPerfil,
   vinculado,

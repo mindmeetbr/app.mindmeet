@@ -17,7 +17,7 @@ import {
 import { DateInput } from '@mantine/dates'
 import { notifications } from '@mantine/notifications'
 import { SecaoHeader } from './SecaoHeader'
-import { BotoesEdicao } from './BotoesEdicao.'
+import { BotoesEdicao } from './BotoesEdicao'
 import { IconAlertCircle } from '@tabler/icons-react'
 
 const UFS = [
@@ -50,13 +50,12 @@ const UFS = [
   'TO',
 ]
 
-export function AbaConta({
-  dadosUsuario,
-  vinculado,
-}: {
+interface AbaContaProps {
   dadosUsuario: MUser | undefined
   vinculado: boolean
-}) {
+}
+
+export function AbaConta({ dadosUsuario, vinculado }: AbaContaProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const queryClient = useQueryClient()
 
