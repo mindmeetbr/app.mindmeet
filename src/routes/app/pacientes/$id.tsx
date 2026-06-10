@@ -26,7 +26,7 @@ import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
 import { BotaoNovaConsulta } from './-components/BotaoNovaConsulta'
-import { PerfilPaciente } from './-components/PerfilPaciente'
+import { PerfilPaciente } from './-components/perfil-paciente/PerfilPaciente'
 import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/pacientes/$id')({
