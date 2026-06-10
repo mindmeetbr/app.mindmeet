@@ -1,86 +1,27 @@
 import type { Paciente } from '../../../../api/models'
-import {
-  Grid,
-  Card,
-  Stack,
-  Avatar,
-  Title,
-  Text,
-  Tooltip,
-  Badge,
-  Group,
-  rem,
-} from '@mantine/core'
-import { IconPhone, IconMail, IconMapPin } from '@tabler/icons-react'
+import { Grid, Card, Stack, Title, Text } from '@mantine/core'
 import dayjs from 'dayjs'
-
-const calcularIdade = (dataNascimento: string) => {
-  return dayjs().diff(dayjs(dataNascimento), 'year')
-}
 
 export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
   return (
-    <Grid>
-      <Grid.Col span={{ base: 4 }}>
-        <Card withBorder radius="md" p="xl">
-          <Stack gap="md" align="center">
-            <Avatar size={120} radius="md">
-              {paciente.nome_completo
-                .split(' ')
-                .map(n => n[0])
-                .join('')
-                .slice(0, 2)}
-            </Avatar>
-
-            <div style={{ textAlign: 'center' }}>
-              <Title order={3}>{paciente.nome_completo}</Title>
-              <Text c="dimmed">
-                {calcularIdade(paciente.data_nascimento)} anos
-              </Text>
-              {paciente?.acompanhado_por && (
-                <Tooltip label={`Acompanhado por ${paciente.acompanhado_por}`}>
-                  <Badge variant="outline">{paciente.acompanhado_por}</Badge>
-                </Tooltip>
-              )}
-            </div>
-
-            <Stack gap="xs" w="100%">
-              <Group gap="xs">
-                <IconPhone style={{ width: rem(16), height: rem(16) }} />
-                <Text size="sm">{paciente.numero_telefone}</Text>
-              </Group>
-              {paciente.numero_celular && (
-                <Group gap="xs">
-                  <IconPhone style={{ width: rem(16), height: rem(16) }} />
-                  <Text size="sm">{paciente.numero_celular}</Text>
-                </Group>
-              )}
-              <Group gap="xs">
-                <IconMail style={{ width: rem(16), height: rem(16) }} />
-                <Text size="sm">{paciente.email}</Text>
-              </Group>
-              {paciente.endereco?.rua && paciente.endereco.bairro && (
-                <Group gap="xs">
-                  <IconMapPin style={{ width: rem(16), height: rem(16) }} />
-                  <Text size="sm">
-                    {paciente.endereco.rua}, {paciente.endereco.bairro}
-                  </Text>
-                </Group>
-              )}
-            </Stack>
-          </Stack>
-        </Card>
-      </Grid.Col>
-
-      <Grid.Col span={{ base: 12, md: 8 }}>
-        <Stack gap="lg">
-          {/* Dados Pessoais */}
+    <Stack gap="lg">
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 6 }}>
           <Card withBorder radius="md" p="xl">
             <Title order={4} mb="md">
               Dados Pessoais
             </Title>
             <Grid>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 6, sm: 4 }}>
+                <Text size="sm" fw={500}>
+                  Nome completo:
+                </Text>
+                <Text size="sm" c="dimmed">
+                  {paciente.nome_completo}
+                </Text>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 6, sm: 4 }}>
                 <Text size="sm" fw={500}>
                   CPF:
                 </Text>
@@ -88,7 +29,7 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                   {paciente.cpf}
                 </Text>
               </Grid.Col>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 6, sm: 4 }}>
                 <Text size="sm" fw={500}>
                   RG:
                 </Text>
@@ -96,7 +37,7 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                   {paciente.rg ? paciente.rg : 'Sem RG cadastrado'}
                 </Text>
               </Grid.Col>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 6, sm: 4 }}>
                 <Text size="sm" fw={500}>
                   Estado Civil:
                 </Text>
@@ -106,7 +47,7 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                     : 'Sem estado civil cadastrado'}
                 </Text>
               </Grid.Col>
-              <Grid.Col span={6}>
+              <Grid.Col span={{ base: 6, sm: 4 }}>
                 <Text size="sm" fw={500}>
                   Profissão:
                 </Text>
@@ -116,7 +57,7 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                     : 'Sem profissão cadastrada'}
                 </Text>
               </Grid.Col>
-              <Grid.Col span={12}>
+              <Grid.Col span={{ base: 6, sm: 4 }}>
                 <Text size="sm" fw={500}>
                   Data de Nascimento:
                 </Text>
@@ -126,15 +67,57 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
               </Grid.Col>
             </Grid>
           </Card>
+        </Grid.Col>
 
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Card withBorder radius="md" p="xl">
+            <Title order={4} mb="md">
+              Dados para Contato
+            </Title>
+            <Grid>
+              <Grid.Col span={{ base: 12, sm: 4 }}>
+                <Text size="sm" fw={500}>
+                  Número de telefone:
+                </Text>
+                <Text size="sm" c="dimmed">
+                  {paciente.numero_telefone}
+                </Text>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 12, sm: 4 }}>
+                <Text size="sm" fw={500}>
+                  Número de celular:
+                </Text>
+                <Text size="sm" c="dimmed">
+                  {paciente.numero_celular
+                    ? paciente.numero_celular
+                    : 'Sem número de celular cadastrado'}
+                </Text>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 12, sm: 4 }}>
+                <Text size="sm" fw={500}>
+                  Endereço de e-mail:
+                </Text>
+                <Text size="sm" c="dimmed">
+                  {paciente.email}
+                </Text>
+              </Grid.Col>
+            </Grid>
+          </Card>
+        </Grid.Col>
+      </Grid>
+
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 6 }}>
           {/* Informações Clínicas */}
           <Card withBorder radius="md" p="xl">
             <Title order={4} mb="md">
               Informações Clínicas
             </Title>
             {paciente.informacoes_clinicas ? (
-              <Stack gap="md">
-                <div>
+              <Grid>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <Text size="sm" fw={500}>
                     Queixa Principal:
                   </Text>
@@ -143,8 +126,8 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                       ? paciente.informacoes_clinicas.queixa_principal
                       : 'Sem queixa principal cadastrada'}
                   </Text>
-                </div>
-                <div>
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <Text size="sm" fw={500}>
                     Medicamentos Atuais:
                   </Text>
@@ -153,8 +136,9 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                       ? paciente.informacoes_clinicas.medicamentos_atuais
                       : 'Sem medicamentos cadastrados'}
                   </Text>
-                </div>
-                <div>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <Text size="sm" fw={500}>
                     Alergias:
                   </Text>
@@ -163,21 +147,22 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                       ? paciente.informacoes_clinicas.alergias
                       : 'Sem alergias cadastradas'}
                   </Text>
-                </div>
-              </Stack>
+                </Grid.Col>
+              </Grid>
             ) : (
               <Text size="sm">Sem informações clínicas cadastradas</Text>
             )}
           </Card>
-
-          {/* Contato de Emergência */}
+        </Grid.Col>
+        {/* Contato de Emergência */}
+        <Grid.Col span={{ base: 12, md: 6 }}>
           <Card withBorder radius="md" p="xl">
             <Title order={4} mb="md">
               Contato de Emergência
             </Title>
             {paciente.contato_emergencia ? (
               <Grid>
-                <Grid.Col span={8}>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
                   <Text size="sm" fw={500}>
                     Nome:
                   </Text>
@@ -187,7 +172,7 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                       : 'Sem nome para contato de emergência'}
                   </Text>
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
                   <Text size="sm" fw={500}>
                     Telefone:
                   </Text>
@@ -197,13 +182,89 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
                       : 'Sem número para contato de emergência'}
                   </Text>
                 </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Parentesco:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.contato_emergencia.parentesco
+                      ? paciente.contato_emergencia.parentesco
+                      : 'Sem parentesco para contato de emergência'}
+                  </Text>
+                </Grid.Col>
               </Grid>
             ) : (
               <Text size="sm">Sem contato de emergência cadastrado</Text>
             )}
           </Card>
-        </Stack>
-      </Grid.Col>
-    </Grid>
+        </Grid.Col>
+        {/* Endereço */}
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <Card withBorder radius="md" p="xl">
+            <Title order={4} mb="md">
+              Endereço
+            </Title>
+            {paciente.endereco ? (
+              <Grid>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    CEP:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.cep ?? 'Não cadastrado'}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Rua:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.rua ?? 'Não cadastrada'}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Número:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.numero ?? 'Não cadastrado'}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Complemento:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.complemento ?? 'Não cadastrado'}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Bairro:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.bairro ?? 'Não cadastrado'}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={{ base: 6, sm: 4 }}>
+                  <Text size="sm" fw={500}>
+                    Cidade/UF:
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {paciente.endereco.cidade && paciente.endereco.uf
+                      ? `${paciente.endereco.cidade} / ${paciente.endereco.uf}`
+                      : (paciente.endereco.cidade ??
+                        paciente.endereco.uf ??
+                        'Não cadastrado')}
+                  </Text>
+                </Grid.Col>
+              </Grid>
+            ) : (
+              <Text size="sm">Sem endereço cadastrado</Text>
+            )}
+          </Card>
+        </Grid.Col>
+      </Grid>
+    </Stack>
   )
 }
