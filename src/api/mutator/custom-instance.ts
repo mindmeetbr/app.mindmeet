@@ -2,8 +2,11 @@ import Axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 import useAuthStore from '../../stores/auth-store'
 import axios from 'axios'
 
+const BASE_URL = import.meta.env.VITE_API_URL
+const REFRESH_URL = `${BASE_URL}api/auth/token/refresh/`
+
 export const AXIOS_INSTANCE = Axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: BASE_URL,
 })
 
 interface ApiError {
@@ -71,12 +74,9 @@ AXIOS_INSTANCE.interceptors.response.use(
 
       return new Promise((resolve, reject) => {
         axios
-          .post<RefreshResponse>(
-            'http://localhost:8000/api/auth/token/refresh',
-            {
-              refresh: refreshToken,
-            }
-          )
+          .post<RefreshResponse>(REFRESH_URL, {
+            refresh: refreshToken,
+          })
           .then(response => {
             const { data } = response
             const newAccessToken = data.access
