@@ -12,7 +12,9 @@ import { Notifications } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
+dayjs.extend(customParseFormat)
 dayjs.locale('pt-br')
 
 const router = createRouter({ routeTree })
