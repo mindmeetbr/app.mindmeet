@@ -7,17 +7,17 @@ import {
   Text,
   Container,
   Card,
-  // Switch,
   Group,
   Stepper,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { DatePickerInput, DatesProvider } from '@mantine/dates'
+import { DatesProvider, DateInput } from '@mantine/dates'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { useUsuarioCreate } from '../../api/endpoints/users/users'
 import { notifications } from '@mantine/notifications'
 import {
+  IconCheck,
   IconX,
   IconUser,
   IconLock,
@@ -25,22 +25,40 @@ import {
   IconCircleCheck,
 } from '@tabler/icons-react'
 import { useState } from 'react'
-import 'dayjs/locale/pt-br'
 import dayjs from 'dayjs'
 import { PapelEnum } from '../../api/models'
+
 export const Route = createFileRoute('/cadastro/psicologo')({
   component: PaginaCadastro,
 })
+
+const requisitosSenha: { label: string; teste: (v: string) => boolean }[] = [
+  { label: 'Mínimo de 8 caracteres', teste: (v: string) => v.length >= 8 },
+  { label: 'Uma letra maiúscula', teste: (v: string) => /[A-Z]/.test(v) },
+  { label: 'Uma letra minúscula', teste: (v: string) => /[a-z]/.test(v) },
+  { label: 'Um número', teste: (v: string) => /[0-9]/.test(v) },
+  {
+    label: 'Um símbolo especial',
+    teste: (v: string) => /[^A-Za-z0-9]/.test(v),
+  },
+]
+
+const camposPasso = [
+  ['nomeCompleto', 'username', 'email', 'dataNascimento'],
+  ['password1', 'password2'],
+  ['crp'],
+]
+
+const formatarCRP = (valor: string) => {
+  const digitos = valor.replace(/\D/g, '').slice(0, 7)
+  if (digitos.length <= 2) return digitos
+  return `${digitos.slice(0, 2)}/${digitos.slice(2)}`
+}
 
 function PaginaCadastro() {
   const router = useRouter()
   const { mutate: criarUsuario } = useUsuarioCreate()
   const [active, setActive] = useState(0)
-  const camposPasso = [
-    ['nomeCompleto', 'username', 'email', 'dataNascimento'],
-    ['password1', 'password2'],
-    ['crp'],
-  ]
 
   const avancarEtapa = () => {
     const camposParaValidar = camposPasso[active]
@@ -78,19 +96,8 @@ function PaginaCadastro() {
       email: value => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'),
 
       password1: value => {
-        if (value.length < 8) {
-          return 'A senha deve ter pelo menos 8 caracteres'
-        }
-        if (!/[A-Z]/.test(value)) {
-          return 'A senha deve conter pelo menos uma letra maiúscula'
-        }
-        if (!/[a-z]/.test(value)) {
-          return 'A senha deve conter pelo menos uma letra minúscula'
-        }
-        if (!/[^A-Za-z0-9]/.test(value)) {
-          return 'A senha deve conter pelo menos um símbolo especial'
-        }
-        return null
+        const falhou = requisitosSenha.find(req => !req.teste(value))
+        return falhou ? `Requisito não atendido: ${falhou.label}` : null
       },
 
       password2: (value, values) => {
@@ -131,8 +138,6 @@ function PaginaCadastro() {
       },
       papel: PapelEnum.PSICOLOGO,
     }
-
-    console.log(JSON.stringify(data, null, 2))
 
     criarUsuario(
       { data },
@@ -224,15 +229,15 @@ function PaginaCadastro() {
                     {...form.getInputProps('email')}
                     error={form.errors.email}
                   />
-                  <DatesProvider
-                    settings={{
-                      locale: 'pt-BR',
-                    }}
-                  >
-                    <DatePickerInput
+                  <DatesProvider settings={{ locale: 'pt-BR' }}>
+                    <DateInput
                       label="Data de nascimento"
-                      placeholder="Selecione sua data da nascimento"
+                      placeholder="Digite no formato DD/MM/AAAA"
                       valueFormat="DD/MM/YYYY"
+                      dateParser={(input: string) => {
+                        const parsed = dayjs(input, 'DD/MM/YYYY', true)
+                        return parsed.isValid() ? parsed.toDate() : null
+                      }}
                       clearable
                       required
                       {...form.getInputProps('dataNascimento')}
@@ -250,11 +255,33 @@ function PaginaCadastro() {
                   <PasswordInput
                     label="Senha"
                     placeholder="Digite sua senha"
-                    description="Deve conter um mínimo de 8 caracteres, letras maiúsculas e minúsculas e simbolos especiais"
                     required
                     {...form.getInputProps('password1')}
                     error={form.errors.password1}
                   />
+                  <Stack gap={4}>
+                    {requisitosSenha.map(req => {
+                      const atendido = req.teste(form.values.password1)
+                      return (
+                        <Group gap={6} key={req.label}>
+                          {atendido ? (
+                            <IconCheck
+                              size={14}
+                              color="var(--mantine-color-green-6)"
+                            />
+                          ) : (
+                            <IconX
+                              size={14}
+                              color="var(--mantine-color-red-6)"
+                            />
+                          )}
+                          <Text size="xs" c={atendido ? 'green' : 'dimmed'}>
+                            {req.label}
+                          </Text>
+                        </Group>
+                      )
+                    })}
+                  </Stack>
                   <PasswordInput
                     label="Confirme sua senha"
                     placeholder="Digite sua senha novamente"
@@ -282,6 +309,10 @@ function PaginaCadastro() {
                     required
                     withAsterisk
                     {...form.getInputProps('crp')}
+                    onChange={event => {
+                      const formatado = formatarCRP(event.currentTarget.value)
+                      form.setFieldValue('crp', formatado)
+                    }}
                     error={form.errors.crp}
                   />
                 </Stack>
