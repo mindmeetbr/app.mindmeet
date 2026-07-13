@@ -26,8 +26,9 @@ import {
   IconLock,
   IconUser,
   IconX,
+  IconCheck,
 } from '@tabler/icons-react'
-import { DatePickerInput, DatesProvider } from '@mantine/dates'
+import { DateInput, DatesProvider } from '@mantine/dates'
 import { useUsuarioCreate } from '../../api/endpoints/users/users'
 import { PapelEnum } from '../../api/models'
 import { notifications } from '@mantine/notifications'
@@ -42,15 +43,36 @@ export const Route = createFileRoute('/cadastro/gestor')({
   component: CadastroGestor,
 })
 
+const requisitosSenha = [
+  { label: 'Mínimo de 8 caracteres', teste: (v: string) => v.length >= 8 },
+  { label: 'Uma letra maiúscula', teste: (v: string) => /[A-Z]/.test(v) },
+  { label: 'Uma letra minúscula', teste: (v: string) => /[a-z]/.test(v) },
+  { label: 'Um número', teste: (v: string) => /[0-9]/.test(v) },
+  {
+    label: 'Um símbolo especial',
+    teste: (v: string) => /[^A-Za-z0-9]/.test(v),
+  },
+]
+
+const camposPasso = [
+  ['nome_completo', 'username', 'email', 'data_nascimento'],
+  ['password1', 'password2'],
+  ['instituicao.nome', 'instituicao.cnpj'],
+]
+
+const formatarCNPJ = (valor: string) => {
+  const digitos = valor.replace(/\D/g, '').slice(0, 14)
+  return digitos
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/^(\d{2})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3/$4')
+    .replace(/(\d{4})(\d)/, '$1-$2')
+}
+
 function CadastroGestor() {
   const router = useRouter()
   const { mutate: criarGestor } = useUsuarioCreate()
-
-  const camposPasso = [
-    ['nome_completo', 'username', 'email', 'data_nascimento'],
-    ['password1', 'password2'],
-    ['instituicao.nome', 'instituicao.cnpj'],
-  ]
+  const [active, setActive] = useState(0)
 
   const avancarEtapa = () => {
     const camposParaValidar = camposPasso[active]
@@ -68,7 +90,6 @@ function CadastroGestor() {
   const voltarEtapa = () =>
     setActive((current: number) => (current > 0 ? current - 1 : current))
 
-  const [active, setActive] = useState(0)
   const form = useForm({
     initialValues: {
       nome_completo: '',
@@ -86,17 +107,10 @@ function CadastroGestor() {
       instituicao: {
         nome: value =>
           value.trim().length > 0 ? null : 'Instituição inválida',
-        cnpj: value => {
-          if (value.length < 14 || value.length > 18) return 'CNPJ inválido'
-          else if (value.length === 18) {
-            return /\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/.test(value)
-              ? null
-              : 'CNPJ inválido'
-          } else if (value.length === 14) {
-            return /\d{14}/.test(value) ? null : 'CNPJ inválido'
-          }
-          return 'CNPJ inválido'
-        },
+        cnpj: value =>
+          /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(value)
+            ? null
+            : 'CNPJ inválido',
       },
 
       nome_completo: value =>
@@ -108,19 +122,8 @@ function CadastroGestor() {
       email: value => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'),
 
       password1: value => {
-        if (value.length < 8) {
-          return 'A senha deve ter pelo menos 8 caracteres'
-        }
-        if (!/[A-Z]/.test(value)) {
-          return 'A senha deve conter pelo menos uma letra maiúscula'
-        }
-        if (!/[a-z]/.test(value)) {
-          return 'A senha deve conter pelo menos uma letra minúscula'
-        }
-        if (!/[^A-Za-z0-9]/.test(value)) {
-          return 'A senha deve conter pelo menos um símbolo especial'
-        }
-        return null
+        const falhou = requisitosSenha.find(req => !req.teste(value))
+        return falhou ? `Requisito não atendido: ${falhou.label}` : null
       },
 
       password2: (value, values) => {
@@ -141,11 +144,13 @@ function CadastroGestor() {
   })
 
   const handleSubmit = (values: typeof form.values) => {
-    console.log(JSON.stringify(values, null, 2))
     const data = {
-      ...form.values,
+      ...values,
       papel: PapelEnum.GESTOR,
     }
+
+    console.log(JSON.stringify(data, null, 2))
+
     criarGestor(
       { data },
       {
@@ -170,6 +175,7 @@ function CadastroGestor() {
       }
     )
   }
+
   return (
     <Container
       size="sm"
@@ -233,15 +239,16 @@ function CadastroGestor() {
                     {...form.getInputProps('email')}
                     error={form.errors.email}
                   />
-                  <DatesProvider
-                    settings={{
-                      locale: 'pt-BR',
-                    }}
-                  >
-                    <DatePickerInput
+
+                  <DatesProvider settings={{ locale: 'pt-BR' }}>
+                    <DateInput
                       label="Data de nascimento"
-                      placeholder="Selecione sua data da nascimento"
+                      placeholder="Digite no formato DD/MM/AAAA"
                       valueFormat="DD/MM/YYYY"
+                      dateParser={(input: string) => {
+                        const parsed = dayjs(input, 'DD/MM/YYYY', true)
+                        return parsed.isValid() ? parsed.toDate() : null
+                      }}
                       clearable
                       required
                       {...form.getInputProps('data_nascimento')}
@@ -263,6 +270,29 @@ function CadastroGestor() {
                     {...form.getInputProps('password1')}
                     error={form.errors.password1}
                   />
+                  <Stack gap={4}>
+                    {requisitosSenha.map(req => {
+                      const atendido = req.teste(form.values.password1)
+                      return (
+                        <Group gap={6} key={req.label}>
+                          {atendido ? (
+                            <IconCheck
+                              size={14}
+                              color="var(--mantine-color-green-6)"
+                            />
+                          ) : (
+                            <IconX
+                              size={14}
+                              color="var(--mantine-color-red-6)"
+                            />
+                          )}
+                          <Text size="xs" c={atendido ? 'green' : 'dimmed'}>
+                            {req.label}
+                          </Text>
+                        </Group>
+                      )
+                    })}
+                  </Stack>
                   <PasswordInput
                     label="Confirme sua senha"
                     placeholder="Digite sua senha novamente"
@@ -294,9 +324,14 @@ function CadastroGestor() {
                   />
                   <TextInput
                     label="CNPJ"
-                    placeholder="Digite o CNPJ da sua instituição"
+                    placeholder="00.000.000/0000-00"
+                    maxLength={18}
                     required
                     {...form.getInputProps('instituicao.cnpj')}
+                    onChange={event => {
+                      const formatado = formatarCNPJ(event.currentTarget.value)
+                      form.setFieldValue('instituicao.cnpj', formatado)
+                    }}
                     // error={form.errors.instituicao.cnpj}
                   />
                 </Stack>
