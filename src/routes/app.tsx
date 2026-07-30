@@ -144,7 +144,7 @@ function AppLayout() {
                 <UnstyledButton>
                   <Group gap={7}>
                     <Avatar size={32} radius="xl" />
-                    <Text fw={500} size="sm" lh={1} mr={3}>
+                    <Text fw={500} size="sm" lh={1} mr={3} visibleFrom="xs">
                       {user?.email || 'Usuário'}
                     </Text>
                     <IconChevronDown
@@ -156,6 +156,14 @@ function AppLayout() {
               </Menu.Target>
 
               <Menu.Dropdown>
+                <Menu.Item disabled style={{ opacity: 1 }} hiddenFrom="xs">
+                  <Text size="xs" c="dimmed">
+                    Autenticado como
+                  </Text>
+                  <Text size="sm" fw={500}>
+                    {user?.nome_completo}
+                  </Text>
+                </Menu.Item>
                 <Menu.Item
                   leftSection={
                     <IconSettings style={{ width: rem(14), height: rem(14) }} />
