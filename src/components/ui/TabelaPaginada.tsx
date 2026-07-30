@@ -91,7 +91,7 @@ export function TabelaPaginada<T>({
         </Group>
       )}
 
-      <Table.ScrollContainer minWidth={800}>
+      <Table.ScrollContainer minWidth={800} style={{ overflowX: 'auto' }}>
         <Table
           striped
           highlightOnHover
