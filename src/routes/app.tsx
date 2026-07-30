@@ -4,6 +4,7 @@ import {
   Outlet,
   redirect,
   useRouter,
+  useRouterState,
 } from '@tanstack/react-router'
 import {
   AppShell,
@@ -39,7 +40,6 @@ import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'
 
-
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
     const { isAuthenticated } = useAuthStore.getState()
@@ -53,6 +53,30 @@ export const Route = createFileRoute('/app')({
 function AppLayout() {
   const { isAuthenticated, logout, user } = useAuthStore()
   const { setColorScheme } = useMantineColorScheme()
+  const redirector = useRouter()
+  const computedColorScheme = useComputedColorScheme('light')
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] =
+    useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
+  const { location } = useRouterState()
+
+  const handleLogoutClick = () => {
+    logout()
+  }
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      redirector.navigate({ to: '/login' })
+    }
+  }, [isAuthenticated, redirector])
+
+  useEffect(() => {
+    closeMobile()
+  }, [location.pathname, closeMobile])
+
+  const isGestor = user?.papel === PapelEnum.GESTOR
+  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
+
   const { data: pendentes } = useNotificacaoPendenteList({
     query: {
       staleTime: 10 * 60 * 1000, // 10 minutos
@@ -62,24 +86,8 @@ function AppLayout() {
       queryKey: ['notificacoes-pendentes'],
     },
   })
-  const redirector = useRouter()
-  const computedColorScheme = useComputedColorScheme('light')
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
-
-  const handleLogoutClick = () => {
-    logout()
-  }
 
   const temNaoLidas = !!pendentes?.nao_lidas && pendentes.nao_lidas > 0
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      redirector.navigate({ to: '/login' })
-    }
-  }, [isAuthenticated, redirector])
-  const isGestor = user?.papel === PapelEnum.GESTOR
-  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
 
   return (
     <AppShell
