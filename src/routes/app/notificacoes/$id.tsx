@@ -6,6 +6,7 @@ import type { Notificacao } from '../../../api/models'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 
 export const Route = createFileRoute('/app/notificacoes/$id')({
   component: NotificacaoIndividual,
@@ -36,6 +37,13 @@ function CardNotificacao(props: CardNotificacaoProps) {
     <Card withBorder padding="lg" radius="md" shadow="sm">
       <Card.Section inheritPadding my="sm">
         <Title order={1}>{notificacao.titulo}</Title>
+        {notificacao.data_criacao && (
+          <Text size="sm" c="dimmed">
+            {dayjs(notificacao.data_criacao).format(
+              'dddd, D [de] MMMM [de] YYYY [as] HH:mm'
+            )}
+          </Text>
+        )}
       </Card.Section>
       <Text style={{ whiteSpace: 'pre-wrap' }}>{notificacao.mensagem}</Text>
     </Card>
