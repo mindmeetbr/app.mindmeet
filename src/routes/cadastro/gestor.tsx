@@ -45,11 +45,6 @@ export const Route = createFileRoute('/cadastro/gestor')({
   component: CadastroGestor,
 })
 
-function CadastroGestor() {
-  const isMobile = useMediaQuery('(max-width: 48rem)')
-
-  const router = useRouter()
-  const { mutate: criarGestor } = useUsuarioCreate()
 const requisitosSenha = [
   { label: 'Mínimo de 8 caracteres', teste: (v: string) => v.length >= 8 },
   { label: 'Uma letra maiúscula', teste: (v: string) => /[A-Z]/.test(v) },
@@ -59,12 +54,6 @@ const requisitosSenha = [
     label: 'Um símbolo especial',
     teste: (v: string) => /[^A-Za-z0-9]/.test(v),
   },
-]
-
-const camposPasso = [
-  ['nome_completo', 'username', 'email', 'data_nascimento'],
-  ['password1', 'password2'],
-  ['instituicao.nome', 'instituicao.cnpj'],
 ]
 
 const formatarCNPJ = (valor: string) => {
@@ -77,8 +66,17 @@ const formatarCNPJ = (valor: string) => {
 }
 
 function CadastroGestor() {
+  const isMobile = useMediaQuery('(max-width: 48rem)')
+
   const router = useRouter()
   const { mutate: criarGestor } = useUsuarioCreate()
+
+  const camposPasso = [
+    ['nome_completo', 'username', 'email', 'data_nascimento'],
+    ['password1', 'password2'],
+    ['instituicao.nome', 'instituicao.cnpj'],
+  ]
+
   const [active, setActive] = useState(0)
 
   const avancarEtapa = () => {
