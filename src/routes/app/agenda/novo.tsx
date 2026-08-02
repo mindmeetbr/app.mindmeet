@@ -334,7 +334,7 @@ function AgendamentoCreatePage() {
             <Stack gap="md">
               <Title order={4}>Dados do Paciente</Title>
               <Grid>
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Paciente"
                     description="Digite o nome ou email para buscar"
@@ -362,7 +362,7 @@ function AgendamentoCreatePage() {
             <Stack gap="md">
               <Title order={4}>Informações do Agendamento</Title>
               <Grid>
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <DatePickerInput
                     locale="pt-br"
                     valueFormat="DD/MM/YYYY"
@@ -374,12 +374,11 @@ function AgendamentoCreatePage() {
                       form.values.data ? dayjs(form.values.data).toDate() : null
                     }
                     onChange={handleDataChange}
-                    placeholder="Escolha uma data para o agendamento"
                     error={form.errors.data}
                   />
                 </Grid.Col>
 
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Horário"
                     description="Horários disponíveis para a data selecionada"
@@ -402,7 +401,7 @@ function AgendamentoCreatePage() {
                   />
                 </Grid.Col>
 
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Tipo de Agendamento"
                     placeholder="Escolha um tipo"
@@ -415,7 +414,7 @@ function AgendamentoCreatePage() {
                   />
                 </Grid.Col>
 
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Estado do Agendamento"
                     placeholder="Escolha um estado"
@@ -428,7 +427,7 @@ function AgendamentoCreatePage() {
                   />
                 </Grid.Col>
 
-                <Grid.Col span={4}>
+                <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Textarea
                     disabled={form.values.estado !== EstadoEnum.cancelado}
                     label="Motivo do Cancelamento"
