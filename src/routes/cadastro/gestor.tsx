@@ -45,11 +45,6 @@ export const Route = createFileRoute('/cadastro/gestor')({
   component: CadastroGestor,
 })
 
-function CadastroGestor() {
-  const isMobile = useMediaQuery('(max-width: 48rem)')
-
-  const router = useRouter()
-  const { mutate: criarGestor } = useUsuarioCreate()
 const requisitosSenha = [
   { label: 'Mínimo de 8 caracteres', teste: (v: string) => v.length >= 8 },
   { label: 'Uma letra maiúscula', teste: (v: string) => /[A-Z]/.test(v) },
