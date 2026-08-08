@@ -78,8 +78,8 @@ export function useDisponibilidadesMerged() {
   return { disponibilidades, idsDisponibilidades, idsHorarios, isLoading }
 }
 
-interface HandleSaveParams {
-  disponibilidades: DisponibilidadeLocal[]
+interface SalvarDiaParams {
+  dia: DisponibilidadeLocal
   idsDisponibilidades: string[]
   idsHorarios: (string | undefined)[]
   salvarDisponibilidade: ReturnType<typeof useDisponibilidadeCreate>['mutate']
@@ -88,28 +88,26 @@ interface HandleSaveParams {
   >['mutate']
 }
 
-export function salvarDisponibilidades({
-  disponibilidades,
+export function salvarDisponibilidadeDia({
+  dia,
   idsDisponibilidades,
   idsHorarios,
   salvarDisponibilidade,
   atualizarDisponibilidade,
-}: HandleSaveParams): void {
-  for (const disp of disponibilidades) {
-    const { id, ...dados } = disp
+}: SalvarDiaParams): void {
+  const { id, ...dados } = dia
 
-    const horariosSerializados = dados.horarios.map(horario => {
-      if (idsHorarios.includes(horario.id)) return horario
-      const { id: _id, ...novoHorario } = horario
-      return novoHorario
-    })
+  const horariosSerializados = dados.horarios.map(horario => {
+    if (idsHorarios.includes(horario.id)) return horario
+    const { id: _id, ...novoHorario } = horario
+    return novoHorario
+  })
 
-    const payload = { ...dados, horarios: horariosSerializados }
+  const payload = { ...dados, horarios: horariosSerializados }
 
-    if (idsDisponibilidades.includes(id)) {
-      atualizarDisponibilidade({ id, data: payload })
-    } else {
-      salvarDisponibilidade({ data: payload })
-    }
+  if (idsDisponibilidades.includes(id)) {
+    atualizarDisponibilidade({ id, data: payload })
+  } else {
+    salvarDisponibilidade({ data: payload })
   }
 }
