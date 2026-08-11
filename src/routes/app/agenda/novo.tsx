@@ -34,6 +34,7 @@ import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
 import { useDebouncedValue } from '@mantine/hooks'
 import type { AxiosError } from 'axios'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/agenda/novo')({
   component: AgendamentoCreatePage,
@@ -99,19 +100,37 @@ function AgendamentoCreatePage() {
   const router = useRouter()
   const busca = useSearch({ from: '/app/agenda/novo' })
   const { user } = useAuthStore()
+  const queryClient = useQueryClient()
 
   const isEditing = !!busca.id
   const idAgendamento = busca.id
 
-  const { mutate: criarAgendamento, isPending: criando } =
-    useAgendamentoCreate()
+  const { mutate: criarAgendamento, isPending: criando } = useAgendamentoCreate(
+    {
+      mutation: {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+          queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
+        },
+      },
+    }
+  )
   const { mutate: editarAgendamento, isPending: editando } =
-    useAgendamentoUpdate()
+    useAgendamentoUpdate({
+      mutation: {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+          queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
+        },
+      },
+    })
   const isSubmitting = criando || editando
 
   const { data: agendamento, isSuccess } = useAgendamentoDetail(
     idAgendamento ?? '',
-    { query: { enabled: isEditing } }
+    {
+      query: { enabled: isEditing },
+    }
   )
 
   const form = useForm<FormValues>({
