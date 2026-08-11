@@ -1,4 +1,4 @@
-import { Card, Group, Table, TextInput, rem } from '@mantine/core'
+import { Card, Group, Table, TextInput, rem, Flex } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 import type { ReactNode } from 'react'
 import { ControlePaginacao } from './ControlePaginacao'
@@ -73,8 +73,8 @@ export function TabelaPaginada<T>({
   return (
     <Card withBorder radius="md" p="md">
       {temHeader && (
-        <Group mb="md" justify="space-between">
-          {onBuscaChange ? (
+        <Flex direction={{ base: 'column', sm: 'row' }} gap="sm" mb="md">
+          {onBuscaChange && (
             <TextInput
               placeholder={placeholderBusca}
               leftSection={
@@ -84,11 +84,9 @@ export function TabelaPaginada<T>({
               onChange={e => onBuscaChange(e.target.value)}
               style={{ flex: 1 }}
             />
-          ) : (
-            <div style={{ flex: 1 }} />
           )}
-          {acoes}
-        </Group>
+          {acoes && <Group gap="sm">{acoes}</Group>}
+        </Flex>
       )}
 
       <Table.ScrollContainer minWidth={800} style={{ overflowX: 'auto' }}>
