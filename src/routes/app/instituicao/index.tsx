@@ -146,6 +146,7 @@ function TabelaPsicologos() {
           component={Link}
           to="/app/instituicao/novo-psicologo"
           leftSection={<IconPlus />}
+          w="100%"
         >
           Adicionar Psicólogo
         </Button>
@@ -183,7 +184,13 @@ function ModalAtribuirPsicologo({
       }
     )
 
-  const { mutate: trocarPsicologo, isPending } = useTrocarPsicologo()
+  const { mutate: trocarPsicologo, isPending } = useTrocarPsicologo({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['pacientes'] })
+      },
+    },
+  })
 
   const opcoesPsicologos =
     psicologos?.results?.map(p => ({
@@ -203,7 +210,6 @@ function ModalAtribuirPsicologo({
             message: `${paciente.nome_completo} foi transferido com sucesso.`,
             color: 'green',
           })
-          queryClient.invalidateQueries({ queryKey: ['pacientes'] })
           onSucesso()
           onClose()
         },
@@ -406,6 +412,7 @@ function TabelaPacientes() {
             component={Link}
             to="/app/instituicao/novo-paciente"
             leftSection={<IconPlus />}
+            w="100%"
           >
             Adicionar Paciente
           </Button>
