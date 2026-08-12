@@ -30,8 +30,8 @@ import type {
 
 import type {
   AdicionarHorarios,
+  AgendaDisponivel,
   AgendaDisponivelParams,
-  AgendaDisponivelResponse,
   Disponibilidade,
   PatchedDisponibilidade,
 } from '../../models'
@@ -770,7 +770,7 @@ export const agendaDisponivel = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<AgendaDisponivelResponse[]>(
+  return customInstance<AgendaDisponivel>(
     {
       url: `/api/disponibilidades/agenda/${idPsicologo}/`,
       method: 'GET',

@@ -38,7 +38,7 @@ import type { ErrorType } from '../../mutator/custom-instance'
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
- * Retorna uma lista de todas as notificações em que o usuário é o destinatário.
+ * Retorna uma lista de todas as notificações do usuário
  * @summary Lista todas as notificações de um usuário
  */
 export const notificacaoList = (
@@ -58,7 +58,7 @@ export const getNotificacaoListQueryKey = (params?: NotificacaoListParams) => {
 
 export const getNotificacaoListQueryOptions = <
   TData = Awaited<ReturnType<typeof notificacaoList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   params?: NotificacaoListParams,
   options?: {
@@ -90,11 +90,11 @@ export const getNotificacaoListQueryOptions = <
 export type NotificacaoListQueryResult = NonNullable<
   Awaited<ReturnType<typeof notificacaoList>>
 >
-export type NotificacaoListQueryError = ErrorType<unknown>
+export type NotificacaoListQueryError = ErrorType<null>
 
 export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   params: undefined | NotificacaoListParams,
   options: {
@@ -121,7 +121,7 @@ export function useNotificacaoList<
 }
 export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   params?: NotificacaoListParams,
   options?: {
@@ -148,7 +148,7 @@ export function useNotificacaoList<
 }
 export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   params?: NotificacaoListParams,
   options?: {
@@ -171,7 +171,7 @@ export function useNotificacaoList<
 
 export function useNotificacaoList<
   TData = Awaited<ReturnType<typeof notificacaoList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   params?: NotificacaoListParams,
   options?: {
@@ -201,7 +201,7 @@ export function useNotificacaoList<
 }
 
 /**
- * Retorna as informações sobre uma notificação, além de marcá-la como lida.
+ * Retorna as informações sobre uma notificação, também a marca como lida.
  * @summary Obtém detalhes sobre uma notificação
  */
 export const notificacaoDetail = (
@@ -221,7 +221,7 @@ export const getNotificacaoDetailQueryKey = (id?: string) => {
 
 export const getNotificacaoDetailQueryOptions = <
   TData = Awaited<ReturnType<typeof notificacaoDetail>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null | null>,
 >(
   id: string,
   options?: {
@@ -258,11 +258,11 @@ export const getNotificacaoDetailQueryOptions = <
 export type NotificacaoDetailQueryResult = NonNullable<
   Awaited<ReturnType<typeof notificacaoDetail>>
 >
-export type NotificacaoDetailQueryError = ErrorType<unknown>
+export type NotificacaoDetailQueryError = ErrorType<null | null>
 
 export function useNotificacaoDetail<
   TData = Awaited<ReturnType<typeof notificacaoDetail>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null | null>,
 >(
   id: string,
   options: {
@@ -289,7 +289,7 @@ export function useNotificacaoDetail<
 }
 export function useNotificacaoDetail<
   TData = Awaited<ReturnType<typeof notificacaoDetail>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null | null>,
 >(
   id: string,
   options?: {
@@ -316,7 +316,7 @@ export function useNotificacaoDetail<
 }
 export function useNotificacaoDetail<
   TData = Awaited<ReturnType<typeof notificacaoDetail>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null | null>,
 >(
   id: string,
   options?: {
@@ -339,7 +339,7 @@ export function useNotificacaoDetail<
 
 export function useNotificacaoDetail<
   TData = Awaited<ReturnType<typeof notificacaoDetail>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null | null>,
 >(
   id: string,
   options?: {
@@ -369,7 +369,7 @@ export function useNotificacaoDetail<
 }
 
 /**
- * Retorna o número total de notificações não-lidas do usuário.
+ * Retorna o número total de notificações não lidas do usuário.
  * @summary Conta as notificações não lidas de um usuário
  */
 export const notificacaoPendenteList = (
@@ -388,7 +388,7 @@ export const getNotificacaoPendenteListQueryKey = () => {
 
 export const getNotificacaoPendenteListQueryOptions = <
   TData = Awaited<ReturnType<typeof notificacaoPendenteList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(options?: {
   query?: Partial<
     UseQueryOptions<
@@ -418,11 +418,11 @@ export const getNotificacaoPendenteListQueryOptions = <
 export type NotificacaoPendenteListQueryResult = NonNullable<
   Awaited<ReturnType<typeof notificacaoPendenteList>>
 >
-export type NotificacaoPendenteListQueryError = ErrorType<unknown>
+export type NotificacaoPendenteListQueryError = ErrorType<null>
 
 export function useNotificacaoPendenteList<
   TData = Awaited<ReturnType<typeof notificacaoPendenteList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   options: {
     query: Partial<
@@ -448,7 +448,7 @@ export function useNotificacaoPendenteList<
 }
 export function useNotificacaoPendenteList<
   TData = Awaited<ReturnType<typeof notificacaoPendenteList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   options?: {
     query?: Partial<
@@ -474,7 +474,7 @@ export function useNotificacaoPendenteList<
 }
 export function useNotificacaoPendenteList<
   TData = Awaited<ReturnType<typeof notificacaoPendenteList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   options?: {
     query?: Partial<
@@ -496,7 +496,7 @@ export function useNotificacaoPendenteList<
 
 export function useNotificacaoPendenteList<
   TData = Awaited<ReturnType<typeof notificacaoPendenteList>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<null>,
 >(
   options?: {
     query?: Partial<
