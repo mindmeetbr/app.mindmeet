@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
   Table,
-  Avatar,
   Text,
   Group,
   ActionIcon,
@@ -77,18 +76,9 @@ function TabelaPsicologos() {
   const renderLinhaPsicologo = (psicologo: PerfilPsicologo) => (
     <Table.Tr key={psicologo.id}>
       <Table.Td>
-        <Group gap="sm">
-          <Avatar>
-            {psicologo.usuario?.nome_completo
-              .split(' ')
-              .map(n => n[0])
-              .join('')
-              .slice(0, 2)}
-          </Avatar>
-          <Text fw={500} size="sm">
-            {psicologo.usuario?.nome_completo}
-          </Text>
-        </Group>
+        <Text fw={500} size="sm">
+          {psicologo.usuario?.nome_completo}
+        </Text>
       </Table.Td>
       <Table.Td>{psicologo.usuario?.email}</Table.Td>
       <Table.Td>{psicologo.crp}</Table.Td>
@@ -315,18 +305,9 @@ function TabelaPacientes() {
   const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
-        <Group gap="sm">
-          <Avatar>
-            {paciente.nome_completo
-              ?.split(' ')
-              .map(n => n[0])
-              .join('')
-              .slice(0, 2)}
-          </Avatar>
-          <Text fw={500} size="sm">
-            {paciente.nome_completo}
-          </Text>
-        </Group>
+        <Text fw={500} size="sm">
+          {paciente.nome_completo}
+        </Text>
       </Table.Td>
       <Table.Td>
         <div>
