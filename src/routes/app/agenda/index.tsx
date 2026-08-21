@@ -224,23 +224,23 @@ function TabelaAgendamentos() {
 }
 
 function AgendaFutura() {
-  const limparHorizonte = (h: string | undefined) => {
+  const limparHorizonte = (h: string) => {
+    if (h === 'todos') return undefined
     const dias = Number(h)
-    if (Number.isNaN(dias)) return undefined
-    return dias
+    return Number.isNaN(dias) ? undefined : dias
   }
 
   const [horizonteBusca, setHorizonteBusca] = useState<string>('7')
-  const { data } = useAgendaPessoal(
-    { dias: limparHorizonte(horizonteBusca) },
-    {
-      query: {
-        queryKey: ['agendamentosFuturos', horizonteBusca],
-        staleTime: 1000 * 60 * 5,
-        placeholderData: previousData => previousData,
-      },
-    }
-  )
+  const dias = limparHorizonte(horizonteBusca)
+  const params = dias !== undefined ? { dias } : {}
+
+  const { data } = useAgendaPessoal(params, {
+    query: {
+      queryKey: ['agendamentosFuturos', horizonteBusca],
+      staleTime: 1000 * 60 * 5,
+      placeholderData: previousData => previousData,
+    },
+  })
   const agendamentos = data ?? []
 
   const agendamentosFuturos = agendamentos
