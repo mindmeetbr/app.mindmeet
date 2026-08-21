@@ -9,15 +9,8 @@ import {
   Flex,
   Badge,
 } from '@mantine/core'
-import {
-  IconPlus,
-  IconEye,
-  IconEdit,
-  IconPhone,
-  IconMail,
-} from '@tabler/icons-react'
+import { IconPlus, IconEye, IconEdit } from '@tabler/icons-react'
 import { useState } from 'react'
-import dayjs from 'dayjs'
 import { PageLayout } from '../../../components/layout'
 import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
@@ -25,7 +18,6 @@ import { usePaginacao } from '../../../hooks/usePaginacao'
 import { PapelEnum, type Paciente } from '../../../api/models'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { exigirPapel } from '../../../utils/auth'
-import useAuthStore from '../../../stores/auth-store'
 import { useUsuarioDetail } from '../../../api/endpoints/users/users'
 
 export const Route = createFileRoute('/app/pacientes/')({
@@ -35,9 +27,8 @@ export const Route = createFileRoute('/app/pacientes/')({
 
 const COLUNAS_PACIENTES = [
   { chave: 'paciente', label: 'Paciente' },
-  { chave: 'contato', label: 'Contato' },
-  { chave: 'idade', label: 'Idade' },
-  { chave: 'queixa', label: 'Queixa Principal' },
+  { chave: 'telefone', label: 'Telefone' },
+  { chave: 'email', label: 'E-mail' },
   { chave: 'acoes', label: 'Ações', largura: 100 },
 ]
 
@@ -86,26 +77,10 @@ function TabelaPacientes() {
         </Group>
       </Table.Td>
       <Table.Td>
-        <div>
-          <Group gap="xs">
-            <IconPhone style={{ width: rem(12), height: rem(12) }} />
-            <Text size="xs">{paciente.numero_telefone}</Text>
-          </Group>
-          <Group gap="xs">
-            <IconMail style={{ width: rem(12), height: rem(12) }} />
-            <Text size="xs">{paciente.email}</Text>
-          </Group>
-        </div>
+        <Text size="xs">{paciente.numero_telefone}</Text>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">
-          {dayjs().diff(dayjs(paciente.data_nascimento), 'year')} anos
-        </Text>
-      </Table.Td>
-      <Table.Td>
-        <Text lineClamp={2}>
-          {paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma'}
-        </Text>
+        <Text size="xs">{paciente.email}</Text>
       </Table.Td>
       <Table.Td>
         <Flex gap="xs">
@@ -161,7 +136,6 @@ function PacientesPage() {
     },
   })
 
-
   const temVinculo = !!dadosUsuario?.vinculo
 
   return (
@@ -172,11 +146,15 @@ function PacientesPage() {
       ]}
       title="Pacientes"
       description="Gerencie o cadastro e acompanhe o histórico dos seus pacientes"
-      primaryAction={temVinculo ? undefined : {
-        label: 'Novo Paciente',
-        icon: <IconPlus style={{ width: rem(16), height: rem(16) }} />,
-        onClick: () => router.navigate({ to: '/app/pacientes/novo' }),
-      }}
+      primaryAction={
+        temVinculo
+          ? undefined
+          : {
+              label: 'Novo Paciente',
+              icon: <IconPlus style={{ width: rem(16), height: rem(16) }} />,
+              onClick: () => router.navigate({ to: '/app/pacientes/novo' }),
+            }
+      }
     >
       <TabelaPacientes />
     </PageLayout>

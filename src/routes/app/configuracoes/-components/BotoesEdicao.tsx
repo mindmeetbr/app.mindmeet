@@ -1,24 +1,26 @@
 import { Tooltip, ActionIcon, Group, Button, rem } from '@mantine/core'
 import { IconDeviceFloppy, IconPencil, IconX } from '@tabler/icons-react'
 
+interface BotoesEdicaoProps {
+  isEditing: boolean
+  onEditar: () => void
+  onSalvar: () => void
+  onCancelar: () => void
+}
+
 export function BotoesEdicao({
   isEditing,
   onEditar,
   onSalvar,
   onCancelar,
-}: {
-  isEditing: boolean
-  onEditar: () => void
-  onSalvar: () => void
-  onCancelar: () => void
-}) {
+}: BotoesEdicaoProps) {
   if (!isEditing) {
     return (
       <Tooltip label="Editar informações">
         <ActionIcon
           variant="subtle"
-          color="gray"
-          size="lg"
+          color="secondary"
+          size="xl"
           onClick={onEditar}
           aria-label="Editar"
         >
@@ -31,7 +33,7 @@ export function BotoesEdicao({
   return (
     <Group gap="xs">
       <Button
-        variant="subtle"
+        variant="filled"
         color="gray"
         size="xs"
         leftSection={<IconX size={14} />}

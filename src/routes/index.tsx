@@ -28,9 +28,7 @@ function HomePage() {
           </Badge>
 
           <Title ta="center" className={styles.title}>
-            Organize sua rotina clínica
-            <br />
-            sem esforço
+            Organize sua rotina clínica sem esforço
           </Title>
 
           <Text c="dimmed" size="lg" ta="center" maw={520}>
@@ -55,13 +53,13 @@ function HomePage() {
 
           <Title order={2}>Tudo que você precisa para atender melhor</Title>
 
-          <Text c="dimmed" maw={480}>
+          <Text c="dimmed">
             Sem complexidade desnecessária — apenas o essencial para organizar
             sua prática clínica.
           </Text>
         </Stack>
 
-        <SimpleGrid cols={3} spacing="lg">
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
           <Card className={styles.card} radius="md" padding="lg">
             <Title order={4}>Agenda</Title>
             <Text size="sm" c="dimmed">

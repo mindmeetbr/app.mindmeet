@@ -8,7 +8,6 @@ import {
   Group,
   LoadingOverlay,
   rem,
-  SegmentedControl,
   Stack,
   Table,
   Tabs,
@@ -50,12 +49,15 @@ import { usePaginacao } from '../../../hooks/usePaginacao'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { useQueryClient } from '@tanstack/react-query'
 import { notifications } from '@mantine/notifications'
+import { FiltroResponsivo } from './-components/FiltroResponsivo'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/agenda/')({
   component: PaginaAgendamentos,
 })
 
 function TabelaAgendamentos() {
+  useAlterarTitle('Agenda')
   const [searchTerm, setSearchTerm] = useState('')
   const [estadoFiltro, setEstadoFiltro] = useState('')
   const { mutate: apagarAgendamento } = useAgendamentoDelete()
@@ -64,9 +66,9 @@ function TabelaAgendamentos() {
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+        queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
         notifications.show({ title: 'Sucesso', message: 'Consulta finalizada' })
       },
-      onError: () => {},
     },
   })
 
@@ -210,11 +212,11 @@ function TabelaAgendamentos() {
       mensagemVazia="Nenhum agendamento encontrado."
       mensagemErro="Não foi possível carregar seus agendamentos. Tente novamente."
       acoes={
-        <SegmentedControl
-          defaultValue={estadoFiltro}
+        <FiltroResponsivo
+          data={estados}
           value={estadoFiltro}
           onChange={handleEstadoChange}
-          data={estados}
+          label="Estado"
         />
       }
     />
@@ -222,48 +224,31 @@ function TabelaAgendamentos() {
 }
 
 function AgendaFutura() {
-  const limparHorizonte = (h: string | undefined) => {
+  const limparHorizonte = (h: string) => {
+    if (h === 'todos') return undefined
     const dias = Number(h)
-    if (Number.isNaN(dias)) return undefined
-    return dias
+    return Number.isNaN(dias) ? undefined : dias
   }
 
   const [horizonteBusca, setHorizonteBusca] = useState<string>('7')
-  const { data } = useAgendaPessoal(
-    { dias: limparHorizonte(horizonteBusca) },
-    {
-      query: {
-        queryKey: ['agendamentosFuturos', horizonteBusca],
-        staleTime: 1000 * 60 * 5,
-        placeholderData: previousData => previousData,
-      },
-    }
-  )
+  const dias = limparHorizonte(horizonteBusca)
+  const params = dias !== undefined ? { dias } : {}
+
+  const { data } = useAgendaPessoal(params, {
+    query: {
+      queryKey: ['agendamentosFuturos', horizonteBusca],
+      staleTime: 1000 * 60 * 5,
+      placeholderData: previousData => previousData,
+    },
+  })
   const agendamentos = data ?? []
 
-  const agora = new Date()
-
   const agendamentosFuturos = agendamentos
-    .filter(ag => {
-      const horaInicio = new Date(`${ag.data}T${ag.horario_inicio}`)
-      return horaInicio >= agora && ag.estado === 'agendado'
-    })
-    .filter(ag => {
-      if (horizonteBusca === 'todos') {
-        return true
-      }
-
-      const limiteDias = Number.parseInt(horizonteBusca)
-      const limiteData = new Date()
-      limiteData.setDate(agora.getDate() + limiteDias)
-
-      const horaInicio = new Date(`${ag.data}T${ag.horario_inicio}`)
-      return horaInicio <= limiteData
-    })
+    .filter(ag => ag.estado === 'agendado')
     .sort((a, b) => {
       const dataA = new Date(`${a.data}T${a.horario_inicio}`)
-      const dataB = new Date(`${b.data}T${b.horario_fim}`)
-      return dataA - dataB
+      const dataB = new Date(`${b.data}T${b.horario_inicio}`)
+      return dataA.getTime() - dataB.getTime()
     })
 
   const horizonteOpcoes: { label: string; value: string }[] = [
@@ -279,10 +264,11 @@ function AgendaFutura() {
           <Text size="lg" fw={600}>
             Próximos Agendamentos
           </Text>
-          <SegmentedControl
+          <FiltroResponsivo
+            data={horizonteOpcoes}
             value={horizonteBusca}
             onChange={setHorizonteBusca}
-            data={horizonteOpcoes}
+            label="Horizonte"
           />
         </Group>
 

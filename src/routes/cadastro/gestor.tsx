@@ -32,6 +32,8 @@ import { DateInput, DatesProvider } from '@mantine/dates'
 import { useUsuarioCreate } from '../../api/endpoints/users/users'
 import { PapelEnum } from '../../api/models'
 import { notifications } from '@mantine/notifications'
+import classes from './gestor.module.css'
+import { useMediaQuery } from '@mantine/hooks'
 
 export const Route = createFileRoute('/cadastro/gestor')({
   beforeLoad: () => {
@@ -54,12 +56,6 @@ const requisitosSenha = [
   },
 ]
 
-const camposPasso = [
-  ['nome_completo', 'username', 'email', 'data_nascimento'],
-  ['password1', 'password2'],
-  ['instituicao.nome', 'instituicao.cnpj'],
-]
-
 const formatarCNPJ = (valor: string) => {
   const digitos = valor.replace(/\D/g, '').slice(0, 14)
   return digitos
@@ -70,8 +66,17 @@ const formatarCNPJ = (valor: string) => {
 }
 
 function CadastroGestor() {
+  const isMobile = useMediaQuery('(max-width: 48rem)')
+
   const router = useRouter()
   const { mutate: criarGestor } = useUsuarioCreate()
+
+  const camposPasso = [
+    ['nome_completo', 'username', 'email', 'data_nascimento'],
+    ['password1', 'password2'],
+    ['instituicao.nome', 'instituicao.cnpj'],
+  ]
+
   const [active, setActive] = useState(0)
 
   const avancarEtapa = () => {
@@ -177,21 +182,13 @@ function CadastroGestor() {
   }
 
   return (
-    <Container
-      size="sm"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <Container size="sm" className={classes.page}>
       <Card
         shadow="sm"
         padding="xl"
         radius="md"
         withBorder
-        style={{ width: '100%', maxWidth: '960px' }}
+        className={classes.card}
       >
         <Stack gap="lg">
           <div style={{ textAlign: 'center' }}>
@@ -210,8 +207,17 @@ function CadastroGestor() {
               active={active}
               onStepClick={setActive}
               allowNextStepsSelect={false}
-              size="xs"
+              size="md"
+              iconSize={22}
               completedIcon={<IconCircleCheck size={18} />}
+              styles={
+                isMobile
+                  ? {
+                      stepLabel: { display: 'none' },
+                      stepDescription: { display: 'none' },
+                    }
+                  : undefined
+              }
             >
               <Stepper.Step
                 label="Dados Pessoais"
@@ -222,6 +228,7 @@ function CadastroGestor() {
                     label="Nome completo"
                     placeholder="Digite seu nome completo"
                     required
+                    autoComplete="off"
                     {...form.getInputProps('nome_completo')}
                     error={form.errors.nome_completo}
                   />
@@ -229,6 +236,7 @@ function CadastroGestor() {
                     label="Seu nome de usuário"
                     placeholder="Insira um nome de usuário"
                     required
+                    autoComplete="off"
                     {...form.getInputProps('username')}
                     error={form.errors.username}
                   />
@@ -236,6 +244,7 @@ function CadastroGestor() {
                     label="Email"
                     placeholder="Insira seu email"
                     required
+                    autoComplete="off"
                     {...form.getInputProps('email')}
                     error={form.errors.email}
                   />
@@ -267,6 +276,10 @@ function CadastroGestor() {
                     placeholder="Digite sua senha"
                     description="Deve conter um mínimo de 8 caracteres, letras maiúsculas e minúsculas e simbolos especiais"
                     required
+                    styles={{
+                      input: { caretColor: 'var(--mantine-color-indigo-9)' },
+                    }}
+                    autoComplete="off"
                     {...form.getInputProps('password1')}
                     error={form.errors.password1}
                   />
@@ -298,6 +311,9 @@ function CadastroGestor() {
                     placeholder="Digite sua senha novamente"
                     description=""
                     required
+                    styles={{
+                      input: { caretColor: 'var(--mantine-color-indigo-9)' },
+                    }}
                     {...form.getInputProps('password2')}
                     error={form.errors.password2}
                   />
@@ -319,14 +335,15 @@ function CadastroGestor() {
                     label="Nome"
                     placeholder="Digite o nome da sua instituição"
                     required
+                    autoComplete="off"
                     {...form.getInputProps('instituicao.nome')}
-                    // error={form.errors.instituicao.nome}
                   />
                   <TextInput
                     label="CNPJ"
                     placeholder="00.000.000/0000-00"
                     maxLength={18}
                     required
+                    autoComplete="off"
                     {...form.getInputProps('instituicao.cnpj')}
                     onChange={event => {
                       const formatado = formatarCNPJ(event.currentTarget.value)

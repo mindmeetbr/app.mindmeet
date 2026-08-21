@@ -9,7 +9,7 @@ import {
   Select,
   Title,
   rem,
-  Checkbox,
+  Switch,
   Grid,
   Alert,
 } from '@mantine/core'
@@ -182,30 +182,36 @@ function NovoPsicologo() {
             <Stack gap="md">
               <Title order={4}>Informações Profissionais</Title>
 
-              <Checkbox
-                label="É estagiário?"
-                {...form.getInputProps('is_estagiario', {
-                  type: 'checkbox',
-                })}
-              />
-              <Group grow>
-                <TextInput
-                  label="CRP"
-                  placeholder="Informe o número do CRP"
-                  {...form.getInputProps('crp')}
-                  disabled={form.values.is_estagiario}
-                  required={!form.values.is_estagiario}
-                />
-
-                <Select
-                  label="Supervisor"
-                  placeholder="Selecione o supervisor"
-                  data={selectSupervisores}
-                  disabled={!form.values.is_estagiario}
-                  required={form.values.is_estagiario}
-                  {...form.getInputProps('supervisor')}
-                />
-              </Group>
+              <Grid>
+                <Grid.Col span={12}>
+                  <Switch
+                    label="É estagiário?"
+                    description="Estagiários não precisam de CRP e devem ter um supervisor"
+                    {...form.getInputProps('is_estagiario', {
+                      type: 'checkbox',
+                    })}
+                  />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    label="CRP"
+                    placeholder="Informe o número do CRP"
+                    {...form.getInputProps('crp')}
+                    disabled={form.values.is_estagiario}
+                    required={!form.values.is_estagiario}
+                  />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <Select
+                    label="Supervisor"
+                    placeholder="Selecione o supervisor"
+                    data={selectSupervisores}
+                    disabled={!form.values.is_estagiario}
+                    required={form.values.is_estagiario}
+                    {...form.getInputProps('supervisor')}
+                  />
+                </Grid.Col>
+              </Grid>
             </Stack>
           </Card>
         </Stack>

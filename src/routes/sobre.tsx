@@ -22,13 +22,9 @@ function SobrePage() {
       {/* HERO */}
       <Container size="md" className={styles.hero}>
         <Stack gap="lg" align="center">
-          <Title ta="center" className={styles.title}>
-            Um sistema pensado para
-            <br />
-            quem atende pessoas
-          </Title>
+          <Title ta="center">Um sistema pensado para quem atende pessoas</Title>
 
-          <Text c="dimmed" ta="center" maw={560}>
+          <Text c="dimmed" ta="center">
             O MindMeet nasceu com uma ideia simples: reduzir a fricção da rotina
             clínica e devolver tempo para o que realmente importa.
           </Text>
@@ -36,7 +32,7 @@ function SobrePage() {
       </Container>
 
       {/* HISTÓRIA */}
-      <Container size="sm" className={styles.section}>
+      <Container size="lg" className={styles.section}>
         <Stack gap="md">
           <Badge color="gray" variant="light">
             Origem
@@ -44,13 +40,13 @@ function SobrePage() {
 
           <Title order={2}>Por que o MindMeet existe</Title>
 
-          <Text c="dimmed">
+          <Text c="dimmed" ta="justify">
             A rotina clínica muitas vezes depende de ferramentas genéricas:
             agendas improvisadas, anotações dispersas e processos pouco
             integrados. Isso gera ruído, retrabalho e perda de foco.
           </Text>
 
-          <Text c="dimmed">
+          <Text c="dimmed" ta="justify">
             O MindMeet foi criado para centralizar esse fluxo em um único lugar
             — com uma experiência simples, direta e sem excesso de complexidade.
           </Text>
@@ -72,7 +68,7 @@ function SobrePage() {
           </Text>
         </Stack>
 
-        <SimpleGrid cols={3} spacing="lg">
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
           <Card className={styles.card}>
             <Title order={4}>Clareza</Title>
             <Text size="sm" c="dimmed">
@@ -106,7 +102,7 @@ function SobrePage() {
           <Title order={2}>Para quem é o MindMeet</Title>
         </Stack>
 
-        <SimpleGrid cols={2} spacing="lg">
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
           <Card className={styles.card}>
             <Title order={4}>Profissionais autônomos</Title>
             <Text size="sm" c="dimmed">
@@ -124,37 +120,6 @@ function SobrePage() {
         </SimpleGrid>
       </Container>
 
-      {/* STACK */}
-      {/* <Container size="sm" className={styles.section}>
-        <Stack gap="xs">
-          <Badge color="indigo" variant="light">
-            Tecnologia
-          </Badge>
-
-          <Title order={2}>Construído com ferramentas modernas</Title>
-
-          <Text c="dimmed">
-            O MindMeet é desenvolvido com uma stack atual, focada em
-            performance, segurança e evolução contínua.
-          </Text>
-
-          <Group mt="md">
-            {[
-              'Django REST',
-              'React',
-              'TypeScript',
-              'Mantine',
-              'TanStack',
-              'PostgreSQL',
-            ].map((tech) => (
-              <Badge key={tech} variant="light">
-                {tech}
-              </Badge>
-            ))}
-          </Group>
-        </Stack>
-      </Container> */}
-
       {/* CTA */}
       <Container size="sm" className={styles.cta}>
         <Stack align="center" gap="md">
@@ -165,7 +130,13 @@ function SobrePage() {
             sua rotina clínica.
           </Text>
 
-          <Button component={Link} to="/cadastro" radius="xl" color="fuchsia">
+          <Button
+            component={Link}
+            to="/cadastro"
+            radius="xl"
+            size="md"
+            color="fuchsia"
+          >
             Criar conta gratuita
           </Button>
         </Stack>

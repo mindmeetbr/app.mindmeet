@@ -65,8 +65,8 @@ function Configuracoes() {
           </Text>
         </div>
 
-        <Tabs variant="pills" orientation="vertical" defaultValue="conta">
-          <Tabs.List w={200} mr="xl">
+        <Tabs defaultValue="conta" orientation="horizontal">
+          <Tabs.List mb="lg">
             <Tabs.Tab value="conta" leftSection={<IconUser size={16} />}>
               Conta
             </Tabs.Tab>

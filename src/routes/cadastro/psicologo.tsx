@@ -9,13 +9,13 @@ import {
   Card,
   Group,
   Stepper,
-} from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { DatesProvider, DateInput } from '@mantine/dates'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
-import { useUsuarioCreate } from '../../api/endpoints/users/users'
-import { notifications } from '@mantine/notifications'
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { DatesProvider, DateInput } from "@mantine/dates";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
+import { useUsuarioCreate } from "../../api/endpoints/users/users";
+import { notifications } from "@mantine/notifications";
 import {
   IconCheck,
   IconX,
@@ -23,109 +23,106 @@ import {
   IconLock,
   IconBriefcase,
   IconCircleCheck,
-} from '@tabler/icons-react'
-import { useState } from 'react'
-import dayjs from 'dayjs'
-import { PapelEnum } from '../../api/models'
+} from "@tabler/icons-react";
+import { useState } from "react";
+import dayjs from "dayjs";
+import { PapelEnum } from "../../api/models";
+import classes from "./psicologo.module.css";
+import { useMediaQuery } from "@mantine/hooks";
 
-export const Route = createFileRoute('/cadastro/psicologo')({
+export const Route = createFileRoute("/cadastro/psicologo")({
   component: PaginaCadastro,
-})
+});
 
 const requisitosSenha: { label: string; teste: (v: string) => boolean }[] = [
-  { label: 'Mínimo de 8 caracteres', teste: (v: string) => v.length >= 8 },
-  { label: 'Uma letra maiúscula', teste: (v: string) => /[A-Z]/.test(v) },
-  { label: 'Uma letra minúscula', teste: (v: string) => /[a-z]/.test(v) },
-  { label: 'Um número', teste: (v: string) => /[0-9]/.test(v) },
+  { label: "Mínimo de 8 caracteres", teste: (v: string) => v.length >= 8 },
+  { label: "Uma letra maiúscula", teste: (v: string) => /[A-Z]/.test(v) },
+  { label: "Uma letra minúscula", teste: (v: string) => /[a-z]/.test(v) },
+  { label: "Um número", teste: (v: string) => /[0-9]/.test(v) },
   {
-    label: 'Um símbolo especial',
+    label: "Um símbolo especial",
     teste: (v: string) => /[^A-Za-z0-9]/.test(v),
   },
-]
+];
 
 const camposPasso = [
-  ['nomeCompleto', 'username', 'email', 'dataNascimento'],
-  ['password1', 'password2'],
-  ['crp'],
-]
+  ["nomeCompleto", "username", "email", "dataNascimento"],
+  ["password1", "password2"],
+  ["crp"],
+];
 
 const formatarCRP = (valor: string) => {
-  const digitos = valor.replace(/\D/g, '').slice(0, 7)
-  if (digitos.length <= 2) return digitos
-  return `${digitos.slice(0, 2)}/${digitos.slice(2)}`
-}
+  const digitos = valor.replace(/\D/g, "").slice(0, 7);
+  if (digitos.length <= 2) return digitos;
+  return `${digitos.slice(0, 2)}/${digitos.slice(2)}`;
+};
 
 function PaginaCadastro() {
-  const router = useRouter()
-  const { mutate: criarUsuario } = useUsuarioCreate()
-  const [active, setActive] = useState(0)
+  const isMobile = useMediaQuery("(max-width: 48rem)");
+
+  const router = useRouter();
+  const { mutate: criarUsuario } = useUsuarioCreate();
+  const [active, setActive] = useState(0);
 
   const avancarEtapa = () => {
-    const camposParaValidar = camposPasso[active]
-    let erro = false
+    const camposParaValidar = camposPasso[active];
+    let erro = false;
 
-    camposParaValidar.forEach(campo => {
-      const resultado = form.validateField(campo)
-      if (resultado.hasError) erro = true
-    })
+    camposParaValidar.forEach((campo) => {
+      const resultado = form.validateField(campo);
+      if (resultado.hasError) erro = true;
+    });
 
     if (!erro) {
-      setActive((current: number) => (current < 2 ? current + 1 : current))
+      setActive((current: number) => (current < 2 ? current + 1 : current));
     }
-  }
-  const voltarEtapa = () =>
-    setActive((current: number) => (current > 0 ? current - 1 : current))
+  };
+  const voltarEtapa = () => setActive((current: number) => (current > 0 ? current - 1 : current));
 
   const form = useForm({
     initialValues: {
-      nomeCompleto: '',
-      username: '',
-      email: '',
-      password1: '',
-      password2: '',
+      nomeCompleto: "",
+      username: "",
+      email: "",
+      password1: "",
+      password2: "",
       dataNascimento: null,
-      crp: '',
+      crp: "",
     },
     validate: {
-      nomeCompleto: value =>
-        value.trim().length > 0 ? null : 'Nome completo inválido',
+      nomeCompleto: (value) => (value.trim().length > 0 ? null : "Nome completo inválido"),
 
-      username: value =>
-        value.trim().length > 0 ? null : 'Nome de usuário inválido',
+      username: (value) => (value.trim().length > 0 ? null : "Nome de usuário inválido"),
 
-      email: value => (/^\S+@\S+\.\S+$/.test(value) ? null : 'Email inválido'),
+      email: (value) => (/^\S+@\S+\.\S+$/.test(value) ? null : "Email inválido"),
 
-      password1: value => {
-        const falhou = requisitosSenha.find(req => !req.teste(value))
-        return falhou ? `Requisito não atendido: ${falhou.label}` : null
+      password1: (value) => {
+        const falhou = requisitosSenha.find((req) => !req.teste(value));
+        return falhou ? `Requisito não atendido: ${falhou.label}` : null;
       },
 
       password2: (value, values) => {
-        if (value.length === 0)
-          return 'A confirmação da senha não pode ser vazia'
+        if (value.length === 0) return "A confirmação da senha não pode ser vazia";
         if (values.password1 && value !== values.password1) {
-          return 'As senhas não coincidem, tente novamente'
+          return "As senhas não coincidem, tente novamente";
         }
-        return null
+        return null;
       },
 
-      dataNascimento: value => {
-        if (!value) return 'Data de nascimento é obrigatória'
-        if (dayjs(value).isAfter(dayjs()))
-          return 'A data não pode estar no futuro'
-        return null
+      dataNascimento: (value) => {
+        if (!value) return "Data de nascimento é obrigatória";
+        if (dayjs(value).isAfter(dayjs())) return "A data não pode estar no futuro";
+        return null;
       },
 
-      crp: value => {
-        return /^\d{2}\/\d{5}$/.test(value)
-          ? null
-          : 'CRP inválido. Use o formato 00/00000'
+      crp: (value) => {
+        return /^\d{2}\/\d{5}$/.test(value) ? null : "CRP inválido. Use o formato 00/00000";
       },
     },
-  })
+  });
 
   const handleSubmit = (values: typeof form.values) => {
-    const dataFormatada = dayjs(values.dataNascimento).format('YYYY-MM-DD')
+    const dataFormatada = dayjs(values.dataNascimento).format("YYYY-MM-DD");
     const data = {
       nome_completo: values.nomeCompleto,
       username: values.username,
@@ -137,52 +134,38 @@ function PaginaCadastro() {
         crp: values.crp,
       },
       papel: PapelEnum.PSICOLOGO,
-    }
+    };
 
     criarUsuario(
       { data },
       {
         onSuccess: () => {
-          form.clearErrors()
+          form.clearErrors();
           router.navigate({
-            to: '/login',
-            state: { mensagem: 'Cadastro concluído. Aproveite!' },
-          })
+            to: "/login",
+            state: { mensagem: "Cadastro concluído. Aproveite!" },
+          });
         },
-        onError: error => {
-          form.setErrors(error.response?.data)
+        onError: (error) => {
+          form.setErrors(error.response?.data);
           notifications.show({
-            color: 'red',
+            color: "red",
             autoClose: 10000,
-            title: 'Erro!',
+            title: "Erro!",
             message:
-              'Não foi possível criar sua conta. Certifique-se de que todos os campos estão corretos e tente novamente.',
+              "Não foi possível criar sua conta. Certifique-se de que todos os campos estão corretos e tente novamente.",
             icon: <IconX />,
-          })
+          });
         },
-      }
-    )
-  }
+      },
+    );
+  };
 
   return (
-    <Container
-      size="sm"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Card
-        shadow="sm"
-        padding="xl"
-        radius="md"
-        withBorder
-        style={{ width: '100%', maxWidth: '960px' }}
-      >
+    <Container size="sm" className={classes.page}>
+      <Card shadow="sm" padding="xl" radius="md" withBorder className={classes.card}>
         <Stack gap="lg">
-          <div style={{ textAlign: 'center' }}>
+          <div style={{ textAlign: "center" }}>
             <Title order={2} mb="xs">
               Bem vindo ao MindMeet
             </Title>
@@ -199,19 +182,26 @@ function PaginaCadastro() {
               active={active}
               onStepClick={setActive}
               allowNextStepsSelect={false}
-              size="xs"
+              size="md"
+              iconSize={22}
+              styles={
+                isMobile
+                  ? {
+                      stepLabel: { display: "none" },
+                      stepDescription: { display: "none" },
+                    }
+                  : undefined
+              }
               completedIcon={<IconCircleCheck size={18} />}
             >
-              <Stepper.Step
-                label="Dados Pessoais"
-                icon={<IconUser size={18} />}
-              >
+              <Stepper.Step label="Dados Pessoais" icon={<IconUser size={18} />}>
                 <Stack gap="sm">
                   <TextInput
                     label="Nome completo"
                     placeholder="Digite seu nome completo"
                     required
-                    {...form.getInputProps('nomeCompleto')}
+                    autoComplete="off"
+                    {...form.getInputProps("nomeCompleto")}
                     error={form.errors.nomeCompleto}
                   />
                   <TextInput
@@ -219,28 +209,30 @@ function PaginaCadastro() {
                     placeholder="Insira um nome de usuário"
                     description="Este nome será exibido para outros usuários durante a busca"
                     required
-                    {...form.getInputProps('username')}
+                    autoComplete="off"
+                    {...form.getInputProps("username")}
                     error={form.errors.username}
                   />
                   <TextInput
                     label="Email"
                     placeholder="Insira seu email"
                     required
-                    {...form.getInputProps('email')}
+                    autoComplete="off"
+                    {...form.getInputProps("email")}
                     error={form.errors.email}
                   />
-                  <DatesProvider settings={{ locale: 'pt-BR' }}>
+                  <DatesProvider settings={{ locale: "pt-BR" }}>
                     <DateInput
                       label="Data de nascimento"
                       placeholder="Digite no formato DD/MM/AAAA"
                       valueFormat="DD/MM/YYYY"
                       dateParser={(input: string) => {
-                        const parsed = dayjs(input, 'DD/MM/YYYY', true)
-                        return parsed.isValid() ? parsed.toDate() : null
+                        const parsed = dayjs(input, "DD/MM/YYYY", true);
+                        return parsed.isValid() ? parsed.toDate() : null;
                       }}
                       clearable
                       required
-                      {...form.getInputProps('dataNascimento')}
+                      {...form.getInputProps("dataNascimento")}
                       error={form.errors.dataNascimento}
                     />
                   </DatesProvider>
@@ -256,37 +248,39 @@ function PaginaCadastro() {
                     label="Senha"
                     placeholder="Digite sua senha"
                     required
-                    {...form.getInputProps('password1')}
+                    autoComplete="off"
+                    styles={{
+                      input: { caretColor: "var(--mantine-color-indigo-9)" },
+                    }}
+                    {...form.getInputProps("password1")}
                     error={form.errors.password1}
                   />
                   <Stack gap={4}>
-                    {requisitosSenha.map(req => {
-                      const atendido = req.teste(form.values.password1)
+                    {requisitosSenha.map((req) => {
+                      const atendido = req.teste(form.values.password1);
                       return (
                         <Group gap={6} key={req.label}>
                           {atendido ? (
-                            <IconCheck
-                              size={14}
-                              color="var(--mantine-color-green-6)"
-                            />
+                            <IconCheck size={14} color="var(--mantine-color-green-6)" />
                           ) : (
-                            <IconX
-                              size={14}
-                              color="var(--mantine-color-red-6)"
-                            />
+                            <IconX size={14} color="var(--mantine-color-red-6)" />
                           )}
-                          <Text size="xs" c={atendido ? 'green' : 'dimmed'}>
+                          <Text size="xs" c={atendido ? "green" : "dimmed"}>
                             {req.label}
                           </Text>
                         </Group>
-                      )
+                      );
                     })}
                   </Stack>
                   <PasswordInput
                     label="Confirme sua senha"
                     placeholder="Digite sua senha novamente"
                     required
-                    {...form.getInputProps('password2')}
+                    autoComplete="off"
+                    styles={{
+                      input: { caretColor: "var(--mantine-color-indigo-9)" },
+                    }}
+                    {...form.getInputProps("password2")}
                     error={form.errors.password2}
                   />
                 </Stack>
@@ -297,10 +291,7 @@ function PaginaCadastro() {
                   <Button onClick={avancarEtapa}>Próximo</Button>
                 </Group>
               </Stepper.Step>
-              <Stepper.Step
-                label="Profissional"
-                icon={<IconBriefcase size={18} />}
-              >
+              <Stepper.Step label="Profissional" icon={<IconBriefcase size={18} />}>
                 <Stack gap="sm">
                   <TextInput
                     label="CRP"
@@ -308,10 +299,11 @@ function PaginaCadastro() {
                     maxLength={8}
                     required
                     withAsterisk
-                    {...form.getInputProps('crp')}
-                    onChange={event => {
-                      const formatado = formatarCRP(event.currentTarget.value)
-                      form.setFieldValue('crp', formatado)
+                    autoComplete="off"
+                    {...form.getInputProps("crp")}
+                    onChange={(event) => {
+                      const formatado = formatarCRP(event.currentTarget.value);
+                      form.setFieldValue("crp", formatado);
                     }}
                     error={form.errors.crp}
                   />
@@ -328,5 +320,5 @@ function PaginaCadastro() {
         </Stack>
       </Card>
     </Container>
-  )
+  );
 }

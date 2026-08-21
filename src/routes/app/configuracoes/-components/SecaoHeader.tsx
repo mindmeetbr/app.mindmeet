@@ -1,21 +1,21 @@
-import { Text } from '@mantine/core'
-export function SecaoHeader({
-  titulo,
-  descricao,
-}: {
+import { Stack, Text } from '@mantine/core'
+
+interface SecaoHeaderProps {
   titulo: string
   descricao?: string
-}) {
+}
+
+export function SecaoHeader({ titulo, descricao }: SecaoHeaderProps) {
   return (
-    <div>
-      <Text fw={600} size="sm" tt="uppercase" c="dimmed" mb={2}>
+    <Stack maw="80%" gap="0">
+      <Text fw={600} size="md" tt="uppercase">
         {titulo}
       </Text>
       {descricao && (
-        <Text size="xs" c="dimmed">
+        <Text size="sm" c="dimmed">
           {descricao}
         </Text>
       )}
-    </div>
+    </Stack>
   )
 }

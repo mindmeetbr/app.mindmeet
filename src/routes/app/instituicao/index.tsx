@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
   Table,
-  Avatar,
   Text,
   Group,
   ActionIcon,
@@ -77,18 +76,9 @@ function TabelaPsicologos() {
   const renderLinhaPsicologo = (psicologo: PerfilPsicologo) => (
     <Table.Tr key={psicologo.id}>
       <Table.Td>
-        <Group gap="sm">
-          <Avatar>
-            {psicologo.usuario?.nome_completo
-              .split(' ')
-              .map(n => n[0])
-              .join('')
-              .slice(0, 2)}
-          </Avatar>
-          <Text fw={500} size="sm">
-            {psicologo.usuario?.nome_completo}
-          </Text>
-        </Group>
+        <Text fw={500} size="sm">
+          {psicologo.usuario?.nome_completo}
+        </Text>
       </Table.Td>
       <Table.Td>{psicologo.usuario?.email}</Table.Td>
       <Table.Td>{psicologo.crp}</Table.Td>
@@ -146,6 +136,7 @@ function TabelaPsicologos() {
           component={Link}
           to="/app/instituicao/novo-psicologo"
           leftSection={<IconPlus />}
+          w="100%"
         >
           Adicionar Psicólogo
         </Button>
@@ -183,7 +174,13 @@ function ModalAtribuirPsicologo({
       }
     )
 
-  const { mutate: trocarPsicologo, isPending } = useTrocarPsicologo()
+  const { mutate: trocarPsicologo, isPending } = useTrocarPsicologo({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['pacientes'] })
+      },
+    },
+  })
 
   const opcoesPsicologos =
     psicologos?.results?.map(p => ({
@@ -203,7 +200,6 @@ function ModalAtribuirPsicologo({
             message: `${paciente.nome_completo} foi transferido com sucesso.`,
             color: 'green',
           })
-          queryClient.invalidateQueries({ queryKey: ['pacientes'] })
           onSucesso()
           onClose()
         },
@@ -309,18 +305,9 @@ function TabelaPacientes() {
   const renderLinhaPaciente = (paciente: Paciente) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
-        <Group gap="sm">
-          <Avatar>
-            {paciente.nome_completo
-              ?.split(' ')
-              .map(n => n[0])
-              .join('')
-              .slice(0, 2)}
-          </Avatar>
-          <Text fw={500} size="sm">
-            {paciente.nome_completo}
-          </Text>
-        </Group>
+        <Text fw={500} size="sm">
+          {paciente.nome_completo}
+        </Text>
       </Table.Td>
       <Table.Td>
         <div>
@@ -406,6 +393,7 @@ function TabelaPacientes() {
             component={Link}
             to="/app/instituicao/novo-paciente"
             leftSection={<IconPlus />}
+            w="100%"
           >
             Adicionar Paciente
           </Button>

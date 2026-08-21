@@ -4,6 +4,7 @@ import {
   Outlet,
   redirect,
   useRouter,
+  useRouterState,
 } from '@tanstack/react-router'
 import {
   AppShell,
@@ -39,7 +40,6 @@ import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'
 
-
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
     const { isAuthenticated } = useAuthStore.getState()
@@ -53,6 +53,30 @@ export const Route = createFileRoute('/app')({
 function AppLayout() {
   const { isAuthenticated, logout, user } = useAuthStore()
   const { setColorScheme } = useMantineColorScheme()
+  const redirector = useRouter()
+  const computedColorScheme = useComputedColorScheme('light')
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] =
+    useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
+  const { location } = useRouterState()
+
+  const handleLogoutClick = () => {
+    logout()
+  }
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      redirector.navigate({ to: '/login' })
+    }
+  }, [isAuthenticated, redirector])
+
+  useEffect(() => {
+    closeMobile()
+  }, [location.pathname, closeMobile])
+
+  const isGestor = user?.papel === PapelEnum.GESTOR
+  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
+
   const { data: pendentes } = useNotificacaoPendenteList({
     query: {
       staleTime: 10 * 60 * 1000, // 10 minutos
@@ -62,24 +86,8 @@ function AppLayout() {
       queryKey: ['notificacoes-pendentes'],
     },
   })
-  const redirector = useRouter()
-  const computedColorScheme = useComputedColorScheme('light')
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
-
-  const handleLogoutClick = () => {
-    logout()
-  }
 
   const temNaoLidas = !!pendentes?.nao_lidas && pendentes.nao_lidas > 0
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      redirector.navigate({ to: '/login' })
-    }
-  }, [isAuthenticated, redirector])
-  const isGestor = user?.papel === PapelEnum.GESTOR
-  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
 
   return (
     <AppShell
@@ -136,7 +144,7 @@ function AppLayout() {
                 <UnstyledButton>
                   <Group gap={7}>
                     <Avatar size={32} radius="xl" />
-                    <Text fw={500} size="sm" lh={1} mr={3}>
+                    <Text fw={500} size="sm" lh={1} mr={3} visibleFrom="xs">
                       {user?.email || 'Usuário'}
                     </Text>
                     <IconChevronDown
@@ -148,6 +156,14 @@ function AppLayout() {
               </Menu.Target>
 
               <Menu.Dropdown>
+                <Menu.Item disabled style={{ opacity: 1 }} hiddenFrom="xs">
+                  <Text size="xs" c="dimmed">
+                    Autenticado como
+                  </Text>
+                  <Text size="sm" fw={500}>
+                    {user?.nome_completo}
+                  </Text>
+                </Menu.Item>
                 <Menu.Item
                   leftSection={
                     <IconSettings style={{ width: rem(14), height: rem(14) }} />

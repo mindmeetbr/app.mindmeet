@@ -3,20 +3,19 @@ import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { PageLayout } from '../../../components/layout'
 import {
   Card,
+  SimpleGrid,
   Stack,
   Text,
   Divider,
   rem,
-  Grid,
+  Group,
   Title,
   LoadingOverlay,
   Center,
   Alert,
 } from '@mantine/core'
 import { IconAlertCircle, IconEdit } from '@tabler/icons-react'
-
 import { EstadoEnum } from '../../../api/models'
-
 import {
   getEstadoBadge,
   getTipoBadge,
@@ -25,9 +24,27 @@ import {
   formatarHora,
 } from '../../../utils/agenda'
 import { useAgendamentoDetail } from '../../../api/endpoints/agendamentos/agendamentos'
+
 export const Route = createFileRoute('/app/agenda/$id')({
   component: AgendamentoDetalhePage,
 })
+
+function InfoItem({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <Group gap="xs">
+      <Text fw={600} size="sm">
+        {label}:
+      </Text>
+      <Text size="sm">{children}</Text>
+    </Group>
+  )
+}
 
 function AgendamentoDetalhePage() {
   const router = useRouter()
@@ -102,73 +119,53 @@ function AgendamentoDetalhePage() {
       }}
     >
       <Stack gap="lg">
-        <Card withBorder p="xl" radius="md">
-          <Stack gap="md">
-            <Title order={4}>Informações do Paciente</Title>
-            <Divider />
-            <Grid>
-              <Grid.Col span={4}>
-                <Text fw={600}>Nome do(a) Paciente:</Text>
-                <Text>{agendamento.paciente.nome_completo}</Text>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Text fw={600}>Email do(a) Paciente:</Text>
-                <Text>{agendamento.paciente.email}</Text>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Text fw={600}>Telefone do(a) Paciente:</Text>
-                <Text>
-                  {agendamento.paciente.numero_telefone
-                    ? agendamento.paciente.numero_telefone
-                    : 'Sem telefone'}
-                </Text>
-              </Grid.Col>
-            </Grid>
-          </Stack>
-        </Card>
-
-        <Card withBorder p="xl" radius="md">
-          <Stack>
-            <Title order={4}>Informações Gerais</Title>
-            <Divider />
-            <Grid>
-              <Grid.Col span={4}>
-                <Text fw={600}>Data:</Text>
-                <Text>{formatarData(agendamento.data)}</Text>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Text fw={600}>Horário de Início:</Text>
-                <Text>{formatarHora(agendamento.horario_inicio)}</Text>
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Text fw={600}>Horário de Fim:</Text>
-                <Text>{formatarHora(agendamento.horario_fim)}</Text>
-              </Grid.Col>
-              <Grid.Col span="auto">
-                <Text fw={600}>Tipo de Agendamento:</Text>
-                <Text>{getTipoBadge(agendamento.tipo)}</Text>
-              </Grid.Col>
-              <Grid.Col span="auto">
-                <Text fw={600}>Estado:</Text>
-                <Text>
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
+          <Card withBorder p="xl" radius="md">
+            <Stack gap="md">
+              <Title order={4}>Informações do Paciente</Title>
+              <Divider />
+              <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
+                <InfoItem label="Nome">
+                  {agendamento.paciente.nome_completo}
+                </InfoItem>
+                <InfoItem label="Email">{agendamento.paciente.email}</InfoItem>
+                <InfoItem label="Telefone">
+                  {agendamento.paciente.numero_telefone ?? 'Sem telefone'}
+                </InfoItem>
+              </SimpleGrid>
+            </Stack>
+          </Card>
+          <Card withBorder p="xl" radius="md">
+            <Stack gap="md">
+              <Title order={4}>Informações Gerais</Title>
+              <Divider />
+              <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
+                <InfoItem label="Data">
+                  {formatarData(agendamento.data)}
+                </InfoItem>
+                <InfoItem label="Início">
+                  {formatarHora(agendamento.horario_inicio)}
+                </InfoItem>
+                <InfoItem label="Fim">
+                  {formatarHora(agendamento.horario_fim)}
+                </InfoItem>
+                <InfoItem label="Tipo">
+                  {getTipoBadge(agendamento.tipo)}
+                </InfoItem>
+                <InfoItem label="Estado">
                   {agendamento.estado
                     ? getEstadoBadge(agendamento.estado)
                     : 'Desconhecido'}
-                </Text>
-              </Grid.Col>
-              {agendamento.estado === EstadoEnum.cancelado && (
-                <Grid.Col span="auto">
-                  <Text fw={600}>Motivo do Cancelamento:</Text>
-                  <Text>
-                    {agendamento.motivo_cancelamento
-                      ? agendamento.motivo_cancelamento
-                      : 'Não informado'}
-                  </Text>
-                </Grid.Col>
-              )}
-            </Grid>
-          </Stack>
-        </Card>
+                </InfoItem>
+                {agendamento.estado === EstadoEnum.cancelado && (
+                  <InfoItem label="Motivo do Cancelamento">
+                    {agendamento.motivo_cancelamento ?? 'Não informado'}
+                  </InfoItem>
+                )}
+              </SimpleGrid>
+            </Stack>
+          </Card>
+        </SimpleGrid>
       </Stack>
     </PageLayout>
   )

@@ -26,13 +26,12 @@ function RootComponent() {
     to: '/cadastro',
     fuzzy: false,
   })
-
   const isLogin = matchRoute({ from: '/', to: '/login' })
 
   return (
     <>
       {paginaInicial && (
-        <header style={{ height: 45 }}>
+        <header style={{ height: 48 }}>
           <Flex
             justify="space-between"
             align="center"
@@ -47,38 +46,27 @@ function RootComponent() {
               </Text>
             </Flex>
 
-            {/* meio */}
-            <Flex flex={1} justify="center">
-              <Group gap="lg">
-                <Text
-                  component={Link}
-                  className={classes.link}
-                  to="/sobre"
-                  activeOptions={{ exact: true }}
-                  activeProps={{
-                    className: `${classes.link} ${classes.active}`,
-                  }}
-                >
-                  Sobre o Projeto
-                </Text>
-              </Group>
-            </Flex>
-
             {/* direita */}
             <Flex flex={1} justify="flex-end">
-              <Group>
+              <Group gap="xs" wrap="nowrap">
                 {!isLogin && (
                   <Button
                     variant="outline"
                     size="xs"
                     component={Link}
                     to="/login"
+                    px={{ base: 'xs', sm: 'md' }}
                   >
                     Entrar
                   </Button>
                 )}
                 {!isCadastroIndex && (
-                  <Button size="xs" component={Link} to="/cadastro">
+                  <Button
+                    size="xs"
+                    component={Link}
+                    to="/cadastro"
+                    px={{ base: 'xs', sm: 'md' }}
+                  >
                     Cadastrar-se
                   </Button>
                 )}
@@ -89,7 +77,7 @@ function RootComponent() {
         </header>
       )}
 
-      <main>
+      <main className={classes.page}>
         <Outlet />
       </main>
       <TanStackRouterDevtools />
