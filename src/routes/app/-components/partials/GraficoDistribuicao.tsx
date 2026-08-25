@@ -8,6 +8,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Title)
 
 interface GraficoDistribuicaoProps {
   dados: AgendamentosPorEstado
+  isGestor: boolean
 }
 
 const CORES = {
@@ -16,8 +17,14 @@ const CORES = {
   cancelado: '#dc1818',
 }
 
-export function GraficoDistribuicao({ dados }: GraficoDistribuicaoProps) {
+export function GraficoDistribuicao({
+  dados,
+  isGestor,
+}: GraficoDistribuicaoProps) {
   const totalAgendamentos = dados.agendado + dados.realizado + dados.cancelado
+  const tituloGrafico = isGestor
+    ? 'Agendamentos da sua instituição'
+    : 'Seus agendamentos'
 
   const dadosGrafico: ChartData<'doughnut'> =
     totalAgendamentos > 0
@@ -55,7 +62,7 @@ export function GraficoDistribuicao({ dados }: GraficoDistribuicaoProps) {
       legend: { position: 'bottom' },
       title: {
         display: true,
-        text: 'Seus agendamentos',
+        text: tituloGrafico,
         font: { size: 12 },
       },
     },

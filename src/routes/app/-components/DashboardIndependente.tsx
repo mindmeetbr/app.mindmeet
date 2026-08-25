@@ -13,7 +13,10 @@ export function DashboardIndependente({ dados }: DashboardIndependenteProps) {
   return (
     <Grid>
       <Grid.Col span={{ base: 12, md: 6 }}>
-        <GraficoDistribuicao dados={dados.agendamentos_por_estado} />
+        <GraficoDistribuicao
+          dados={dados.agendamentos_por_estado}
+          isGestor={false}
+        />
       </Grid.Col>
 
       <Grid.Col span={{ base: 12, md: 6 }}>
