@@ -13,8 +13,10 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  * OpenAPI spec version: 0.1.0
  */
 
-import { BlankEnum } from './blankEnum'
-import { SexoEnum } from './sexoEnum'
+export type DashboardPsicologoTipoDashboard =
+  (typeof DashboardPsicologoTipoDashboard)[keyof typeof DashboardPsicologoTipoDashboard]
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MUserSexo = { ...SexoEnum, ...BlankEnum } as const
+export const DashboardPsicologoTipoDashboard = {
+  None: 'None',
+} as const

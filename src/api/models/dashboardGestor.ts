@@ -12,8 +12,9 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import type { InstituicaoResumo } from './instituicaoResumo'
+
 import type { AgendaInstitucional } from './agendaInstitucional'
+import type { InstituicaoResumo } from './instituicaoResumo'
 import type { PacientesInstituicao } from './pacientesInstituicao'
 
 export interface DashboardGestor {

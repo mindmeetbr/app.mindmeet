@@ -13,12 +13,11 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  * OpenAPI spec version: 0.1.0
  */
 import type { AgendaHojeGestor } from './agendaHojeGestor'
-import type { ProximaSemana } from './proximaSemana'
 import type { AgendamentosPorEstado } from './agendamentosPorEstado'
+import type { ProximaSemana } from './proximaSemana'
 
 export interface AgendaInstitucional {
   hoje: AgendaHojeGestor
   proxima_semana: ProximaSemana
   por_estado: AgendamentosPorEstado
-  taxa_realizacao: number
 }

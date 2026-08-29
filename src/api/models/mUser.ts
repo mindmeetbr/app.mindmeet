@@ -12,8 +12,9 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import type { MUserSexo } from './mUserSexo'
+
 import type { Endereco } from './endereco'
+import type { MUserSexo } from './mUserSexo'
 import type { PapelEnum } from './papelEnum'
 
 export interface MUser {

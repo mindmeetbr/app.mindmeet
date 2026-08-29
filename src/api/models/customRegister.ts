@@ -12,8 +12,9 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import type { PerfilPsicologo } from './perfilPsicologo'
+
 import type { Instituicao } from './instituicao'
+import type { PerfilPsicologo } from './perfilPsicologo'
 
 export interface CustomRegister {
   /**

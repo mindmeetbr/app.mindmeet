@@ -13,8 +13,15 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  * OpenAPI spec version: 0.1.0
  */
 
-import { BlankEnum } from './blankEnum'
-import { SexoEnum } from './sexoEnum'
+import type { Agenda } from './agenda'
+import type { AgendamentosPorEstado } from './agendamentosPorEstado'
+import type { DashboardPsicologoTipoDashboard } from './dashboardPsicologoTipoDashboard'
+import type { PacientesResumo } from './pacientesResumo'
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const MUserSexo = { ...SexoEnum, ...BlankEnum } as const
+export interface DashboardPsicologo {
+  tipo_dashboard: DashboardPsicologoTipoDashboard
+  agenda: Agenda
+  agendamentos_por_estado: AgendamentosPorEstado
+  pacientes: PacientesResumo
+  notificacoes_nao_lidas: number
+}

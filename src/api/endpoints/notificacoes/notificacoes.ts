@@ -12,7 +12,7 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from '@tanstack/react-query'
+
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -24,6 +24,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import type {
   Notificacao,
@@ -31,9 +32,8 @@ import type {
   NotificacoesPendentes,
   PaginatedNotificacaoList,
 } from '../../models'
-
-import { customInstance } from '../../mutator/custom-instance'
 import type { ErrorType } from '../../mutator/custom-instance'
+import { customInstance } from '../../mutator/custom-instance'
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 

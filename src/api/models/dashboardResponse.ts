@@ -13,10 +13,6 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  * OpenAPI spec version: 0.1.0
  */
 import type { DashboardGestor } from './dashboardGestor'
-import type { DashboardPsicologoIndependente } from './dashboardPsicologoIndependente'
-import type { DashboardPsicologoVinculado } from './dashboardPsicologoVinculado'
+import type { DashboardPsicologo } from './dashboardPsicologo'
 
-export type DashboardResponse =
-  | DashboardGestor
-  | DashboardPsicologoIndependente
-  | DashboardPsicologoVinculado
+export type DashboardResponse = DashboardGestor | DashboardPsicologo
