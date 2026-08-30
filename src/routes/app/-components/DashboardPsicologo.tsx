@@ -1,15 +1,15 @@
 import { Flex, Grid, rem, Stack } from '@mantine/core'
 import { IconBell, IconUsers } from '@tabler/icons-react'
-import type { DashboardPsicologoIndependente } from '../../../api/models'
+import type { DashboardPsicologo as DashboardPsicologoResponse } from '../../../api/models'
 import { CardAgenda } from './partials/CardAgenda'
 import { CardEstatistica } from './partials/CardEstatistica'
 import { GraficoDistribuicao } from './partials/GraficoDistribuicao'
 
-interface DashboardIndependenteProps {
-  dados: DashboardPsicologoIndependente
+interface DashboardPsicologoProps {
+  dados: DashboardPsicologoResponse
 }
 
-export function DashboardIndependente({ dados }: DashboardIndependenteProps) {
+export function DashboardPsicologo({ dados }: DashboardPsicologoProps) {
   return (
     <Grid>
       <Grid.Col span={{ base: 12, md: 6 }}>
