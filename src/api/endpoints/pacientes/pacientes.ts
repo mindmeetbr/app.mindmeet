@@ -12,7 +12,7 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery } from '@tanstack/react-query'
+
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -27,16 +27,16 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 import type {
-  Paciente,
+  PacienteDetail,
   PacienteListParams,
-  PaginatedPacienteList,
-  PatchedPaciente,
+  PaginatedPacienteListList,
+  PatchedPacienteDetail,
 } from '../../models'
-
+import type { BodyType, ErrorType } from '../../mutator/custom-instance'
 import { customInstance } from '../../mutator/custom-instance'
-import type { ErrorType, BodyType } from '../../mutator/custom-instance'
 
 // https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
 type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
@@ -80,7 +80,7 @@ export const pacienteList = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<PaginatedPacienteList>(
+  return customInstance<PaginatedPacienteListList>(
     { url: `/api/pacientes/`, method: 'GET', params, signal },
     options
   )
@@ -219,16 +219,16 @@ export function usePacienteList<
  * @summary Cria um novo paciente
  */
 export const pacienteCreate = (
-  paciente: BodyType<NonReadonly<Paciente>>,
+  pacienteDetail: BodyType<NonReadonly<PacienteDetail>>,
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Paciente>(
+  return customInstance<PacienteDetail>(
     {
       url: `/api/pacientes/`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: paciente,
+      data: pacienteDetail,
       signal,
     },
     options
@@ -242,14 +242,14 @@ export const getPacienteCreateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof pacienteCreate>>,
     TError,
-    { data: BodyType<NonReadonly<Paciente>> },
+    { data: BodyType<NonReadonly<PacienteDetail>> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof pacienteCreate>>,
   TError,
-  { data: BodyType<NonReadonly<Paciente>> },
+  { data: BodyType<NonReadonly<PacienteDetail>> },
   TContext
 > => {
   const mutationKey = ['pacienteCreate']
@@ -263,7 +263,7 @@ export const getPacienteCreateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof pacienteCreate>>,
-    { data: BodyType<NonReadonly<Paciente>> }
+    { data: BodyType<NonReadonly<PacienteDetail>> }
   > = props => {
     const { data } = props ?? {}
 
@@ -276,7 +276,7 @@ export const getPacienteCreateMutationOptions = <
 export type PacienteCreateMutationResult = NonNullable<
   Awaited<ReturnType<typeof pacienteCreate>>
 >
-export type PacienteCreateMutationBody = BodyType<NonReadonly<Paciente>>
+export type PacienteCreateMutationBody = BodyType<NonReadonly<PacienteDetail>>
 export type PacienteCreateMutationError = ErrorType<null | null>
 
 /**
@@ -290,7 +290,7 @@ export const usePacienteCreate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof pacienteCreate>>,
       TError,
-      { data: BodyType<NonReadonly<Paciente>> },
+      { data: BodyType<NonReadonly<PacienteDetail>> },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -299,7 +299,7 @@ export const usePacienteCreate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof pacienteCreate>>,
   TError,
-  { data: BodyType<NonReadonly<Paciente>> },
+  { data: BodyType<NonReadonly<PacienteDetail>> },
   TContext
 > => {
   const mutationOptions = getPacienteCreateMutationOptions(options)
@@ -315,7 +315,7 @@ export const pacienteDetail = (
   options?: SecondParameter<typeof customInstance>,
   signal?: AbortSignal
 ) => {
-  return customInstance<Paciente>(
+  return customInstance<PacienteDetail>(
     { url: `/api/pacientes/${id}/`, method: 'GET', signal },
     options
   )
@@ -460,15 +460,15 @@ export function usePacienteDetail<
  */
 export const pacienteUpdate = (
   id: string,
-  patchedPaciente: BodyType<NonReadonly<PatchedPaciente>>,
+  patchedPacienteDetail: BodyType<NonReadonly<PatchedPacienteDetail>>,
   options?: SecondParameter<typeof customInstance>
 ) => {
-  return customInstance<Paciente>(
+  return customInstance<PacienteDetail>(
     {
       url: `/api/pacientes/${id}/`,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedPaciente,
+      data: patchedPacienteDetail,
     },
     options
   )
@@ -481,14 +481,14 @@ export const getPacienteUpdateMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof pacienteUpdate>>,
     TError,
-    { id: string; data: BodyType<NonReadonly<PatchedPaciente>> },
+    { id: string; data: BodyType<NonReadonly<PatchedPacienteDetail>> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof pacienteUpdate>>,
   TError,
-  { id: string; data: BodyType<NonReadonly<PatchedPaciente>> },
+  { id: string; data: BodyType<NonReadonly<PatchedPacienteDetail>> },
   TContext
 > => {
   const mutationKey = ['pacienteUpdate']
@@ -502,7 +502,7 @@ export const getPacienteUpdateMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof pacienteUpdate>>,
-    { id: string; data: BodyType<NonReadonly<PatchedPaciente>> }
+    { id: string; data: BodyType<NonReadonly<PatchedPacienteDetail>> }
   > = props => {
     const { id, data } = props ?? {}
 
@@ -515,7 +515,9 @@ export const getPacienteUpdateMutationOptions = <
 export type PacienteUpdateMutationResult = NonNullable<
   Awaited<ReturnType<typeof pacienteUpdate>>
 >
-export type PacienteUpdateMutationBody = BodyType<NonReadonly<PatchedPaciente>>
+export type PacienteUpdateMutationBody = BodyType<
+  NonReadonly<PatchedPacienteDetail>
+>
 export type PacienteUpdateMutationError = ErrorType<null | null | null>
 
 /**
@@ -529,7 +531,7 @@ export const usePacienteUpdate = <
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof pacienteUpdate>>,
       TError,
-      { id: string; data: BodyType<NonReadonly<PatchedPaciente>> },
+      { id: string; data: BodyType<NonReadonly<PatchedPacienteDetail>> },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -538,7 +540,7 @@ export const usePacienteUpdate = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof pacienteUpdate>>,
   TError,
-  { id: string; data: BodyType<NonReadonly<PatchedPaciente>> },
+  { id: string; data: BodyType<NonReadonly<PatchedPacienteDetail>> },
   TContext
 > => {
   const mutationOptions = getPacienteUpdateMutationOptions(options)

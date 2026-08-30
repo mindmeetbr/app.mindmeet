@@ -39,6 +39,7 @@ import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notifi
 import { useEffect } from 'react'
 import { PapelEnum } from '../api/models'
 import { useDisclosure } from '@mantine/hooks'
+import { useAuthLogoutCreate } from '../api/endpoints/auth/auth'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -51,7 +52,10 @@ export const Route = createFileRoute('/app')({
 })
 
 function AppLayout() {
-  const { isAuthenticated, logout, user } = useAuthStore()
+  const { isAuthenticated, logout: logoutFront, user } = useAuthStore()
+  const { mutate: logoutBack } = useAuthLogoutCreate({
+    mutation: { onSuccess: () => logoutFront() },
+  })
   const { setColorScheme } = useMantineColorScheme()
   const redirector = useRouter()
   const computedColorScheme = useComputedColorScheme('light')
@@ -60,9 +64,7 @@ function AppLayout() {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
   const { location } = useRouterState()
 
-  const handleLogoutClick = () => {
-    logout()
-  }
+  const handleLogoutClick = () => logoutBack()
 
   useEffect(() => {
     if (!isAuthenticated) {

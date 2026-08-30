@@ -12,18 +12,18 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation } from '@tanstack/react-query'
+
 import type {
   MutationFunction,
   QueryClient,
   UseMutationOptions,
   UseMutationResult,
 } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
 import type { PatchedPerfilPsicologo } from '../../models'
-
+import type { BodyType, ErrorType } from '../../mutator/custom-instance'
 import { customInstance } from '../../mutator/custom-instance'
-import type { ErrorType, BodyType } from '../../mutator/custom-instance'
 
 // https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
 type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
