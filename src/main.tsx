@@ -35,7 +35,7 @@ if (!rootElement.innerHTML) {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5,
-        refetchOnWindowFocus: false,
+        gcTime: 1000 * 60 * 10,
       },
     },
   })
