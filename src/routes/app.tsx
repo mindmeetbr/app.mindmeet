@@ -1,4 +1,34 @@
 import {
+  ActionIcon,
+  AppShell,
+  Avatar,
+  Burger,
+  Group,
+  Indicator,
+  Menu,
+  NavLink,
+  rem,
+  Text,
+  UnstyledButton,
+  useComputedColorScheme,
+  useMantineColorScheme,
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import {
+  IconBell,
+  IconBuildingCommunity,
+  IconCalendarWeek,
+  IconChevronDown,
+  IconClock,
+  IconDashboard,
+  IconLogout,
+  IconMoonStars,
+  IconSettings,
+  IconSun,
+  IconUsers,
+} from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import {
   createFileRoute,
   Link,
   Outlet,
@@ -6,40 +36,11 @@ import {
   useRouter,
   useRouterState,
 } from '@tanstack/react-router'
-import {
-  AppShell,
-  Text,
-  NavLink,
-  Group,
-  Avatar,
-  UnstyledButton,
-  Menu,
-  rem,
-  Indicator,
-  ActionIcon,
-  useMantineColorScheme,
-  useComputedColorScheme,
-  Burger,
-} from '@mantine/core'
-import {
-  IconDashboard,
-  IconSettings,
-  IconUsers,
-  IconLogout,
-  IconChevronDown,
-  IconClock,
-  IconBell,
-  IconBuildingCommunity,
-  IconSun,
-  IconMoonStars,
-  IconCalendarWeek,
-} from '@tabler/icons-react'
-import useAuthStore from '../stores/auth-store'
-import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notificacoes'
 import { useEffect } from 'react'
-import { PapelEnum } from '../api/models'
-import { useDisclosure } from '@mantine/hooks'
 import { useAuthLogoutCreate } from '../api/endpoints/auth/auth'
+import { useNotificacaoPendenteList } from '../api/endpoints/notificacoes/notificacoes'
+import { PapelEnum } from '../api/models'
+import useAuthStore from '../stores/auth-store'
 
 export const Route = createFileRoute('/app')({
   beforeLoad: () => {
@@ -53,8 +54,14 @@ export const Route = createFileRoute('/app')({
 
 function AppLayout() {
   const { isAuthenticated, logout: logoutFront, user } = useAuthStore()
+  const queryClient = useQueryClient()
   const { mutate: logoutBack } = useAuthLogoutCreate({
-    mutation: { onSuccess: () => logoutFront() },
+    mutation: {
+      onSuccess: () => {
+        queryClient.clear()
+        logoutFront()
+      },
+    },
   })
   const { setColorScheme } = useMantineColorScheme()
   const redirector = useRouter()
