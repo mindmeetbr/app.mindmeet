@@ -34,6 +34,7 @@ import type {
   PacienteListParams,
   PaginatedPacienteListList,
   PatchedPacienteDetail,
+  TrocarPsicologo,
 } from '../../models'
 import type { BodyType, ErrorType } from '../../mutator/custom-instance'
 import { customInstance } from '../../mutator/custom-instance'
@@ -633,38 +634,42 @@ export const usePacienteDelete = <
   return useMutation(mutationOptions, queryClient)
 }
 /**
- * Permite que um **gestor** troque o psicólogo associado a um paciente dentro da mesma instituição. Apenas gestores da instituição do paciente e do novo psicólogo podem executar esta operação.
- * @summary Troca o psicólogo de um paciente.
+ * Permite que um **gestor** troque o psicólogo associado a um paciente dentro da mesma instituição, ou remova o vínculo enviando `novo_psicologo: null`. Apenas gestores da instituição do paciente e do novo psicólogo (quando informado) podem executar esta operação.
+ * @summary Troca ou remove o psicólogo de um paciente.
  */
 export const trocarPsicologo = (
   id: string,
-  novoPsicologo: string,
-  options?: SecondParameter<typeof customInstance>
+  trocarPsicologo: BodyType<TrocarPsicologo>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
   return customInstance<null>(
     {
-      url: `/api/pacientes/${id}/trocar-psicologo/${novoPsicologo}/`,
-      method: 'PATCH',
+      url: `/api/pacientes/${id}/trocar-psicologo/`,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: trocarPsicologo,
+      signal,
     },
     options
   )
 }
 
 export const getTrocarPsicologoMutationOptions = <
-  TError = ErrorType<null | null | null>,
+  TError = ErrorType<null | null | null | null | null>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof trocarPsicologo>>,
     TError,
-    { id: string; novoPsicologo: string },
+    { id: string; data: BodyType<TrocarPsicologo> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof trocarPsicologo>>,
   TError,
-  { id: string; novoPsicologo: string },
+  { id: string; data: BodyType<TrocarPsicologo> },
   TContext
 > => {
   const mutationKey = ['trocarPsicologo']
@@ -678,11 +683,11 @@ export const getTrocarPsicologoMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof trocarPsicologo>>,
-    { id: string; novoPsicologo: string }
+    { id: string; data: BodyType<TrocarPsicologo> }
   > = props => {
-    const { id, novoPsicologo } = props ?? {}
+    const { id, data } = props ?? {}
 
-    return trocarPsicologo(id, novoPsicologo, requestOptions)
+    return trocarPsicologo(id, data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -691,21 +696,23 @@ export const getTrocarPsicologoMutationOptions = <
 export type TrocarPsicologoMutationResult = NonNullable<
   Awaited<ReturnType<typeof trocarPsicologo>>
 >
-
-export type TrocarPsicologoMutationError = ErrorType<null | null | null>
+export type TrocarPsicologoMutationBody = BodyType<TrocarPsicologo>
+export type TrocarPsicologoMutationError = ErrorType<
+  null | null | null | null | null
+>
 
 /**
- * @summary Troca o psicólogo de um paciente.
+ * @summary Troca ou remove o psicólogo de um paciente.
  */
 export const useTrocarPsicologo = <
-  TError = ErrorType<null | null | null>,
+  TError = ErrorType<null | null | null | null | null>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof trocarPsicologo>>,
       TError,
-      { id: string; novoPsicologo: string },
+      { id: string; data: BodyType<TrocarPsicologo> },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -714,7 +721,7 @@ export const useTrocarPsicologo = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof trocarPsicologo>>,
   TError,
-  { id: string; novoPsicologo: string },
+  { id: string; data: BodyType<TrocarPsicologo> },
   TContext
 > => {
   const mutationOptions = getTrocarPsicologoMutationOptions(options)

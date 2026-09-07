@@ -27,7 +27,7 @@ export interface MUser {
   cpf?: string
   /** @nullable */
   data_nascimento?: string | null
-  /** @maxLength 15 */
+  /** @maxLength 30 */
   numero_telefone?: string
   sexo?: (typeof MUserSexo)[keyof typeof MUserSexo]
   readonly verificado: boolean

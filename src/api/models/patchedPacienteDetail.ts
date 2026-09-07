@@ -21,6 +21,7 @@ export interface PatchedPacienteDetail {
   readonly id?: string
   /** @nullable */
   readonly acompanhado_por?: string | null
+  readonly psicologo?: string
   /** @nullable */
   anamnese?: PatchedPacienteDetailAnamnese
   /** @nullable */
@@ -29,15 +30,14 @@ export interface PatchedPacienteDetail {
   endereco?: PatchedPacienteDetailEndereco
   /** @nullable */
   informacoes_clinicas?: PatchedPacienteDetailInformacoesClinicas
-  readonly psicologo?: string
   /** @maxLength 255 */
   nome_completo?: string
   data_nascimento?: string
   /** @maxLength 255 */
   email?: string
-  /** @maxLength 15 */
+  /** @maxLength 30 */
   numero_telefone?: string
-  /** @maxLength 15 */
+  /** @maxLength 30 */
   numero_celular?: string
   /** @maxLength 14 */
   cpf?: string

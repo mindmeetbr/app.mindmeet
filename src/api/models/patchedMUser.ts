@@ -27,7 +27,7 @@ export interface PatchedMUser {
   cpf?: string
   /** @nullable */
   data_nascimento?: string | null
-  /** @maxLength 15 */
+  /** @maxLength 30 */
   numero_telefone?: string
   sexo?: (typeof PatchedMUserSexo)[keyof typeof PatchedMUserSexo]
   readonly verificado?: boolean
