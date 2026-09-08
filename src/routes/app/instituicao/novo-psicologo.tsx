@@ -1,30 +1,31 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
-
 import {
+  Alert,
   Button,
   Card,
-  Group,
-  Stack,
-  TextInput,
-  Select,
-  Title,
-  rem,
-  Switch,
   Grid,
-  Alert,
+  Group,
+  rem,
+  Select,
+  Stack,
+  Switch,
+  TextInput,
+  Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { PageLayout } from '../../../components/layout'
+import { notifications } from '@mantine/notifications'
 import {
   IconArrowLeft,
   IconDeviceFloppy,
   IconInfoCircle,
 } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { useCadastrarPsicologo } from '../../../api/endpoints/users/users'
-import { notifications } from '@mantine/notifications'
 import { useListarPsicologos } from '../../../api/endpoints/instituicoes/instituicoes'
+import { useCadastrarPsicologo } from '../../../api/endpoints/users/users'
+import { PageLayout } from '../../../components/layout'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+
 export const Route = createFileRoute('/app/instituicao/novo-psicologo')({
   component: NovoPsicologo,
 })
@@ -32,7 +33,14 @@ export const Route = createFileRoute('/app/instituicao/novo-psicologo')({
 function NovoPsicologo() {
   useAlterarTitle('Cadastrar Psicólogo')
   const router = useRouter()
-  const { mutate: cadastrarPsicologo } = useCadastrarPsicologo()
+  const queryClient = useQueryClient()
+  const { mutate: cadastrarPsicologo } = useCadastrarPsicologo({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['psicologos'] })
+      },
+    },
+  })
   const { data } = useListarPsicologos()
   const listaSupervisores =
     data?.results.filter(psi => !psi.is_estagiario) ?? []

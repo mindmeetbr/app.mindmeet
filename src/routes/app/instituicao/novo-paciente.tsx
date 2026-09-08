@@ -1,20 +1,21 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
 import {
-  Card,
-  Stack,
-  Group,
   Button,
-  TextInput,
-  Select,
+  Card,
   Grid,
+  Group,
   rem,
+  Select,
+  Stack,
+  TextInput,
   Title,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
-import { PageLayout } from '../../../components/layout'
-import { usePacienteCreate } from '../../../api/endpoints/pacientes/pacientes'
 import { notifications } from '@mantine/notifications'
+import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { usePacienteCreate } from '../../../api/endpoints/pacientes/pacientes'
+import { PageLayout } from '../../../components/layout'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 
 export const Route = createFileRoute('/app/instituicao/novo-paciente')({
@@ -23,7 +24,14 @@ export const Route = createFileRoute('/app/instituicao/novo-paciente')({
 
 function NovoPaciente() {
   useAlterarTitle('Cadastrar Paciente')
-  const { mutate: criarPaciente } = usePacienteCreate()
+  const queryClient = useQueryClient()
+  const { mutate: criarPaciente } = usePacienteCreate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['pacientes'] })
+      },
+    },
+  })
   const router = useRouter()
 
   const listaEstados = [
