@@ -18,6 +18,7 @@ export interface PacienteList {
   /** @nullable */
   readonly acompanhado_por: string | null
   readonly psicologo: string
+  readonly psicologo_id: string
   /** @maxLength 255 */
   nome_completo: string
   data_nascimento: string

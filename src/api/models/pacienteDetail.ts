@@ -22,6 +22,7 @@ export interface PacienteDetail {
   /** @nullable */
   readonly acompanhado_por: string | null
   readonly psicologo: string
+  readonly psicologo_id: string
   /** @nullable */
   anamnese?: PacienteDetailAnamnese
   /** @nullable */

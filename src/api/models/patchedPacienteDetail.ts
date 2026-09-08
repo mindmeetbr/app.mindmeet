@@ -22,6 +22,7 @@ export interface PatchedPacienteDetail {
   /** @nullable */
   readonly acompanhado_por?: string | null
   readonly psicologo?: string
+  readonly psicologo_id?: string
   /** @nullable */
   anamnese?: PatchedPacienteDetailAnamnese
   /** @nullable */
