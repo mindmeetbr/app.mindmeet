@@ -1,52 +1,52 @@
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
-  Table,
-  Text,
-  Group,
   ActionIcon,
-  rem,
-  Flex,
-  Tabs,
-  Button,
-  Stack,
-  Modal,
   Alert,
+  Button,
+  Flex,
+  Group,
+  Modal,
+  rem,
   Select,
+  Stack,
+  Table,
+  Tabs,
+  Text,
 } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 import {
-  IconPlus,
-  IconUserCheck,
-  IconUser,
-  IconMail,
-  IconPhone,
+  IconAlertCircle,
   IconEdit,
   IconEye,
-  IconAlertCircle,
+  IconMail,
+  IconPhone,
+  IconPlus,
+  IconUser,
+  IconUserCheck,
   IconUserPlus,
 } from '@tabler/icons-react'
-import { useState } from 'react'
-import { PageLayout } from '../../../components/layout'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
+import { useEffect, useState } from 'react'
+import {
+  useInstituicaoDetail,
+  useListarPsicologos,
+} from '../../../api/endpoints/instituicoes/instituicoes'
 import {
   usePacienteList,
   useTrocarPsicologo,
 } from '../../../api/endpoints/pacientes/pacientes'
 import {
-  useInstituicaoDetail,
-  useListarPsicologos,
-} from '../../../api/endpoints/instituicoes/instituicoes'
-import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
-import { usePaginacao } from '../../../hooks/usePaginacao'
-import {
+  type PacienteList,
   PapelEnum,
-  type Paciente,
   type PerfilPsicologo,
 } from '../../../api/models'
-import { exigirPapel } from '../../../utils/auth'
+import { PageLayout } from '../../../components/layout'
+import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { usePaginacao } from '../../../hooks/usePaginacao'
 import useAuthStore from '../../../stores/auth-store'
-import { useQueryClient } from '@tanstack/react-query'
-import { notifications } from '@mantine/notifications'
+import { exigirPapel } from '../../../utils/auth'
 
 export const Route = createFileRoute('/app/instituicao/')({
   beforeLoad: exigirPapel(PapelEnum.GESTOR),
@@ -148,7 +148,7 @@ function TabelaPsicologos() {
 }
 
 interface ModalAtribuirPsicologoProps {
-  paciente: Paciente | null
+  paciente: PacienteList | null
   onClose: () => void
   onSucesso: () => void
 }
@@ -161,15 +161,15 @@ function ModalAtribuirPsicologo({
   const [psicologoSelecionado, setPsicologoSelecionado] = useState<
     string | null
   >(null)
+  const [psicologoInicial, setPsicologoInicial] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
   const { data: psicologos, isLoading: carregandoPsicologos } =
     useListarPsicologos(
-      { pagina: 1, tamanho: 100 },
+      { pagina: 1, tamanho: 999 },
       {
         query: {
           queryKey: ['psicologos-instituicao'],
-          staleTime: 5 * 60 * 1000,
         },
       }
     )
@@ -182,6 +182,20 @@ function ModalAtribuirPsicologo({
     },
   })
 
+  useEffect(() => {
+    if (!paciente || !psicologos?.results) return
+
+    const perfilAtual = psicologos.results.find(
+      p => p.usuario?.id === paciente.psicologo_id
+    )
+
+    const valorInicial = perfilAtual?.id ?? null
+    setPsicologoSelecionado(valorInicial)
+    setPsicologoInicial(valorInicial)
+  }, [paciente, psicologos])
+
+  const houveAlteracao = psicologoSelecionado !== psicologoInicial
+
   const opcoesPsicologos =
     psicologos?.results?.map(p => ({
       value: p.id,
@@ -189,16 +203,20 @@ function ModalAtribuirPsicologo({
     })) ?? []
 
   const handleSalvar = () => {
-    if (!paciente || !psicologoSelecionado) return
+    if (!paciente || !houveAlteracao) return
 
     trocarPsicologo(
-      { id: paciente.id, novoPsicologo: psicologoSelecionado },
+      { id: paciente.id, data: { novo_psicologo: psicologoSelecionado } },
       {
         onSuccess: () => {
+          const foiRemocao = psicologoSelecionado === null
+
           notifications.show({
-            title: 'Psicólogo atribuído',
-            message: `${paciente.nome_completo} foi transferido com sucesso.`,
-            color: 'green',
+            title: foiRemocao ? 'Psicólogo removido' : 'Psicólogo atribuído',
+            message: foiRemocao
+              ? `${paciente.nome_completo} ficou sem psicólogo atribuído.`
+              : `${paciente.nome_completo} foi transferido com sucesso.`,
+            color: foiRemocao ? 'orange' : 'green',
           })
           onSucesso()
           onClose()
@@ -245,7 +263,8 @@ function ModalAtribuirPsicologo({
             <Text span fw={500}>
               {paciente.psicologo}
             </Text>
-            . Ao salvar, o psicólogo será substituído.
+            . Escolha outro psicólogo para transferir, ou limpe o campo para
+            remover o vínculo.
           </Alert>
         )}
 
@@ -261,6 +280,7 @@ function ModalAtribuirPsicologo({
           searchable
           nothingFoundMessage="Nenhum psicólogo encontrado"
           disabled={carregandoPsicologos}
+          clearable
         />
 
         <Group justify="flex-end" gap="sm">
@@ -270,7 +290,7 @@ function ModalAtribuirPsicologo({
           <Button
             onClick={handleSalvar}
             loading={isPending}
-            disabled={!psicologoSelecionado}
+            disabled={!houveAlteracao}
           >
             Salvar
           </Button>
@@ -283,7 +303,7 @@ function ModalAtribuirPsicologo({
 function TabelaPacientes() {
   const [searchTerm, setSearchTerm] = useState('')
   const [pacienteParaAtribuir, setPacienteParaAtribuir] =
-    useState<Paciente | null>(null)
+    useState<PacienteList | null>(null)
 
   const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
   const { data, isLoading, isError, refetch } = usePacienteList(
@@ -302,7 +322,7 @@ function TabelaPacientes() {
       pac.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const renderLinhaPaciente = (paciente: Paciente) => (
+  const renderLinhaPaciente = (paciente: PacienteList) => (
     <Table.Tr key={paciente.id}>
       <Table.Td>
         <Text fw={500} size="sm">
@@ -322,11 +342,7 @@ function TabelaPacientes() {
         </div>
       </Table.Td>
       <Table.Td>{calcularIdade(paciente.data_nascimento)} anos</Table.Td>
-      <Table.Td>
-        {isGestor
-          ? (paciente.psicologo ?? 'Ninguém')
-          : (paciente.informacoes_clinicas?.queixa_principal ?? 'Nenhuma')}
-      </Table.Td>
+      <Table.Td>{paciente.psicologo ?? 'Ninguém'}</Table.Td>
       <Table.Td>
         <Flex gap="xs">
           <Link to="/app/pacientes/$id" params={{ id: paciente.id }}>
@@ -347,6 +363,7 @@ function TabelaPacientes() {
               size="sm"
               title="Atribuir psicólogo"
               onClick={() => setPacienteParaAtribuir(paciente)}
+              // onClick={() => console.log(JSON.stringify(paciente, null, 4))}
             >
               <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
@@ -356,16 +373,11 @@ function TabelaPacientes() {
     </Table.Tr>
   )
 
-  const getColunaPaciente = () => {
-    if (isGestor) return { chave: 'psicologoPaciente', label: 'Psicólogo' }
-    return { chave: 'queixa', label: 'Queixa Principal' }
-  }
-
   const COLUNAS_PACIENTES = [
     { chave: 'paciente', label: 'Paciente' },
     { chave: 'contato', label: 'Contato' },
     { chave: 'idade', label: 'Idade' },
-    getColunaPaciente(),
+    { chave: 'psicologoPaciente', label: 'Psicólogo' },
     { chave: 'acoes', label: 'Ações', largura: isGestor ? 120 : 100 },
   ]
 

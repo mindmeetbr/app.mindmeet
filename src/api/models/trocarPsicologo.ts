@@ -13,12 +13,10 @@ A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o to
  * OpenAPI spec version: 0.1.0
  */
 
-export interface ContatoDeEmergencia {
-  readonly id: string
-  /** @maxLength 50 */
-  nome: string
-  /** @maxLength 30 */
-  numero_telefone: string
-  /** @maxLength 20 */
-  parentesco?: string
+export interface TrocarPsicologo {
+  /**
+   * ID do psicólogo a vincular, ou null para remover o vínculo.
+   * @nullable
+   */
+  novo_psicologo: string | null
 }
