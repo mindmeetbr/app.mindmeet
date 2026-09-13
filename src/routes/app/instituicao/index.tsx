@@ -527,8 +527,6 @@ function TabelaPacientes() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
-          {/* botão de atribuição — somente para gestores */}
-          {/* {isGestor && ( */}
           <ActionIcon
             variant="light"
             color="green"
@@ -538,7 +536,6 @@ function TabelaPacientes() {
           >
             <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
           </ActionIcon>
-          {/* )} */}
         </Flex>
       </Table.Td>
     </Table.Tr>
