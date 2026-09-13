@@ -21,182 +21,49 @@ import type {
 } from '@tanstack/react-query'
 import { useMutation } from '@tanstack/react-query'
 
-import type { PatchedPerfilPsicologo } from '../../models'
+import type { TrocarSupervisor } from '../../models'
 import type { BodyType, ErrorType } from '../../mutator/custom-instance'
 import { customInstance } from '../../mutator/custom-instance'
-
-// https://stackoverflow.com/questions/49579094/typescript-conditional-types-filter-out-readonly-properties-pick-only-requir/49579497#49579497
-type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
-  T,
->() => T extends Y ? 1 : 2
-  ? A
-  : B
-
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    { [Q in P]: T[P] },
-    { -readonly [Q in P]: T[P] },
-    P
-  >
-}[keyof T]
-
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
-) => void
-  ? I
-  : never
-type DistributeReadOnlyOverUnions<T> = T extends any ? NonReadonly<T> : never
-
-type Writable<T> = Pick<T, WritableKeys<T>>
-type NonReadonly<T> = [T] extends [UnionToIntersection<T>]
-  ? {
-      [P in keyof Writable<T>]: T[P] extends object
-        ? NonReadonly<NonNullable<T[P]>>
-        : T[P]
-    }
-  : DistributeReadOnlyOverUnions<T>
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
- * Permite que um **gestor** remova o supervisor atualmente associado a um estagiário da sua instituição. Após a remoção, o campo `supervisor_confirmado` é definido como `False`.
- * @summary Remover supervisor de um estagiário
- */
-export const removerSupervisor = (
-  id: string,
-  patchedPerfilPsicologo: BodyType<NonReadonly<PatchedPerfilPsicologo>>,
-  options?: SecondParameter<typeof customInstance>
-) => {
-  return customInstance<null>(
-    {
-      url: `/api/estagiarios/${id}/remover-supervisor/`,
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      data: patchedPerfilPsicologo,
-    },
-    options
-  )
-}
-
-export const getRemoverSupervisorMutationOptions = <
-  TError = ErrorType<null | null | null | null>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof removerSupervisor>>,
-    TError,
-    { id: string; data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
-    TContext
-  >
-  request?: SecondParameter<typeof customInstance>
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof removerSupervisor>>,
-  TError,
-  { id: string; data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
-  TContext
-> => {
-  const mutationKey = ['removerSupervisor']
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      'mutationKey' in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined }
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof removerSupervisor>>,
-    { id: string; data: BodyType<NonReadonly<PatchedPerfilPsicologo>> }
-  > = props => {
-    const { id, data } = props ?? {}
-
-    return removerSupervisor(id, data, requestOptions)
-  }
-
-  return { mutationFn, ...mutationOptions }
-}
-
-export type RemoverSupervisorMutationResult = NonNullable<
-  Awaited<ReturnType<typeof removerSupervisor>>
->
-export type RemoverSupervisorMutationBody = BodyType<
-  NonReadonly<PatchedPerfilPsicologo>
->
-export type RemoverSupervisorMutationError = ErrorType<
-  null | null | null | null
->
-
-/**
- * @summary Remover supervisor de um estagiário
- */
-export const useRemoverSupervisor = <
-  TError = ErrorType<null | null | null | null>,
-  TContext = unknown,
->(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof removerSupervisor>>,
-      TError,
-      { id: string; data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
-      TContext
-    >
-    request?: SecondParameter<typeof customInstance>
-  },
-  queryClient?: QueryClient
-): UseMutationResult<
-  Awaited<ReturnType<typeof removerSupervisor>>,
-  TError,
-  { id: string; data: BodyType<NonReadonly<PatchedPerfilPsicologo>> },
-  TContext
-> => {
-  const mutationOptions = getRemoverSupervisorMutationOptions(options)
-
-  return useMutation(mutationOptions, queryClient)
-}
-/**
- * Permite que um **gestor** troque o supervisor associado a um estagiário dentro da mesma instituição. Apenas gestores da instituição do estagiário e do novo supervisor podem executar esta operação.
- * @summary Trocar supervisor de um estagiário
+ * Permite que um **gestor** troque o supervisor associado a um estagiário dentro da mesma instituição, ou remova o vínculo enviando `novo_supervisor: null`. Apenas gestores da instituição do estagiário e do novo supervisor (quando informado) podem executar esta operação.
+ * @summary Troca ou remove o supervisor de um estagiário
  */
 export const trocarSupervisor = (
   id: string,
-  novoSupervisor: string,
-  patchedPerfilPsicologo: BodyType<NonReadonly<PatchedPerfilPsicologo>>,
-  options?: SecondParameter<typeof customInstance>
+  trocarSupervisor: BodyType<TrocarSupervisor>,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
   return customInstance<null>(
     {
-      url: `/api/estagiarios/${id}/trocar/${novoSupervisor}/`,
-      method: 'PATCH',
+      url: `/api/estagiarios/${id}/trocar-supervisor/`,
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: patchedPerfilPsicologo,
+      data: trocarSupervisor,
+      signal,
     },
     options
   )
 }
 
 export const getTrocarSupervisorMutationOptions = <
-  TError = ErrorType<null | null | null | null>,
+  TError = ErrorType<null | null | null | null | null>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof trocarSupervisor>>,
     TError,
-    {
-      id: string
-      novoSupervisor: string
-      data: BodyType<NonReadonly<PatchedPerfilPsicologo>>
-    },
+    { id: string; data: BodyType<TrocarSupervisor> },
     TContext
   >
   request?: SecondParameter<typeof customInstance>
 }): UseMutationOptions<
   Awaited<ReturnType<typeof trocarSupervisor>>,
   TError,
-  {
-    id: string
-    novoSupervisor: string
-    data: BodyType<NonReadonly<PatchedPerfilPsicologo>>
-  },
+  { id: string; data: BodyType<TrocarSupervisor> },
   TContext
 > => {
   const mutationKey = ['trocarSupervisor']
@@ -210,15 +77,11 @@ export const getTrocarSupervisorMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof trocarSupervisor>>,
-    {
-      id: string
-      novoSupervisor: string
-      data: BodyType<NonReadonly<PatchedPerfilPsicologo>>
-    }
+    { id: string; data: BodyType<TrocarSupervisor> }
   > = props => {
-    const { id, novoSupervisor, data } = props ?? {}
+    const { id, data } = props ?? {}
 
-    return trocarSupervisor(id, novoSupervisor, data, requestOptions)
+    return trocarSupervisor(id, data, requestOptions)
   }
 
   return { mutationFn, ...mutationOptions }
@@ -227,27 +90,23 @@ export const getTrocarSupervisorMutationOptions = <
 export type TrocarSupervisorMutationResult = NonNullable<
   Awaited<ReturnType<typeof trocarSupervisor>>
 >
-export type TrocarSupervisorMutationBody = BodyType<
-  NonReadonly<PatchedPerfilPsicologo>
+export type TrocarSupervisorMutationBody = BodyType<TrocarSupervisor>
+export type TrocarSupervisorMutationError = ErrorType<
+  null | null | null | null | null
 >
-export type TrocarSupervisorMutationError = ErrorType<null | null | null | null>
 
 /**
- * @summary Trocar supervisor de um estagiário
+ * @summary Troca ou remove o supervisor de um estagiário
  */
 export const useTrocarSupervisor = <
-  TError = ErrorType<null | null | null | null>,
+  TError = ErrorType<null | null | null | null | null>,
   TContext = unknown,
 >(
   options?: {
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof trocarSupervisor>>,
       TError,
-      {
-        id: string
-        novoSupervisor: string
-        data: BodyType<NonReadonly<PatchedPerfilPsicologo>>
-      },
+      { id: string; data: BodyType<TrocarSupervisor> },
       TContext
     >
     request?: SecondParameter<typeof customInstance>
@@ -256,11 +115,7 @@ export const useTrocarSupervisor = <
 ): UseMutationResult<
   Awaited<ReturnType<typeof trocarSupervisor>>,
   TError,
-  {
-    id: string
-    novoSupervisor: string
-    data: BodyType<NonReadonly<PatchedPerfilPsicologo>>
-  },
+  { id: string; data: BodyType<TrocarSupervisor> },
   TContext
 > => {
   const mutationOptions = getTrocarSupervisorMutationOptions(options)

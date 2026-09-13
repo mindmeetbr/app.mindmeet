@@ -12,18 +12,11 @@ Permite o gerenciamento completo de psicólogos, pacientes, agendamentos e anota
 A autenticação é feita via **JWT**. Todos os endpoints protegidos exigem o token no header `Authorization: Bearer <token>`.
  * OpenAPI spec version: 0.1.0
  */
-import type { MUser } from './mUser'
 
-export interface PatchedPerfilPsicologo {
-  usuario?: MUser
-  readonly id?: string
+export interface TrocarSupervisor {
   /**
-   * @maxLength 10
+   * ID do psicólogo a vincular, ou null para removê-lo
    * @nullable
    */
-  crp?: string | null
-  is_estagiario?: boolean
-  supervisor?: string
-  readonly supervisor_id?: string
-  readonly supervisor_confirmado?: boolean
+  novo_supervisor: string | null
 }
