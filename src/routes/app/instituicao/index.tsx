@@ -28,6 +28,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+import { useTrocarSupervisor } from '../../../api/endpoints/estagiarios/estagiarios'
 import {
   useInstituicaoDetail,
   useListarPsicologos,
@@ -45,7 +46,6 @@ import { PageLayout } from '../../../components/layout'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { usePaginacao } from '../../../hooks/usePaginacao'
-import useAuthStore from '../../../stores/auth-store'
 import { exigirPapel } from '../../../utils/auth'
 
 export const Route = createFileRoute('/app/instituicao/')({
@@ -53,11 +53,164 @@ export const Route = createFileRoute('/app/instituicao/')({
   component: PaginaInstituicao,
 })
 
-const { user } = useAuthStore.getState()
-const isGestor = user?.papel === PapelEnum.GESTOR
+interface ModalTrocarSupervisorProps {
+  estagiario: PerfilPsicologo | null
+  onClose: () => void
+  onSucesso: () => void
+}
+
+function ModalTrocarSupervisor({
+  estagiario,
+  onClose,
+  onSucesso,
+}: ModalTrocarSupervisorProps) {
+  const [supervisorSelecionado, setSupervisorSelecionado] = useState<
+    string | null
+  >(null)
+  const [supervisorInicial, setSupervisorInicial] = useState<string | null>(
+    null
+  )
+  const queryClient = useQueryClient()
+
+  const { data: psicologos, isLoading: carregandoPsicologos } =
+    useListarPsicologos(
+      { pagina: 1, tamanho: 999 },
+      {
+        query: {
+          queryKey: ['psicologos', 'select-supervisor'],
+        },
+      }
+    )
+
+  const { mutate: trocarSupervisor, isPending } = useTrocarSupervisor({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['psicologos'] })
+      },
+    },
+  })
+
+  useEffect(() => {
+    if (!estagiario || !psicologos?.results) return
+
+    const perfilAtual = psicologos.results.find(
+      p => p.usuario?.id === estagiario.supervisor_id
+    )
+
+    const valorInicial = perfilAtual?.id ?? null
+    setSupervisorSelecionado(valorInicial)
+    setSupervisorInicial(valorInicial)
+  }, [estagiario, psicologos])
+
+  const houveAlteracao = supervisorSelecionado !== supervisorInicial
+
+  const opcoesSupervisores =
+    psicologos?.results
+      ?.filter(p => !p.is_estagiario && p.id !== estagiario?.id)
+      .map(p => ({
+        value: p.id,
+        label: `${p.usuario?.nome_completo} — CRP ${p.crp ?? 'não informado'}`,
+      })) ?? []
+
+  const handleSalvar = () => {
+    if (!estagiario || !houveAlteracao) return
+
+    trocarSupervisor(
+      { id: estagiario.id, data: { novo_supervisor: supervisorSelecionado } },
+      {
+        onSuccess: () => {
+          const foiRemocao = supervisorSelecionado === null
+
+          notifications.show({
+            title: foiRemocao ? 'Supervisor removido' : 'Supervisor atribuído',
+            message: foiRemocao
+              ? `${estagiario.usuario?.nome_completo} ficou sem supervisor.`
+              : `${estagiario.usuario?.nome_completo} teve o supervisor atualizado.`,
+            color: foiRemocao ? 'orange' : 'green',
+          })
+          onSucesso()
+          onClose()
+        },
+        onError: () => {
+          notifications.show({
+            title: 'Erro ao trocar supervisor',
+            message: 'Verifique se o supervisor pertence à sua instituição.',
+            color: 'red',
+          })
+        },
+      }
+    )
+  }
+
+  const handleClose = () => {
+    setSupervisorSelecionado(null)
+    onClose()
+  }
+
+  return (
+    <Modal
+      opened={!!estagiario}
+      onClose={handleClose}
+      title={
+        <Text fw={600}>
+          Trocar supervisor —{' '}
+          <Text span c="dimmed" fw={400}>
+            {estagiario?.usuario?.nome_completo}
+          </Text>
+        </Text>
+      }
+      centered
+      size="md"
+    >
+      <Stack gap="lg">
+        {estagiario?.supervisor && (
+          <Alert
+            variant="light"
+            color="orange"
+            icon={<IconAlertCircle size={16} />}
+          >
+            Este estagiário já possui supervisor. Escolha outro para transferir,
+            ou limpe o campo para remover o vínculo.
+          </Alert>
+        )}
+
+        <Select
+          label="Supervisor"
+          description="Selecione o psicólogo que supervisionará este estagiário"
+          placeholder={
+            carregandoPsicologos ? 'Carregando...' : 'Escolha um supervisor'
+          }
+          data={opcoesSupervisores}
+          value={supervisorSelecionado}
+          onChange={setSupervisorSelecionado}
+          searchable
+          nothingFoundMessage="Nenhum psicólogo encontrado"
+          disabled={carregandoPsicologos}
+          clearable
+        />
+
+        <Group justify="flex-end" gap="sm">
+          <Button variant="subtle" color="gray" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSalvar}
+            loading={isPending}
+            disabled={!houveAlteracao}
+          >
+            Salvar
+          </Button>
+        </Group>
+      </Stack>
+    </Modal>
+  )
+}
 
 function TabelaPsicologos() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [estagiarioParaTrocar, setEstagiarioParaTrocar] =
+    useState<PerfilPsicologo | null>(null)
+
   const { pagina, tamanho, setPagina, setTamanho } = usePaginacao()
   const { data, isLoading, isError, refetch } = useListarPsicologos(
     { pagina, tamanho },
@@ -102,6 +255,17 @@ function TabelaPsicologos() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
+          {psicologo.is_estagiario && (
+            <ActionIcon
+              variant="light"
+              color="green"
+              size="sm"
+              title="Trocar supervisor"
+              onClick={() => setEstagiarioParaTrocar(psicologo)}
+            >
+              <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
+            </ActionIcon>
+          )}
         </Flex>
       </Table.Td>
     </Table.Tr>
@@ -117,33 +281,41 @@ function TabelaPsicologos() {
   ]
 
   return (
-    <TabelaPaginada
-      dados={psicologosFiltrados}
-      total={data?.count ?? 0}
-      isLoading={isLoading}
-      isError={isError}
-      onRetry={refetch}
-      colunas={COLUNAS_PSICOLOGOS}
-      renderLinha={renderLinhaPsicologo}
-      pagina={pagina}
-      tamanho={tamanho}
-      onPaginaChange={setPagina}
-      onTamanhoChange={setTamanho}
-      mensagemVazia="Nenhum psicólogo encontrado."
-      mensagemErro="Não foi possível carregar seus psicólogos. Tente novamente"
-      acoes={
-        <Button
-          component={Link}
-          to="/app/instituicao/novo-psicologo"
-          leftSection={<IconPlus />}
-          w="100%"
-        >
-          Adicionar Psicólogo
-        </Button>
-      }
-      termoBusca={searchTerm}
-      onBuscaChange={setSearchTerm}
-    />
+    <>
+      <TabelaPaginada
+        dados={psicologosFiltrados}
+        total={data?.count ?? 0}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={refetch}
+        colunas={COLUNAS_PSICOLOGOS}
+        renderLinha={renderLinhaPsicologo}
+        pagina={pagina}
+        tamanho={tamanho}
+        onPaginaChange={setPagina}
+        onTamanhoChange={setTamanho}
+        mensagemVazia="Nenhum psicólogo encontrado."
+        mensagemErro="Não foi possível carregar seus psicólogos. Tente novamente"
+        acoes={
+          <Button
+            component={Link}
+            to="/app/instituicao/novo-psicologo"
+            leftSection={<IconPlus />}
+            w="100%"
+          >
+            Adicionar Psicólogo
+          </Button>
+        }
+        termoBusca={searchTerm}
+        onBuscaChange={setSearchTerm}
+      />
+
+      <ModalTrocarSupervisor
+        estagiario={estagiarioParaTrocar}
+        onClose={() => setEstagiarioParaTrocar(null)}
+        onSucesso={() => setEstagiarioParaTrocar(null)}
+      />
+    </>
   )
 }
 
@@ -169,7 +341,7 @@ function ModalAtribuirPsicologo({
       { pagina: 1, tamanho: 999 },
       {
         query: {
-          queryKey: ['psicologos-instituicao'],
+          queryKey: ['psicologos'],
         },
       }
     )
@@ -355,19 +527,15 @@ function TabelaPacientes() {
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
-          {/* botão de atribuição — somente para gestores */}
-          {isGestor && (
-            <ActionIcon
-              variant="light"
-              color="green"
-              size="sm"
-              title="Atribuir psicólogo"
-              onClick={() => setPacienteParaAtribuir(paciente)}
-              // onClick={() => console.log(JSON.stringify(paciente, null, 4))}
-            >
-              <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
-            </ActionIcon>
-          )}
+          <ActionIcon
+            variant="light"
+            color="green"
+            size="sm"
+            title="Atribuir psicólogo"
+            onClick={() => setPacienteParaAtribuir(paciente)}
+          >
+            <IconUserPlus style={{ width: rem(14), height: rem(14) }} />
+          </ActionIcon>
         </Flex>
       </Table.Td>
     </Table.Tr>
@@ -378,7 +546,7 @@ function TabelaPacientes() {
     { chave: 'contato', label: 'Contato' },
     { chave: 'idade', label: 'Idade' },
     { chave: 'psicologoPaciente', label: 'Psicólogo' },
-    { chave: 'acoes', label: 'Ações', largura: isGestor ? 120 : 100 },
+    { chave: 'acoes', label: 'Ações', largura: 120 },
   ]
 
   return (

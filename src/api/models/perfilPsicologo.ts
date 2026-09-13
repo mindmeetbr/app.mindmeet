@@ -24,5 +24,6 @@ export interface PerfilPsicologo {
   crp?: string | null
   is_estagiario?: boolean
   supervisor?: string
+  readonly supervisor_id: string
   readonly supervisor_confirmado: boolean
 }
