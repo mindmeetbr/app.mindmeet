@@ -1,13 +1,3 @@
-import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
-
-import {
-  AgendamentoTipoEnum,
-  EstadoEnum,
-  type Agendamento,
-} from '../../../api/models'
-import { useForm } from '@mantine/form'
-import { PageLayout, type BreadcrumbItem } from '../../../components/layout'
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import {
   Button,
   Card,
@@ -20,21 +10,30 @@ import {
   Title,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
-import { formatarHora, paraMaiuscula } from '../../../utils/agenda'
-import { useMemo, useState, useEffect } from 'react'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
+import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
+// import { useDebouncedValue } from '@mantine/hooks'
+import type { AxiosError } from 'axios'
+import dayjs from 'dayjs'
+import { useEffect, useMemo, useState } from 'react'
 import {
   useAgendamentoCreate,
   useAgendamentoDetail,
   useAgendamentoUpdate,
 } from '../../../api/endpoints/agendamentos/agendamentos'
 import { useAgendaDisponivel } from '../../../api/endpoints/disponibilidades/disponibilidades'
+import { usePacienteSelect } from '../../../api/endpoints/pacientes/pacientes'
+import {
+  type Agendamento,
+  AgendamentoTipoEnum,
+  EstadoEnum,
+} from '../../../api/models'
+import { type BreadcrumbItem, PageLayout } from '../../../components/layout'
 import useAuthStore from '../../../stores/auth-store'
-import dayjs from 'dayjs'
-import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
-import { notifications } from '@mantine/notifications'
-import { useDebouncedValue } from '@mantine/hooks'
-import type { AxiosError } from 'axios'
-import { useQueryClient } from '@tanstack/react-query'
+import { formatarHora, paraMaiuscula } from '../../../utils/agenda'
 
 export const Route = createFileRoute('/app/agenda/novo')({
   component: AgendamentoCreatePage,
@@ -163,50 +162,16 @@ function AgendamentoCreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, agendamento])
 
-  const [termoBusca, setTermoBusca] = useState('')
-  const [termoBuscaDebounced] = useDebouncedValue(termoBusca, 300)
-
-  const handleSearchChange = (valor: string) => {
-    if (!form.values.paciente_id || valor === '') {
-      setTermoBusca(valor)
-    }
-  }
-
-  const handlePacienteChange = (valor: string | null) => {
-    form.setFieldValue('paciente_id', valor ?? '')
-    setTermoBusca('')
-  }
-
-  const { data: pacientes, isLoading: buscandoPacientes } = usePacienteList(
-    { search: termoBuscaDebounced, tamanho: 20 },
-    {
-      query: {
-        queryKey: ['pacientes-select', termoBuscaDebounced],
-        enabled: termoBuscaDebounced.length >= 2,
-        staleTime: 30 * 1000,
-      },
-    }
-  )
-
-  const opcoesPacientes = useMemo(() => {
-    const lista =
-      pacientes?.results?.map(p => ({
+  const { data: pacientes, isLoading: carregandoPacientes } =
+    usePacienteSelect()
+  const opcoesPacientes = useMemo(
+    () =>
+      pacientes?.map(p => ({
         value: p.id,
         label: `${p.nome_completo} — ${p.email}`,
-      })) ?? []
-
-    if (isEditing && agendamento?.paciente) {
-      const jaEstaNaLista = lista.some(p => p.value === agendamento.paciente.id)
-      if (!jaEstaNaLista) {
-        lista.unshift({
-          value: agendamento.paciente.id,
-          label: `${agendamento.paciente.nome_completo} — ${agendamento.paciente.email}`,
-        })
-      }
-    }
-
-    return lista
-  }, [pacientes, agendamento, isEditing])
+      })) ?? [],
+    [pacientes]
+  )
 
   const [horarioSelecionado, setHorarioSelecionado] = useState('')
   const dataSelecionada = form.values.data
@@ -356,21 +321,24 @@ function AgendamentoCreatePage() {
                 <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Paciente"
-                    description="Digite o nome ou email para buscar"
-                    placeholder="Buscar paciente..."
-                    searchable
-                    data={opcoesPacientes}
-                    onSearchChange={handleSearchChange}
-                    value={form.values.paciente_id}
-                    onChange={handlePacienteChange}
-                    error={form.errors.paciente_id}
-                    nothingFoundMessage={
-                      termoBusca.length < 2
-                        ? 'Digite pelo menos 2 caracteres'
-                        : buscandoPacientes
-                          ? 'Buscando...'
-                          : 'Nenhum paciente encontrado'
+                    description="Digite para filtrar a lista"
+                    placeholder={
+                      carregandoPacientes
+                        ? 'Carregando...'
+                        : 'Buscar paciente...'
                     }
+                    searchable
+                    limit={50}
+                    disabled={carregandoPacientes}
+                    required
+                    withAsterisk
+                    data={opcoesPacientes}
+                    value={form.values.paciente_id}
+                    onChange={valor =>
+                      form.setFieldValue('paciente_id', valor ?? '')
+                    }
+                    error={form.errors.paciente_id}
+                    nothingFoundMessage="Nenhum paciente encontrado"
                   />
                 </Grid.Col>
               </Grid>
