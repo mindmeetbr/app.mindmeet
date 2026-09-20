@@ -12,6 +12,7 @@ import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import 'dayjs/locale/pt-br'
+import { ModalsProvider } from '@mantine/modals'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { theme } from './theme'
@@ -44,8 +45,10 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <MantineProvider theme={theme}>
-          <Notifications />
-          <RouterProvider router={router} />
+          <ModalsProvider>
+            <Notifications />
+            <RouterProvider router={router} />
+          </ModalsProvider>
         </MantineProvider>
       </QueryClientProvider>
     </StrictMode>
