@@ -14,6 +14,8 @@ import {
   Text,
   Timeline,
 } from '@mantine/core'
+import { modals } from '@mantine/modals'
+import { notifications } from '@mantine/notifications'
 import {
   IconAlertCircle,
   IconCalendarPlus,
@@ -24,33 +26,32 @@ import {
   IconListDetails,
   IconTrash,
 } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
-import { PageLayout } from '../../../components/layout'
-import {
-  type AgendamentoListEstado,
-  AgendamentoTipoEnum,
-  EstadoEnum,
-  type Agendamento,
-} from '../../../api/models'
-import { useState } from 'react'
-import {
-  getEstadoBadge,
-  getTipoBadge,
-  formatarDataHora,
-  paraMaiuscula,
-} from '../../../utils/agenda'
+import { useCallback, useState } from 'react'
 import {
   useAgendamentoDelete,
   useAgendamentoList,
   useAgendamentoUpdate,
   useAgendaPessoal,
 } from '../../../api/endpoints/agendamentos/agendamentos'
-import { usePaginacao } from '../../../hooks/usePaginacao'
+import {
+  type Agendamento,
+  type AgendamentoListEstado,
+  AgendamentoTipoEnum,
+  EstadoEnum,
+} from '../../../api/models'
+import { PageLayout } from '../../../components/layout'
 import { TabelaPaginada } from '../../../components/ui/TabelaPaginada'
-import { useQueryClient } from '@tanstack/react-query'
-import { notifications } from '@mantine/notifications'
-import { FiltroResponsivo } from './-components/FiltroResponsivo'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
+import { usePaginacao } from '../../../hooks/usePaginacao'
+import {
+  formatarDataHora,
+  getEstadoBadge,
+  getTipoBadge,
+  paraMaiuscula,
+} from '../../../utils/agenda'
+import { FiltroResponsivo } from './-components/FiltroResponsivo'
 
 export const Route = createFileRoute('/app/agenda/')({
   component: PaginaAgendamentos,
@@ -60,13 +61,36 @@ function TabelaAgendamentos() {
   useAlterarTitle('Agenda')
   const [searchTerm, setSearchTerm] = useState('')
   const [estadoFiltro, setEstadoFiltro] = useState('')
-  const { mutate: apagarAgendamento } = useAgendamentoDelete()
   const queryClient = useQueryClient()
-  const { mutate: concluirAgendamento, isPending } = useAgendamentoUpdate({
+
+  const invalidarQueries = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+    queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
+  }, [queryClient])
+
+  const {
+    mutate: apagarAgendamento,
+    isPending: apagando,
+    variables: variaveisApagar,
+  } = useAgendamentoDelete({
     mutation: {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
-        queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
+        invalidarQueries()
+        notifications.show({
+          title: 'Sucesso',
+          message: 'Consulta apagada com sucesso',
+        })
+      },
+    },
+  })
+  const {
+    mutate: concluirAgendamento,
+    isPending: concluindo,
+    variables: variaveisConcluir,
+  } = useAgendamentoUpdate({
+    mutation: {
+      onSuccess: () => {
+        invalidarQueries()
         notifications.show({ title: 'Sucesso', message: 'Consulta finalizada' })
       },
     },
@@ -105,11 +129,20 @@ function TabelaAgendamentos() {
     })
   }
 
-  const handleDeleteClick = (id: Agendamento['id']) => {
-    const resposta = window.confirm(
-      'Tem certeza que deseja apagar esse agendamento?'
-    )
-    if (resposta) apagarAgendamento({ id })
+  const handleApagar = (id: Agendamento['id']) => {
+    modals.openConfirmModal({
+      title: 'Apagar agendamento',
+      children: (
+        <Text size="sm">
+          Tem certeza que deseja apagar este agendamento? Essa ação não é
+          reversível.
+        </Text>
+      ),
+      labels: { confirm: 'Apagar', cancel: 'Cancelar' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => apagarAgendamento({ id }),
+      centered: true,
+    })
   }
 
   const renderLinhaAgendamento = (agendamento: Agendamento) => (
@@ -150,28 +183,40 @@ function TabelaAgendamentos() {
               variant="light"
               color="green"
               size="sm"
-              title="Marcar como realizado"
+              aria-label="Marcar como realizado"
               onClick={() => handleConcluir(agendamento.id)}
-              loading={isPending}
+              loading={concluindo && variaveisConcluir.id === agendamento.id}
             >
               <IconCheck style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           )}
           <Link to="/app/agenda/$id" params={{ id: agendamento.id }}>
-            <ActionIcon variant="light" color="blue" size="sm">
+            <ActionIcon
+              variant="light"
+              color="blue"
+              size="sm"
+              aria-label="Detalhar"
+            >
               <IconEye style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
           <Link to="/app/agenda/novo" search={{ id: agendamento.id }}>
-            <ActionIcon variant="light" color="orange" size="sm">
+            <ActionIcon
+              variant="light"
+              color="orange"
+              size="sm"
+              aria-label="Editar"
+            >
               <IconEdit style={{ width: rem(14), height: rem(14) }} />
             </ActionIcon>
           </Link>
           <ActionIcon
-            onClick={() => handleDeleteClick(agendamento.id)}
             variant="light"
             color="red"
             size="sm"
+            aria-label="Apagar"
+            onClick={() => handleApagar(agendamento.id)}
+            loading={apagando && variaveisApagar.id === agendamento.id}
           >
             <IconTrash style={{ width: rem(14), height: rem(14) }} />
           </ActionIcon>
