@@ -1,14 +1,5 @@
-import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
-
 import {
-  AgendamentoTipoEnum,
-  EstadoEnum,
-  type Agendamento,
-} from '../../../api/models'
-import { useForm } from '@mantine/form'
-import { PageLayout, type BreadcrumbItem } from '../../../components/layout'
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
-import {
+  Alert,
   Button,
   Card,
   Grid,
@@ -20,24 +11,37 @@ import {
   Title,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
-import { formatarHora, paraMaiuscula } from '../../../utils/agenda'
-import { useMemo, useState, useEffect } from 'react'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
+import {
+  IconAlertCircle,
+  IconArrowLeft,
+  IconDeviceFloppy,
+} from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
+import type { AxiosError } from 'axios'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useMemo } from 'react'
 import {
   useAgendamentoCreate,
   useAgendamentoDetail,
   useAgendamentoUpdate,
 } from '../../../api/endpoints/agendamentos/agendamentos'
 import { useAgendaDisponivel } from '../../../api/endpoints/disponibilidades/disponibilidades'
+import { usePacienteSelect } from '../../../api/endpoints/pacientes/pacientes'
+import {
+  type Agendamento,
+  AgendamentoTipoEnum,
+  EstadoEnum,
+} from '../../../api/models'
+import { type BreadcrumbItem, PageLayout } from '../../../components/layout'
+import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import useAuthStore from '../../../stores/auth-store'
-import dayjs from 'dayjs'
-import { usePacienteList } from '../../../api/endpoints/pacientes/pacientes'
-import { notifications } from '@mantine/notifications'
-import { useDebouncedValue } from '@mantine/hooks'
-import type { AxiosError } from 'axios'
-import { useQueryClient } from '@tanstack/react-query'
+import { formatarHora, paraMaiuscula } from '../../../utils/agenda'
 
 export const Route = createFileRoute('/app/agenda/novo')({
-  component: AgendamentoCreatePage,
+  component: AgendamentoFormPage,
   validateSearch: (search: Record<string, unknown>) => ({
     id: search.id as string | undefined,
   }),
@@ -96,42 +100,35 @@ function agendamentoParaFormValues(agendamento: Agendamento): FormValues {
   }
 }
 
-function AgendamentoCreatePage() {
+function AgendamentoFormPage() {
   const router = useRouter()
-  const busca = useSearch({ from: '/app/agenda/novo' })
+  const { id: idAgendamento } = Route.useSearch()
   const { user } = useAuthStore()
   const queryClient = useQueryClient()
 
-  const isEditing = !!busca.id
-  const idAgendamento = busca.id
+  const isEditing = !!idAgendamento
+
+  const {
+    data: agendamento,
+    isSuccess,
+    isError: erroAoCarregar,
+  } = useAgendamentoDetail(idAgendamento ?? '', {
+    query: { enabled: isEditing },
+  })
+
+  useAlterarTitle(isEditing ? 'Editar Agendamento' : 'Novo Agendamento')
+
+  const invalidarQueries = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
+    queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
+  }, [queryClient])
 
   const { mutate: criarAgendamento, isPending: criando } = useAgendamentoCreate(
-    {
-      mutation: {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
-          queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
-        },
-      },
-    }
+    { mutation: { onSuccess: invalidarQueries } }
   )
   const { mutate: editarAgendamento, isPending: editando } =
-    useAgendamentoUpdate({
-      mutation: {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['agendamentos'] })
-          queryClient.invalidateQueries({ queryKey: ['agendamentosFuturos'] })
-        },
-      },
-    })
+    useAgendamentoUpdate({ mutation: { onSuccess: invalidarQueries } })
   const isSubmitting = criando || editando
-
-  const { data: agendamento, isSuccess } = useAgendamentoDetail(
-    idAgendamento ?? '',
-    {
-      query: { enabled: isEditing },
-    }
-  )
 
   const form = useForm<FormValues>({
     initialValues: DEFAULT_VALUES,
@@ -146,6 +143,8 @@ function AgendamentoCreatePage() {
       tipo: value => (!value ? 'Tipo do agendamento é obrigatório' : null),
       estado: value => (!value ? 'Estado do agendamento é obrigatório' : null),
       motivo_cancelamento: (value, values) => {
+        if (values.estado === EstadoEnum.cancelado && !value)
+          return 'Informe o motivo do cancelamento'
         if (value && values.estado !== EstadoEnum.cancelado)
           return 'O motivo de cancelamento só é válido para agendamentos cancelados'
         return null
@@ -156,69 +155,36 @@ function AgendamentoCreatePage() {
   useEffect(() => {
     if (isEditing && isSuccess && agendamento) {
       form.setValues(agendamentoParaFormValues(agendamento))
-      setHorarioSelecionado(
-        `${agendamento.horario_inicio}|${agendamento.horario_fim}`
-      )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess, agendamento])
+  }, [isEditing, isSuccess, agendamento])
 
-  const [termoBusca, setTermoBusca] = useState('')
-  const [termoBuscaDebounced] = useDebouncedValue(termoBusca, 300)
+  const { data: pacientes, isLoading: carregandoPacientes } =
+    usePacienteSelect()
 
-  const handleSearchChange = (valor: string) => {
-    if (!form.values.paciente_id || valor === '') {
-      setTermoBusca(valor)
-    }
-  }
-
-  const handlePacienteChange = (valor: string | null) => {
-    form.setFieldValue('paciente_id', valor ?? '')
-    setTermoBusca('')
-  }
-
-  const { data: pacientes, isLoading: buscandoPacientes } = usePacienteList(
-    { search: termoBuscaDebounced, tamanho: 20 },
-    {
-      query: {
-        queryKey: ['pacientes-select', termoBuscaDebounced],
-        enabled: termoBuscaDebounced.length >= 2,
-        staleTime: 30 * 1000,
-      },
-    }
-  )
-
-  const opcoesPacientes = useMemo(() => {
-    const lista =
-      pacientes?.results?.map(p => ({
+  const opcoesPacientes = useMemo(
+    () =>
+      pacientes?.map(p => ({
         value: p.id,
         label: `${p.nome_completo} — ${p.email}`,
-      })) ?? []
+      })) ?? [],
+    [pacientes]
+  )
 
-    if (isEditing && agendamento?.paciente) {
-      const jaEstaNaLista = lista.some(p => p.value === agendamento.paciente.id)
-      if (!jaEstaNaLista) {
-        lista.unshift({
-          value: agendamento.paciente.id,
-          label: `${agendamento.paciente.nome_completo} — ${agendamento.paciente.email}`,
-        })
-      }
-    }
-
-    return lista
-  }, [pacientes, agendamento, isEditing])
-
-  const [horarioSelecionado, setHorarioSelecionado] = useState('')
   const dataSelecionada = form.values.data
 
+  const horarioSelecionado =
+    form.values.horario_inicio && form.values.horario_fim
+      ? `${form.values.horario_inicio}|${form.values.horario_fim}`
+      : ''
+
   const { data: agenda } = useAgendaDisponivel(
-    user?.id as string,
+    user?.id ?? '',
     { data: dataSelecionada },
     {
       query: {
-        enabled: !!dataSelecionada,
-        staleTime: 5 * 60 * 1000,
-        queryKey: ['agenda-dia', dataSelecionada],
+        enabled: !!dataSelecionada && !!user?.id,
+        staleTime: 30 * 1000,
       },
     }
   )
@@ -235,22 +201,22 @@ function AgendamentoCreatePage() {
   }, [agenda, horarioSelecionado])
 
   const handleHorarioChange = (valor: string | null) => {
-    setHorarioSelecionado(valor ?? '')
-    if (!valor) {
-      form.setFieldValue('horario_inicio', '')
-      form.setFieldValue('horario_fim', '')
-      return
-    }
-    const [inicio, fim] = valor.split('|')
+    const [inicio = '', fim = ''] = valor?.split('|') ?? []
     form.setFieldValue('horario_inicio', inicio)
     form.setFieldValue('horario_fim', fim)
   }
 
   const handleDataChange = (valor: Date | null) => {
     form.setFieldValue('data', valor ? dayjs(valor).format('YYYY-MM-DD') : '')
-    setHorarioSelecionado('')
     form.setFieldValue('horario_inicio', '')
     form.setFieldValue('horario_fim', '')
+  }
+
+  const handleEstadoChange = (valor: string | null) => {
+    form.setFieldValue('estado', valor as EstadoEnum)
+    if (valor !== EstadoEnum.cancelado) {
+      form.setFieldValue('motivo_cancelamento', '')
+    }
   }
 
   const tratarErroBackend = (error: AxiosError<ErroBackend>) => {
@@ -269,10 +235,20 @@ function AgendamentoCreatePage() {
     })
   }
 
+  const voltarParaLista = useCallback(
+    () => router.navigate({ to: '/app/agenda' }),
+    [router]
+  )
+
+  const voltarParaDetalhe = useCallback(() => {
+    if (!idAgendamento) return voltarParaLista()
+    router.navigate({ to: '/app/agenda/$id', params: { id: idAgendamento } })
+  }, [router, idAgendamento, voltarParaLista])
+
   const handleSubmit = (values: FormValues) => {
-    if (isEditing) {
+    if (idAgendamento) {
       editarAgendamento(
-        { id: idAgendamento!, data: values },
+        { id: idAgendamento, data: values },
         {
           onSuccess: () => {
             notifications.show({
@@ -280,36 +256,29 @@ function AgendamentoCreatePage() {
               message: 'As alterações foram salvas com sucesso.',
               color: 'green',
             })
-            router.navigate({
-              to: '/app/agenda/$id',
-              params: { id: idAgendamento! },
-            })
+            voltarParaDetalhe()
           },
           onError: tratarErroBackend,
         }
       )
-    } else {
-      criarAgendamento(
-        { data: values },
-        {
-          onSuccess: () => {
-            notifications.show({
-              title: 'Agendamento criado',
-              message: 'O agendamento foi adicionado com sucesso.',
-              color: 'green',
-            })
-            router.navigate({ to: '/app/agenda' })
-          },
-          onError: tratarErroBackend,
-        }
-      )
+      return
     }
+
+    criarAgendamento(
+      { data: values },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: 'Agendamento criado',
+            message: 'O agendamento foi adicionado com sucesso.',
+            color: 'green',
+          })
+          voltarParaLista()
+        },
+        onError: tratarErroBackend,
+      }
+    )
   }
-
-  const voltarParaDetalhe = () =>
-    router.navigate({ to: '/app/agenda/$id', params: { id: idAgendamento! } })
-
-  const voltarParaLista = () => router.navigate({ to: '/app/agenda' })
 
   const breadcrumbs = useMemo(() => {
     const lista: BreadcrumbItem[] = [{ label: 'Agenda', href: '/app/agenda' }]
@@ -327,8 +296,7 @@ function AgendamentoCreatePage() {
     })
 
     return lista
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditing, agendamento])
+  }, [isEditing, agendamento, voltarParaDetalhe])
 
   return (
     <PageLayout
@@ -347,6 +315,18 @@ function AgendamentoCreatePage() {
         onClick: isEditing ? voltarParaDetalhe : voltarParaLista,
       }}
     >
+      {erroAoCarregar && (
+        <Alert
+          icon={<IconAlertCircle style={{ width: rem(16), height: rem(16) }} />}
+          color="red"
+          title="Não foi possível carregar o agendamento"
+          mb="lg"
+        >
+          Os dados não puderam ser carregados. Volte e tente novamente para
+          evitar salvar informações incorretas.
+        </Alert>
+      )}
+
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="lg">
           <Card withBorder radius="md" p="xl">
@@ -356,21 +336,24 @@ function AgendamentoCreatePage() {
                 <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
                   <Select
                     label="Paciente"
-                    description="Digite o nome ou email para buscar"
-                    placeholder="Buscar paciente..."
-                    searchable
-                    data={opcoesPacientes}
-                    onSearchChange={handleSearchChange}
-                    value={form.values.paciente_id}
-                    onChange={handlePacienteChange}
-                    error={form.errors.paciente_id}
-                    nothingFoundMessage={
-                      termoBusca.length < 2
-                        ? 'Digite pelo menos 2 caracteres'
-                        : buscandoPacientes
-                          ? 'Buscando...'
-                          : 'Nenhum paciente encontrado'
+                    description="Digite para filtrar a lista"
+                    placeholder={
+                      carregandoPacientes
+                        ? 'Carregando...'
+                        : 'Buscar paciente...'
                     }
+                    searchable
+                    limit={50}
+                    disabled={carregandoPacientes}
+                    required
+                    withAsterisk
+                    data={opcoesPacientes}
+                    value={form.values.paciente_id}
+                    onChange={valor =>
+                      form.setFieldValue('paciente_id', valor ?? '')
+                    }
+                    error={form.errors.paciente_id}
+                    nothingFoundMessage="Nenhum paciente encontrado"
                   />
                 </Grid.Col>
               </Grid>
@@ -401,6 +384,8 @@ function AgendamentoCreatePage() {
                   <Select
                     label="Horário"
                     description="Horários disponíveis para a data selecionada"
+                    required
+                    withAsterisk
                     placeholder={
                       !dataSelecionada
                         ? 'Selecione uma data primeiro'
@@ -442,7 +427,9 @@ function AgendamentoCreatePage() {
                     required
                     withAsterisk
                     allowDeselect={false}
-                    {...form.getInputProps('estado')}
+                    value={form.values.estado}
+                    onChange={handleEstadoChange}
+                    error={form.errors.estado}
                   />
                 </Grid.Col>
 
@@ -450,9 +437,10 @@ function AgendamentoCreatePage() {
                   <Textarea
                     disabled={form.values.estado !== EstadoEnum.cancelado}
                     label="Motivo do Cancelamento"
-                    description="Descreva por quê o agendamento foi cancelado"
+                    description="Descreva por que o agendamento foi cancelado"
                     placeholder="..."
                     maxRows={2}
+                    withAsterisk={form.values.estado === EstadoEnum.cancelado}
                     {...form.getInputProps('motivo_cancelamento')}
                   />
                 </Grid.Col>

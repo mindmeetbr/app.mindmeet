@@ -32,6 +32,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import type {
   PacienteDetail,
   PacienteListParams,
+  PacienteSelect,
   PaginatedPacienteListList,
   PatchedPacienteDetail,
   TrocarPsicologo,
@@ -727,4 +728,138 @@ export const useTrocarPsicologo = <
   const mutationOptions = getTrocarPsicologoMutationOptions(options)
 
   return useMutation(mutationOptions, queryClient)
+}
+/**
+ * Retorna uma listagem enxuta (apenas `id`, `nome_completo` e `email`) com todos os pacientes associados ao psicólogo ou à instituição do gestor que fez a requisição, sem paginação. Destinado exclusivamente ao preenchimento de campos de seleção (ex: dropdown de paciente em formulários), não devendo ser usado como listagem geral — para esse fim, utilize o endpoint `list`.
+ * @summary Lista pacientes para seleção em formulários
+ */
+export const pacienteSelect = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<PacienteSelect[]>(
+    { url: `/api/pacientes/select/`, method: 'GET', signal },
+    options
+  )
+}
+
+export const getPacienteSelectQueryKey = () => {
+  return [`/api/pacientes/select/`] as const
+}
+
+export const getPacienteSelectQueryOptions = <
+  TData = Awaited<ReturnType<typeof pacienteSelect>>,
+  TError = ErrorType<null | null>,
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<Awaited<ReturnType<typeof pacienteSelect>>, TError, TData>
+  >
+  request?: SecondParameter<typeof customInstance>
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getPacienteSelectQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof pacienteSelect>>> = ({
+    signal,
+  }) => pacienteSelect(requestOptions, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof pacienteSelect>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PacienteSelectQueryResult = NonNullable<
+  Awaited<ReturnType<typeof pacienteSelect>>
+>
+export type PacienteSelectQueryError = ErrorType<null | null>
+
+export function usePacienteSelect<
+  TData = Awaited<ReturnType<typeof pacienteSelect>>,
+  TError = ErrorType<null | null>,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof pacienteSelect>>, TError, TData>
+    > &
+      Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteSelect>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteSelect>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function usePacienteSelect<
+  TData = Awaited<ReturnType<typeof pacienteSelect>>,
+  TError = ErrorType<null | null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof pacienteSelect>>, TError, TData>
+    > &
+      Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof pacienteSelect>>,
+          TError,
+          Awaited<ReturnType<typeof pacienteSelect>>
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+export function usePacienteSelect<
+  TData = Awaited<ReturnType<typeof pacienteSelect>>,
+  TError = ErrorType<null | null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof pacienteSelect>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+}
+/**
+ * @summary Lista pacientes para seleção em formulários
+ */
+
+export function usePacienteSelect<
+  TData = Awaited<ReturnType<typeof pacienteSelect>>,
+  TError = ErrorType<null | null>,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof pacienteSelect>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & {
+  queryKey: DataTag<QueryKey, TData, TError>
+} {
+  const queryOptions = getPacienteSelectQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<
+    TData,
+    TError
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+
+  query.queryKey = queryOptions.queryKey
+
+  return query
 }
