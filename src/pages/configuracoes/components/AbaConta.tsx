@@ -1,24 +1,24 @@
-import type { MUser } from '../../../../api/models'
-import { SexoEnum } from '../../../../api/models'
-import { useState, useEffect } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useForm } from '@mantine/form'
-import { useUsuarioUpdate } from '../../../../api/endpoints/users/users'
 import {
-  Card,
-  Stack,
   Alert,
-  Group,
-  Grid,
-  TextInput,
-  Select,
+  Card,
   Divider,
+  Grid,
+  Group,
+  Select,
+  Stack,
+  TextInput,
 } from '@mantine/core'
 import { DateInput } from '@mantine/dates'
+import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
-import { SecaoHeader } from './SecaoHeader'
-import { BotoesEdicao } from './BotoesEdicao'
 import { IconAlertCircle } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { useUsuarioUpdate } from '@/api/endpoints/users/users'
+import type { MUser } from '@/api/models'
+import { SexoEnum } from '@/api/models'
+import BotoesEdicao from './BotoesEdicao'
+import SecaoHeader from './SecaoHeader'
 
 const UFS = [
   'AC',
@@ -55,7 +55,7 @@ interface AbaContaProps {
   vinculado: boolean
 }
 
-export function AbaConta({ dadosUsuario, vinculado }: AbaContaProps) {
+export default function AbaConta({ dadosUsuario, vinculado }: AbaContaProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const queryClient = useQueryClient()
 

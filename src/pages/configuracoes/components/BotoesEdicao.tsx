@@ -1,4 +1,4 @@
-import { Tooltip, ActionIcon, Group, Button, rem } from '@mantine/core'
+import { ActionIcon, Button, Group, rem, Tooltip } from '@mantine/core'
 import { IconDeviceFloppy, IconPencil, IconX } from '@tabler/icons-react'
 
 interface BotoesEdicaoProps {
@@ -8,7 +8,7 @@ interface BotoesEdicaoProps {
   onCancelar: () => void
 }
 
-export function BotoesEdicao({
+export default function BotoesEdicao({
   isEditing,
   onEditar,
   onSalvar,

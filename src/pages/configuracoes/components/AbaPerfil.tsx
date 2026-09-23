@@ -1,30 +1,30 @@
-import type { PerfilPsicologo } from '../../../../api/models'
-import { useState, useEffect } from 'react'
-import { useForm } from '@mantine/form'
-import { useQueryClient } from '@tanstack/react-query'
-import { usePerfilPsicologoUpdate } from '../../../../api/endpoints/users/users'
-import { notifications } from '@mantine/notifications'
 import {
-  Card,
-  Stack,
   Alert,
-  Group,
-  Grid,
-  TextInput,
-  Input,
+  Card,
   Checkbox,
   Divider,
+  Grid,
+  Group,
+  Input,
+  Stack,
+  TextInput,
 } from '@mantine/core'
+import { useForm } from '@mantine/form'
+import { notifications } from '@mantine/notifications'
 import { IconAlertCircle } from '@tabler/icons-react'
-import { SecaoHeader } from './SecaoHeader'
-import { BotoesEdicao } from './BotoesEdicao'
-export function AbaPerfil({
-  dadosPerfil,
-  vinculado,
-}: {
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { usePerfilPsicologoUpdate } from '@/api/endpoints/users/users'
+import type { PerfilPsicologo } from '@/api/models'
+import BotoesEdicao from './BotoesEdicao'
+import SecaoHeader from './SecaoHeader'
+
+interface AbaPerfilProps {
   dadosPerfil: PerfilPsicologo | undefined
   vinculado: boolean
-}) {
+}
+
+export default function AbaPerfil({ dadosPerfil, vinculado }: AbaPerfilProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const queryClient = useQueryClient()
 
