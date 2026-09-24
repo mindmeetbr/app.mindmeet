@@ -1,33 +1,33 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
 import {
-  Title,
+  Alert,
+  Avatar,
+  Button,
   Card,
   Group,
-  Text,
-  Avatar,
   rem,
-  Tabs,
   Skeleton,
-  Alert,
-  Button,
+  Tabs,
+  Text,
+  Title,
 } from '@mantine/core'
 import {
-  IconEdit,
-  IconCalendar,
-  IconUser,
   IconAlertCircle,
+  IconCalendar,
+  IconEdit,
   IconRefresh,
+  IconUser,
 } from '@tabler/icons-react'
-import { useState } from 'react'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import 'dayjs/locale/pt-br'
-import { PageLayout } from '../../../components/layout'
+
 import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
+import { PageLayout } from '../../../components/layout'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
 import { BotaoNovaConsulta } from './-components/BotaoNovaConsulta'
+import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
 import { PerfilPaciente } from './-components/perfil-paciente/PerfilPaciente'
-import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/pacientes/$id')({
   component: PacienteDetalhePage,
@@ -48,11 +48,6 @@ function PacienteDetalhePage() {
     refetch,
     error,
   } = usePacienteDetail(id)
-  const queryClient = useQueryClient()
-
-  const handleRecarregarConsultas = () => {
-    queryClient.invalidateQueries({ queryKey: ['anotacoes', id] })
-  }
 
   const titulo = paciente?.nome_completo
     ? `Paciente: ${paciente.nome_completo}`
@@ -195,20 +190,10 @@ function PacienteDetalhePage() {
           <Card withBorder radius="md" p="xl">
             <Group justify="space-between" mb="lg">
               <Title order={4}>Linha do Tempo das Consultas</Title>
-              <Group justify="space-between">
-                <Button
-                  variant="outline"
-                  color="gray"
-                  onClick={handleRecarregarConsultas}
-                  leftSection={<IconRefresh size={20} />}
-                >
-                  Recarregar
-                </Button>
-                <BotaoNovaConsulta
-                  pacienteId={id}
-                  desativado={!!paciente?.acompanhado_por}
-                />
-              </Group>
+              <BotaoNovaConsulta
+                pacienteId={id}
+                desativado={!!paciente?.acompanhado_por}
+              />
             </Group>
 
             <ComponenteLinhaDoTempo

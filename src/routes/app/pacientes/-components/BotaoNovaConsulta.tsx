@@ -1,18 +1,19 @@
-import { useDisclosure } from '@mantine/hooks'
-import { useAnotacaoCreate } from '../../../../api/endpoints/anotacoes/anotacoes'
-import { useForm } from '@mantine/form'
-import { notifications } from '@mantine/notifications'
 import {
-  Modal,
-  TextInput,
-  Group,
   Button,
-  Stack,
+  Group,
+  Modal,
   rem,
+  Stack,
   Textarea,
+  TextInput,
 } from '@mantine/core'
 import { DateTimePicker } from '@mantine/dates'
-import { IconNotes, IconCalendar } from '@tabler/icons-react'
+import { useForm } from '@mantine/form'
+import { useDisclosure } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
+import { IconCalendar, IconNotes } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useAnotacaoCreate } from '../../../../api/endpoints/anotacoes/anotacoes'
 
 interface BotaoNovaConsultaProps {
   pacienteId: string
@@ -24,7 +25,14 @@ export function BotaoNovaConsulta({
   desativado,
 }: BotaoNovaConsultaProps) {
   const [opened, { open, close }] = useDisclosure(false)
-  const { mutate: criarAnotacao } = useAnotacaoCreate()
+  const queryClient = useQueryClient()
+  const { mutate: criarAnotacao } = useAnotacaoCreate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['anotacoes'] })
+      },
+    },
+  })
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -39,7 +47,7 @@ export function BotaoNovaConsulta({
 
   function handleSubmit(values: typeof form.values) {
     const dataFormatada = new Date(values.data).toISOString()
-    const dados = {
+    const payload = {
       pacientePk: pacienteId,
       data: {
         titulo: values.titulo,
@@ -49,7 +57,8 @@ export function BotaoNovaConsulta({
         data: dataFormatada,
       },
     }
-    criarAnotacao(dados, {
+
+    criarAnotacao(payload, {
       onSuccess: () => {
         notifications.show({
           title: 'Sucesso!',
