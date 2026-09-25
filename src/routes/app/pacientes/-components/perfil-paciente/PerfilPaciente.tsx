@@ -1,10 +1,11 @@
-import type { Paciente } from '../../../../../api/models'
 import { Grid } from '@mantine/core'
-import CardDadosPessoais from './CardDadosPessoais'
+import type { Paciente } from '../../../../../api/models'
+import CardAnamnese from './CardAnamnese'
 import CardContato from './CardContato'
-import CardInformacoesClinicas from './CardInformacoesClinicas'
 import CardContatoEmergencia from './CardContatoEmergencia'
+import CardDadosPessoais from './CardDadosPessoais'
 import CardEndereco from './CardEndereco'
+import CardInformacoesClinicas from './CardInformacoesClinicas'
 
 export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
   return (
@@ -23,6 +24,9 @@ export function PerfilPaciente({ paciente }: { paciente: Paciente }) {
       </Grid.Col>
       <Grid.Col span={{ base: 12, md: 6 }}>
         <CardEndereco {...paciente} />
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6 }}>
+        <CardAnamnese {...paciente} />
       </Grid.Col>
     </Grid>
   )

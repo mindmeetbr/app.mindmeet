@@ -1,33 +1,35 @@
-import { createFileRoute, useRouter } from '@tanstack/react-router'
 import {
-  Title,
+  Alert,
+  Avatar,
+  Button,
   Card,
   Group,
-  Text,
-  Avatar,
   rem,
-  Tabs,
   Skeleton,
-  Alert,
-  Button,
+  Tabs,
+  Text,
+  Title,
 } from '@mantine/core'
 import {
-  IconEdit,
-  IconCalendar,
-  IconUser,
   IconAlertCircle,
+  IconCalendar,
+  IconEdit,
   IconRefresh,
+  IconUser,
 } from '@tabler/icons-react'
-import { useState } from 'react'
+import { createFileRoute, useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import 'dayjs/locale/pt-br'
-import { PageLayout } from '../../../components/layout'
+
 import { usePacienteDetail } from '../../../api/endpoints/pacientes/pacientes'
+import { PapelEnum } from '../../../api/models'
+import { PageLayout } from '../../../components/layout'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
+import useAuthStore from '../../../stores/auth-store'
 import { BotaoNovaConsulta } from './-components/BotaoNovaConsulta'
+import { LinhaDoTempo as ComponenteLinhaDoTempo } from './-components/LinhaDoTempo'
 import { PerfilPaciente } from './-components/perfil-paciente/PerfilPaciente'
-import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/app/pacientes/$id')({
   component: PacienteDetalhePage,
@@ -40,7 +42,12 @@ const calcularIdade = (dataNascimento: string) => {
 function PacienteDetalhePage() {
   const { id } = Route.useParams()
   const router = useRouter()
+
+  const { user } = useAuthStore()
+  const isPsicologo = user?.papel === PapelEnum.PSICOLOGO
+
   const [activeTab, setActiveTab] = useState<string | null>('perfil')
+
   const {
     data: paciente,
     isLoading,
@@ -48,11 +55,6 @@ function PacienteDetalhePage() {
     refetch,
     error,
   } = usePacienteDetail(id)
-  const queryClient = useQueryClient()
-
-  const handleRecarregarConsultas = () => {
-    queryClient.invalidateQueries({ queryKey: ['anotacoes', id] })
-  }
 
   const titulo = paciente?.nome_completo
     ? `Paciente: ${paciente.nome_completo}`
@@ -177,46 +179,40 @@ function PacienteDetalhePage() {
           >
             Perfil
           </Tabs.Tab>
-          <Tabs.Tab
-            value="consultas"
-            leftSection={
-              <IconCalendar style={{ width: rem(16), height: rem(16) }} />
-            }
-          >
-            Consultas
-          </Tabs.Tab>
+          {isPsicologo && (
+            <Tabs.Tab
+              value="consultas"
+              leftSection={
+                <IconCalendar style={{ width: rem(16), height: rem(16) }} />
+              }
+            >
+              Consultas
+            </Tabs.Tab>
+          )}
         </Tabs.List>
 
         <Tabs.Panel value="perfil" pt="lg">
           <PerfilPaciente paciente={paciente} />
         </Tabs.Panel>
 
-        <Tabs.Panel value="consultas" pt="lg">
-          <Card withBorder radius="md" p="xl">
-            <Group justify="space-between" mb="lg">
-              <Title order={4}>Linha do Tempo das Consultas</Title>
-              <Group justify="space-between">
-                <Button
-                  variant="outline"
-                  color="gray"
-                  onClick={handleRecarregarConsultas}
-                  leftSection={<IconRefresh size={20} />}
-                >
-                  Recarregar
-                </Button>
+        {isPsicologo && (
+          <Tabs.Panel value="consultas" pt="lg">
+            <Card withBorder radius="md" p="xl">
+              <Group justify="space-between" mb="lg">
+                <Title order={4}>Linha do Tempo das Consultas</Title>
                 <BotaoNovaConsulta
                   pacienteId={id}
                   desativado={!!paciente?.acompanhado_por}
                 />
               </Group>
-            </Group>
 
-            <ComponenteLinhaDoTempo
-              pacienteId={id}
-              podeEditar={!paciente?.acompanhado_por}
-            />
-          </Card>
-        </Tabs.Panel>
+              <ComponenteLinhaDoTempo
+                pacienteId={id}
+                podeEditar={!paciente?.acompanhado_por}
+              />
+            </Card>
+          </Tabs.Panel>
+        )}
       </Tabs>
     </PageLayout>
   )

@@ -1,8 +1,12 @@
 import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
-import { IconClockPlus } from '@tabler/icons-react'
-import { useState } from 'react'
 import { notifications } from '@mantine/notifications'
-import { useAdicionarHorarios } from '../../../../api/endpoints/disponibilidades/disponibilidades'
+import { IconClockPlus } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import {
+  getDisponibilidadeListQueryKey,
+  useAdicionarHorarios,
+} from '../../../../api/endpoints/disponibilidades/disponibilidades'
 import { AdicionarHorariosDiaEnum } from '../../../../api/models'
 import { diasSemana } from '../-useDisponibilidade'
 
@@ -23,7 +27,16 @@ const formInicial: FormAdicionarHorarios = {
 }
 
 export function BotaoAdicionarHorarios() {
-  const { mutate: adicionarHorarios } = useAdicionarHorarios()
+  const queryClient = useQueryClient()
+  const { mutate: adicionarHorarios } = useAdicionarHorarios({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getDisponibilidadeListQueryKey(),
+        })
+      },
+    },
+  })
   const [opened, setOpened] = useState(false)
   const [formData, setFormData] = useState<FormAdicionarHorarios>(formInicial)
 

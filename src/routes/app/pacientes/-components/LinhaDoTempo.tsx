@@ -1,32 +1,33 @@
 import {
-  Timeline,
-  Stack,
+  ActionIcon,
+  Button,
+  Flex,
   Group,
+  Loader,
+  rem,
+  Stack,
   Text,
   Textarea,
   TextInput,
-  ActionIcon,
-  Button,
-  Loader,
-  Flex,
-  rem,
+  Timeline,
 } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import {
   IconClockHour3,
-  IconPencil,
   IconDeviceFloppy,
+  IconPencil,
 } from '@tabler/icons-react'
-import { useState } from 'react'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import 'dayjs/locale/pt-br'
-import type { Anotacao } from '../../../../api/models'
-import { ControlePaginacao } from '../../../../components/ui/ControlePaginacao'
-import { usePaginacao } from '../../../../hooks/usePaginacao'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   useAnotacaoList,
   useAnotacaoUpdate,
 } from '../../../../api/endpoints/anotacoes/anotacoes'
+import type { Anotacao } from '../../../../api/models'
+import { ControlePaginacao } from '../../../../components/ui/ControlePaginacao'
+import { usePaginacao } from '../../../../hooks/usePaginacao'
 
 interface LinhaDoTempoProps {
   pacienteId: string
@@ -161,6 +162,15 @@ function ItemConsulta({
 }
 
 export function LinhaDoTempo({ pacienteId, podeEditar }: LinhaDoTempoProps) {
+  const queryClient = useQueryClient()
+  const { mutate: editarAnotacao } = useAnotacaoUpdate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['anotacoes'] })
+      },
+    },
+  })
+
   const { pagina, tamanho, setPagina, setTamanho } = usePaginacao({
     tamanhoInicial: 5,
   })
@@ -170,8 +180,6 @@ export function LinhaDoTempo({ pacienteId, podeEditar }: LinhaDoTempoProps) {
     { pagina, tamanho },
     { query: { queryKey: ['anotacoes', pacienteId, pagina, tamanho] } }
   )
-
-  const { mutate: editarAnotacao } = useAnotacaoUpdate()
 
   const [editandoId, setEditandoId] = useState<string | null>(null)
   const [registrosTemp, setRegistrosTemp] = useState('')
@@ -186,33 +194,32 @@ export function LinhaDoTempo({ pacienteId, podeEditar }: LinhaDoTempoProps) {
   }
 
   const handleSalvar = (consultaId: string) => {
-    editarAnotacao(
-      {
-        pacientePk: pacienteId,
-        id: consultaId,
-        data: {
-          registros: registrosTemp,
-          queixa_apresentada: apresentadaTemp,
-          queixa_identificada: identificadaTemp,
-        },
+    const payload = {
+      pacientePk: pacienteId,
+      id: consultaId,
+      data: {
+        registros: registrosTemp,
+        queixa_apresentada: apresentadaTemp,
+        queixa_identificada: identificadaTemp,
       },
-      {
-        onSuccess: () => {
-          notifications.show({
-            title: 'Sucesso!',
-            message: 'Anotação editada com sucesso.',
-            color: 'green',
-          })
-        },
-        onError: () => {
-          notifications.show({
-            title: 'Erro!',
-            message: 'Não foi possível salvar a anotação, tente novamente.',
-            color: 'red',
-          })
-        },
-      }
-    )
+    }
+
+    editarAnotacao(payload, {
+      onSuccess: () => {
+        notifications.show({
+          title: 'Sucesso!',
+          message: 'Anotação editada com sucesso.',
+          color: 'green',
+        })
+      },
+      onError: () => {
+        notifications.show({
+          title: 'Erro!',
+          message: 'Não foi possível salvar a anotação, tente novamente.',
+          color: 'red',
+        })
+      },
+    })
     handleCancelar()
   }
 

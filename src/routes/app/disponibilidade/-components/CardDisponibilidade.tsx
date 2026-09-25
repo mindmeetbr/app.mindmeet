@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   ActionIcon,
   Box,
@@ -13,13 +12,15 @@ import {
   Tooltip,
 } from '@mantine/core'
 import { TimeInput } from '@mantine/dates'
+import { useMediaQuery } from '@mantine/hooks'
+import { notifications } from '@mantine/notifications'
 import {
   IconChevronDown,
   IconChevronUp,
   IconPlus,
   IconX,
 } from '@tabler/icons-react'
-import { notifications } from '@mantine/notifications'
+import { useEffect, useState } from 'react'
 import type { DisponibilidadeLocal, HorarioLocal } from '../-types'
 
 interface CardDisponibilidadeProps {
@@ -31,10 +32,19 @@ export function CardDisponibilidade({
   dia,
   onSalvar,
 }: CardDisponibilidadeProps) {
+  const isMobile = useMediaQuery('(max-width: 30rem)')
+
   const [aberto, setAberto] = useState(false)
   const [estado, setEstado] = useState<DisponibilidadeLocal>(dia)
   const [alterado, setAlterado] = useState(false)
   const [salvando, setSalvando] = useState(false)
+
+  useEffect(() => {
+    if (!alterado) {
+      setEstado(dia)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dia])
 
   const atualizar = (novoEstado: DisponibilidadeLocal) => {
     setEstado(novoEstado)
@@ -144,11 +154,21 @@ export function CardDisponibilidade({
             )}
 
             {estado.horarios.map(horario => (
-              <Group key={horario.id} justify="space-between" align="center">
-                <Group gap="xs" align="center">
+              <Group
+                key={horario.id}
+                justify="space-between"
+                align="center"
+                wrap="nowrap"
+              >
+                <Group
+                  gap="sm"
+                  justify="space-between"
+                  align="center"
+                  style={{ flex: 1 }}
+                >
                   <TimeInput
                     size="sm"
-                    style={{ width: 80 }}
+                    style={{ width: 100, flex: isMobile ? 1 : undefined }}
                     styles={{ input: { textAlign: 'center' } }}
                     value={horario.inicio.slice(0, 5)}
                     onChange={e =>
@@ -164,7 +184,7 @@ export function CardDisponibilidade({
                   </Text>
                   <TimeInput
                     size="sm"
-                    style={{ width: 80 }}
+                    style={{ width: 100, flex: isMobile ? 1 : undefined }}
                     styles={{ input: { textAlign: 'center' } }}
                     value={horario.fim.slice(0, 5)}
                     onChange={e =>
