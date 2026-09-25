@@ -1,20 +1,22 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { Divider, Flex, Group, SimpleGrid, Skeleton, Text } from '@mantine/core'
-import { PageLayout } from '../../../components/layout/PageLayout'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import {
+  getDisponibilidadeListQueryKey,
   useDisponibilidadeCreate,
   useDisponibilidadeUpdate,
 } from '../../../api/endpoints/disponibilidades/disponibilidades'
 import { PapelEnum } from '../../../api/models'
+import { PageLayout } from '../../../components/layout/PageLayout'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
 import { exigirPapel } from '../../../utils/auth'
+import { BotaoAdicionarHorarios } from './-components/BotaoAdicionarHorarios'
+import { CardDisponibilidade } from './-components/CardDisponibilidade'
+import type { DisponibilidadeLocal } from './-types'
 import {
   salvarDisponibilidadeDia,
   useDisponibilidadesMerged,
 } from './-useDisponibilidade'
-import { CardDisponibilidade } from './-components/CardDisponibilidade'
-import { BotaoAdicionarHorarios } from './-components/BotaoAdicionarHorarios'
-import type { DisponibilidadeLocal } from './-types'
 
 export const Route = createFileRoute('/app/disponibilidade/')({
   beforeLoad: exigirPapel(PapelEnum.PSICOLOGO),
@@ -24,8 +26,25 @@ export const Route = createFileRoute('/app/disponibilidade/')({
 function PaginaDisponibilidade() {
   useAlterarTitle('Disponibilidade')
 
-  const { mutate: salvarDisponibilidade } = useDisponibilidadeCreate()
-  const { mutate: atualizarDisponibilidade } = useDisponibilidadeUpdate()
+  const queryClient = useQueryClient()
+  const { mutate: salvarDisponibilidade } = useDisponibilidadeCreate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getDisponibilidadeListQueryKey(),
+        })
+      },
+    },
+  })
+  const { mutate: atualizarDisponibilidade } = useDisponibilidadeUpdate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getDisponibilidadeListQueryKey(),
+        })
+      },
+    },
+  })
   const { disponibilidades, idsDisponibilidades, idsHorarios, isLoading } =
     useDisponibilidadesMerged()
 
