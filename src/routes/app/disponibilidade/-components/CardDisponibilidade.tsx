@@ -20,7 +20,7 @@ import {
   IconPlus,
   IconX,
 } from '@tabler/icons-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { DisponibilidadeLocal, HorarioLocal } from '../-types'
 
 interface CardDisponibilidadeProps {
@@ -38,6 +38,13 @@ export function CardDisponibilidade({
   const [estado, setEstado] = useState<DisponibilidadeLocal>(dia)
   const [alterado, setAlterado] = useState(false)
   const [salvando, setSalvando] = useState(false)
+
+  useEffect(() => {
+    if (!alterado) {
+      setEstado(dia)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dia])
 
   const atualizar = (novoEstado: DisponibilidadeLocal) => {
     setEstado(novoEstado)
