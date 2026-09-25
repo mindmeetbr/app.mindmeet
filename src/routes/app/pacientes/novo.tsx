@@ -1,29 +1,29 @@
-import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
 import {
-  Card,
-  Stack,
-  Group,
   Button,
-  TextInput,
-  Textarea,
-  Select,
+  Card,
   Grid,
+  Group,
   rem,
-  // Divider,
+  Select,
+  Stack,
+  Textarea,
+  TextInput,
   Title,
 } from '@mantine/core'
-// import { notifications } from '@mantine/notifications'
-import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
-import { useEffect, useState } from 'react'
 import { useForm } from '@mantine/form'
-import { PageLayout } from '../../../components/layout'
+import { notifications } from '@mantine/notifications'
+import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useRouter, useSearch } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import {
+  getPacienteDetailQueryKey,
   usePacienteCreate,
-  usePacienteUpdate,
   usePacienteDetail,
+  usePacienteUpdate,
 } from '../../../api/endpoints/pacientes/pacientes'
+import { type BreadcrumbItem, PageLayout } from '../../../components/layout'
 import { useAlterarTitle } from '../../../hooks/useAlterarTitle'
-import { type BreadcrumbItem } from '../../../components/layout'
 
 export const Route = createFileRoute('/app/pacientes/novo')({
   component: NovoPacientePage,
@@ -41,8 +41,21 @@ function NovoPacientePage() {
   const pacienteId = search.id
   useAlterarTitle(isEditing ? 'Editar Paciente' : 'Novo Paciente')
 
-  const { mutate: criarPaciente } = usePacienteCreate()
-  const { mutate: editarPaciente } = usePacienteUpdate()
+  const queryClient = useQueryClient()
+  const { mutate: criarPaciente } = usePacienteCreate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['pacientes'] })
+      },
+    },
+  })
+  const { mutate: editarPaciente } = usePacienteUpdate({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getPacienteDetailQueryKey() })
+      },
+    },
+  })
   const { data: paciente, isSuccess } = usePacienteDetail(pacienteId as string)
 
   useEffect(() => {
@@ -175,6 +188,11 @@ function NovoPacientePage() {
           { id: pacienteId!, data: values },
           {
             onSuccess: () => {
+              notifications.show({
+                title: 'Sucesso!',
+                message: 'Paciente editado com sucesso',
+                color: 'green',
+              })
               router.navigate({
                 to: '/app/pacientes/$id',
                 params: { id: pacienteId! },
@@ -182,13 +200,11 @@ function NovoPacientePage() {
             },
             onError: (error: any) => {
               setError(error)
-
-              // notifications.show({
-              //   title: 'Erro',
-              //   message:
-              //     'Não foi possível salvar as alterações, tente novamente.',
-              //   color: 'red',
-              // })
+              notifications.show({
+                title: 'Erro!',
+                message: 'Não foi salvar suas mudanças, tente novamente',
+                color: 'red',
+              })
             },
           }
         )
@@ -197,15 +213,20 @@ function NovoPacientePage() {
           { data: values },
           {
             onSuccess: () => {
+              notifications.show({
+                title: 'Sucesso!',
+                message: 'Paciente criado com sucesso',
+                color: 'green',
+              })
               router.navigate({ to: '/app/pacientes' })
             },
             onError: (error: any) => {
               setError(error)
-              // notifications.show({
-              //   title: 'Erro',
-              //   message: 'Não foi possível salvar o paciente, tente novamente.',
-              //   color: 'red',
-              // })
+              notifications.show({
+                title: 'Erro!',
+                message: 'Não foi possível salvar o paciente, tente novamente',
+                color: 'red',
+              })
             },
           }
         )
@@ -225,7 +246,9 @@ function NovoPacientePage() {
   }
 
   const getBreadcrumbs = () => {
-    const breadcrumbs: BreadcrumbItem[] = [{ label: 'Pacientes', href: '/app/pacientes' }]
+    const breadcrumbs: BreadcrumbItem[] = [
+      { label: 'Pacientes', href: '/app/pacientes' },
+    ]
 
     if (isEditing) {
       breadcrumbs.push({
